@@ -1,0 +1,10 @@
+{
+  "name": "bankmanagement-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Role-aware BankManagement frontend implemented with vanilla HTML, CSS, and JavaScript.",
+  "scripts": {
+    "start": "node frontend-server.js",
+    "check": "node --check frontend-server.js"
+  }
+}

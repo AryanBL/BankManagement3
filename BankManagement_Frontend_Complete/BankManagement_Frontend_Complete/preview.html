@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BankManagement · UI role preview</title>
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/auth.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+  <style>
+    .preview-page{min-height:100vh;background:radial-gradient(circle at 10% 10%,rgba(20,184,166,.13),transparent 25%),var(--surface);padding:clamp(1rem,5vw,4rem)}
+    .preview-shell{max-width:1200px;margin:auto}.preview-head{text-align:center;max-width:760px;margin:0 auto 2.2rem}.preview-head h1{font-size:clamp(2rem,5vw,4rem);letter-spacing:-.055em;margin:.5rem 0}.role-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}.role-card{padding:1.4rem;min-height:300px;display:flex;flex-direction:column}.role-card .stat-icon{width:52px;height:52px}.role-card h2{margin:1rem 0 .4rem}.role-card p{color:var(--text-soft);font-size:.85rem}.role-card ul{padding-left:1.1rem;color:var(--text-soft);font-size:.76rem;display:grid;gap:.4rem;flex:1}.role-card .btn{width:100%;margin-top:1rem}@media(max-width:980px){.role-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:580px){.role-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <main class="preview-page">
+    <div class="preview-shell">
+      <header class="preview-head"><div class="kicker">Interactive UI preview</div><h1>Choose a role workspace</h1><p class="page-copy" style="margin-inline:auto">This preview uses simulated data. The production login routes users automatically according to the highest effective role returned by the backend.</p><a class="btn btn-secondary" href="index.html" style="margin-top:1rem">← Back to authentication</a></header>
+      <section class="role-grid">
+        <article class="card role-card"><div class="stat-icon" id="icon-customer"></div><h2>Customer</h2><p>Personal banking and self-service.</p><ul><li>Accounts and balances</li><li>Transfers and withdrawals</li><li>Account opening</li><li>Loan status and installment payment</li><li>Profile and session security</li></ul><button class="btn btn-primary" data-preview-role="Customer">Open customer UI</button></article>
+        <article class="card role-card"><div class="stat-icon" id="icon-employee"></div><h2>Employee</h2><p>Daily branch banking operations.</p><ul><li>Customer and account operations</li><li>Deposits, withdrawals and transfers</li><li>Loan services</li><li>Branch and employee directory</li><li>Operational reports</li></ul><button class="btn btn-primary" data-preview-role="Employee">Open employee UI</button></article>
+        <article class="card role-card"><div class="stat-icon" id="icon-admin"></div><h2>Admin</h2><p>Branch administration and maintenance.</p><ul><li>All employee capabilities</li><li>Employee lifecycle management</li><li>Transfer approval workflow</li><li>Administrative reports</li><li>Scheduled maintenance controls</li></ul><button class="btn btn-primary" data-preview-role="Admin">Open admin UI</button></article>
+        <article class="card role-card"><div class="stat-icon" id="icon-highadmin"></div><h2>HighAdmin</h2><p>Enterprise governance and audit.</p><ul><li>All lower-role capabilities</li><li>Manager governance</li><li>Executive branch overview</li><li>User access reporting</li><li>Audit trail and branch ledger</li></ul><button class="btn btn-primary" data-preview-role="HighAdmin">Open HighAdmin UI</button></article>
+      </section>
+    </div>
+  </main>
+  <script src="assets/js/core/config.js"></script>
+  <script src="assets/js/core/icons.js"></script>
+  <script src="assets/js/core/session.js"></script>
+  <script src="assets/js/pages/preview.js"></script>
+  <script>
+    document.getElementById('icon-customer').innerHTML=BankIcons.icon('user',25);
+    document.getElementById('icon-employee').innerHTML=BankIcons.icon('briefcase',25);
+    document.getElementById('icon-admin').innerHTML=BankIcons.icon('settings',25);
+    document.getElementById('icon-highadmin').innerHTML=BankIcons.icon('shield',25);
+  </script>
+</body>
+</html>
