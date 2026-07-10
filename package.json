@@ -1,0 +1,31 @@
+{
+  "name": "bank-management-backend",
+  "version": "2.0.0",
+  "description": "REST API backend for the BankManagement SQL Server project using direct SQL stored procedures.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "check": "node --check src/server.js && node --check src/app.js && find src -name '*.js' -not -path 'src/server.js' -not -path 'src/app.js' -print0 | xargs -0 -n1 node --check"
+  },
+  "keywords": [
+    "bank-management",
+    "sql-server",
+    "express",
+    "stored-procedures"
+  ],
+  "author": "BankManagement Project",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "morgan": "^1.10.0",
+    "mssql": "^11.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

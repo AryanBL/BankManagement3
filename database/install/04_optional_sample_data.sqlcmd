@@ -1,0 +1,14 @@
+/*
+  Optional. Run only after the full database installation if you want demo data.
+  The resilient scenario is useful for testing both successful and error-handling flows.
+*/
+:setvar DbName "BankManagement"
+:setvar ProjectRoot "C:\CHANGE_ME\bank-management-backend-v2"
+
+USE [$(DbName)];
+GO
+
+:r "$(ProjectRoot)\database\scripts\SampleData\SampleData_RealisticScenario_RESILIENT.sql"
+
+PRINT 'Optional sample data script completed.';
+GO

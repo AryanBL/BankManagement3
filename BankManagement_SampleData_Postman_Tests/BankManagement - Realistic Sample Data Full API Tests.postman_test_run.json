@@ -1,0 +1,5518 @@
+{
+	"id": "bcdbc8d3-a38e-42a4-a319-c7df3c7e066b",
+	"name": "BankManagement - Realistic Sample Data Full API Tests",
+	"timestamp": "2026-07-10T16:42:32.342Z",
+	"collection_id": "24800144-e5728f51-37c7-4db8-8ff2-52b6e3941641",
+	"folder_id": 0,
+	"environment_id": "24800144-d9911160-7b18-473b-8631-5c587c1255fe",
+	"totalPass": 457,
+	"delay": "50",
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2026-07-10T16:42:17.694Z",
+	"totalFail": 9,
+	"results": [
+		{
+			"id": "51a42faa-3bb8-45db-aafd-226f9f21ea3d",
+			"name": "Health Check",
+			"url": "http://127.0.0.1:4000/api/health",
+			"time": 184,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Connected database is BankManagement": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Connected database is BankManagement": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				184
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Connected database is BankManagement": true
+				}
+			]
+		},
+		{
+			"id": "173756bf-b2bd-458a-b3d4-43660ffe91a5",
+			"name": "Login - Gandalf HighAdmin",
+			"url": "http://127.0.0.1:4000/api/auth/login",
+			"time": 58,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Session token was returned": true,
+				"Expected effective role(s) are present": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Session token was returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Expected effective role(s) are present": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				58
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Session token was returned": true,
+					"Expected effective role(s) are present": true
+				}
+			]
+		},
+		{
+			"id": "b08622a2-e548-45e0-af24-19a2eb2adff1",
+			"name": "Login - SpongeBob Branch Manager",
+			"url": "http://127.0.0.1:4000/api/auth/login",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Session token was returned": true,
+				"Expected effective role(s) are present": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Session token was returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Expected effective role(s) are present": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Session token was returned": true,
+					"Expected effective role(s) are present": true
+				}
+			]
+		},
+		{
+			"id": "d3ea55b9-25c6-4124-92ad-0aff2488a32e",
+			"name": "Login - Galadriel Branch Manager",
+			"url": "http://127.0.0.1:4000/api/auth/login",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Session token was returned": true,
+				"Expected effective role(s) are present": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Session token was returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Expected effective role(s) are present": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Session token was returned": true,
+					"Expected effective role(s) are present": true
+				}
+			]
+		},
+		{
+			"id": "1bfd80e3-44e0-4a12-b367-90c82fc13e82",
+			"name": "Login - Patrick Employee",
+			"url": "http://127.0.0.1:4000/api/auth/login",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Session token was returned": true,
+				"Expected effective role(s) are present": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Session token was returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Expected effective role(s) are present": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Session token was returned": true,
+					"Expected effective role(s) are present": true
+				}
+			]
+		},
+		{
+			"id": "7b99b90e-4525-44a8-a1c5-e4f0b68d1279",
+			"name": "Login - Olivia Customer",
+			"url": "http://127.0.0.1:4000/api/auth/login",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Session token was returned": true,
+				"Expected effective role(s) are present": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Session token was returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Expected effective role(s) are present": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Session token was returned": true,
+					"Expected effective role(s) are present": true
+				}
+			]
+		},
+		{
+			"id": "1fe60888-2558-40fa-b4ec-096aa186fea8",
+			"name": "Login - Noah Customer",
+			"url": "http://127.0.0.1:4000/api/auth/login",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Session token was returned": true,
+				"Expected effective role(s) are present": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Session token was returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Expected effective role(s) are present": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Session token was returned": true,
+					"Expected effective role(s) are present": true
+				}
+			]
+		},
+		{
+			"id": "ef459884-47ef-40d6-bb2c-8df04e7b5bfb",
+			"name": "Login - Maya Customer",
+			"url": "http://127.0.0.1:4000/api/auth/login",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Session token was returned": true,
+				"Expected effective role(s) are present": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Session token was returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Expected effective role(s) are present": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Session token was returned": true,
+					"Expected effective role(s) are present": true
+				}
+			]
+		},
+		{
+			"id": "d253356f-814a-4472-a92d-7eac7745c418",
+			"name": "Login - Ava Customer",
+			"url": "http://127.0.0.1:4000/api/auth/login",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Session token was returned": true,
+				"Expected effective role(s) are present": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Session token was returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Expected effective role(s) are present": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Session token was returned": true,
+					"Expected effective role(s) are present": true
+				}
+			]
+		},
+		{
+			"id": "ce1b734b-9883-4b6f-ad73-dd3ab130216d",
+			"name": "Login - James Customer",
+			"url": "http://127.0.0.1:4000/api/auth/login",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Session token was returned": true,
+				"Expected effective role(s) are present": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Session token was returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Expected effective role(s) are present": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Session token was returned": true,
+					"Expected effective role(s) are present": true
+				}
+			]
+		},
+		{
+			"id": "e9bc52b1-0bab-454f-be71-9bb7568b8794",
+			"name": "Resolve All 8 Branch IDs",
+			"url": "http://127.0.0.1:4000/api/branches",
+			"time": 53,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"All 8 sample branches are present": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"All 8 sample branches are present": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				53
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"All 8 sample branches are present": true
+				}
+			]
+		},
+		{
+			"id": "1d53f5d4-7260-4f75-8117-56fe4d9c94be",
+			"name": "Resolve Sample Customer IDs",
+			"url": "http://127.0.0.1:4000/api/customers?includeInactive=true",
+			"time": 23,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Realistic sample customers are present": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Realistic sample customers are present": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				23
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Realistic sample customers are present": true
+				}
+			]
+		},
+		{
+			"id": "b2accbad-bbbc-4447-9766-150bfd7ac84c",
+			"name": "Resolve Sample Employee IDs",
+			"url": "http://127.0.0.1:4000/api/employees?includeTerminated=true&searchBranchHistory=true",
+			"time": 32,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Expected manager and employee fixtures are present": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Expected manager and employee fixtures are present": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				32
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Expected manager and employee fixtures are present": true
+				}
+			]
+		},
+		{
+			"id": "4f2de1aa-1326-4c0f-bef1-5771fff0a57d",
+			"name": "Resolve Olivia Savings Account",
+			"url": "http://127.0.0.1:4000/api/accounts?customerNationalID=4000000001&accountTypeName=Savings%20Basic&branchCode=BB001&includeClosed=true",
+			"time": 31,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Exactly one matching sample account was resolved": true,
+				"AccountID exists": true,
+				"Account status is Active": true,
+				"Account type is Savings Basic": true,
+				"Branch code is BB001": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Exactly one matching sample account was resolved": {
+					"pass": 1,
+					"fail": 0
+				},
+				"AccountID exists": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account status is Active": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account type is Savings Basic": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Branch code is BB001": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				31
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Exactly one matching sample account was resolved": true,
+					"AccountID exists": true,
+					"Account status is Active": true,
+					"Account type is Savings Basic": true,
+					"Branch code is BB001": true
+				}
+			]
+		},
+		{
+			"id": "53e9a473-424e-4244-b5eb-e5e8badbdf45",
+			"name": "Resolve Olivia Current Account",
+			"url": "http://127.0.0.1:4000/api/accounts?customerNationalID=4000000001&accountTypeName=Current%20Account&branchCode=GD001&includeClosed=true",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Exactly one matching sample account was resolved": true,
+				"AccountID exists": true,
+				"Account status is Active": true,
+				"Account type is Current Account": true,
+				"Branch code is GD001": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Exactly one matching sample account was resolved": {
+					"pass": 1,
+					"fail": 0
+				},
+				"AccountID exists": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account status is Active": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account type is Current Account": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Branch code is GD001": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Exactly one matching sample account was resolved": true,
+					"AccountID exists": true,
+					"Account status is Active": true,
+					"Account type is Current Account": true,
+					"Branch code is GD001": true
+				}
+			]
+		},
+		{
+			"id": "5e207721-53d0-4ddb-a94b-14d5d95d14d6",
+			"name": "Resolve Noah Business Account",
+			"url": "http://127.0.0.1:4000/api/accounts?customerNationalID=4000000004&accountTypeName=Business%20Account&branchCode=GD001&includeClosed=true",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Exactly one matching sample account was resolved": true,
+				"AccountID exists": true,
+				"Account status is Active": true,
+				"Account type is Business Account": true,
+				"Branch code is GD001": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Exactly one matching sample account was resolved": {
+					"pass": 1,
+					"fail": 0
+				},
+				"AccountID exists": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account status is Active": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account type is Business Account": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Branch code is GD001": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Exactly one matching sample account was resolved": true,
+					"AccountID exists": true,
+					"Account status is Active": true,
+					"Account type is Business Account": true,
+					"Branch code is GD001": true
+				}
+			]
+		},
+		{
+			"id": "9772451f-3bc7-4c21-af6f-6c4bf477f84e",
+			"name": "Resolve Noah Savings Account",
+			"url": "http://127.0.0.1:4000/api/accounts?customerNationalID=4000000004&accountTypeName=Savings%20Basic&branchCode=GD001&includeClosed=true",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Exactly one matching sample account was resolved": true,
+				"AccountID exists": true,
+				"Account type is Savings Basic": true,
+				"Branch code is GD001": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Exactly one matching sample account was resolved": {
+					"pass": 1,
+					"fail": 0
+				},
+				"AccountID exists": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account type is Savings Basic": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Branch code is GD001": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Exactly one matching sample account was resolved": true,
+					"AccountID exists": true,
+					"Account type is Savings Basic": true,
+					"Branch code is GD001": true
+				}
+			]
+		},
+		{
+			"id": "2548660a-37d4-4a44-b0e1-66cfd3928742",
+			"name": "Resolve Maya Student Account",
+			"url": "http://127.0.0.1:4000/api/accounts?customerNationalID=4000000003&accountTypeName=Student%20Account&branchCode=SH001&includeClosed=true",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Exactly one matching sample account was resolved": true,
+				"AccountID exists": true,
+				"Account status is Active": true,
+				"Account type is Student Account": true,
+				"Branch code is SH001": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Exactly one matching sample account was resolved": {
+					"pass": 1,
+					"fail": 0
+				},
+				"AccountID exists": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account status is Active": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account type is Student Account": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Branch code is SH001": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Exactly one matching sample account was resolved": true,
+					"AccountID exists": true,
+					"Account status is Active": true,
+					"Account type is Student Account": true,
+					"Branch code is SH001": true
+				}
+			]
+		},
+		{
+			"id": "95c1ba29-3927-48f2-95c1-80d3d64e1706",
+			"name": "Resolve Ava Frozen Current Account",
+			"url": "http://127.0.0.1:4000/api/accounts?customerNationalID=4000000011&accountTypeName=Current%20Account&branchCode=MW001&includeClosed=true",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Exactly one matching sample account was resolved": true,
+				"AccountID exists": true,
+				"Account status is Frozen": true,
+				"Account type is Current Account": true,
+				"Branch code is MW001": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Exactly one matching sample account was resolved": {
+					"pass": 1,
+					"fail": 0
+				},
+				"AccountID exists": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account status is Frozen": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account type is Current Account": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Branch code is MW001": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Exactly one matching sample account was resolved": true,
+					"AccountID exists": true,
+					"Account status is Frozen": true,
+					"Account type is Current Account": true,
+					"Branch code is MW001": true
+				}
+			]
+		},
+		{
+			"id": "1eb4fc43-96ca-46fe-b265-35c2e1f6e31a",
+			"name": "Resolve James Closed Student Account",
+			"url": "http://127.0.0.1:4000/api/accounts?customerNationalID=4000000012&accountTypeName=Student%20Account&branchCode=SH001&includeClosed=true",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Exactly one matching sample account was resolved": true,
+				"AccountID exists": true,
+				"Account status is Closed": true,
+				"Account type is Student Account": true,
+				"Branch code is SH001": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Exactly one matching sample account was resolved": {
+					"pass": 1,
+					"fail": 0
+				},
+				"AccountID exists": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account status is Closed": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account type is Student Account": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Branch code is SH001": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Exactly one matching sample account was resolved": true,
+					"AccountID exists": true,
+					"Account status is Closed": true,
+					"Account type is Student Account": true,
+					"Branch code is SH001": true
+				}
+			]
+		},
+		{
+			"id": "1cdf6c1d-8755-4249-9d3c-8afb3ae76eb9",
+			"name": "Resolve Logan Dormant Savings Account",
+			"url": "http://127.0.0.1:4000/api/accounts?customerNationalID=4000000014&accountTypeName=Savings%20Basic&branchCode=BB001&includeClosed=true",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Exactly one matching sample account was resolved": true,
+				"AccountID exists": true,
+				"Account status is Dormant": true,
+				"Account type is Savings Basic": true,
+				"Branch code is BB001": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Exactly one matching sample account was resolved": {
+					"pass": 1,
+					"fail": 0
+				},
+				"AccountID exists": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account status is Dormant": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account type is Savings Basic": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Branch code is BB001": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Exactly one matching sample account was resolved": true,
+					"AccountID exists": true,
+					"Account status is Dormant": true,
+					"Account type is Savings Basic": true,
+					"Branch code is BB001": true
+				}
+			]
+		},
+		{
+			"id": "307f7d38-26ee-4525-95f8-e3728056d325",
+			"name": "Resolve Chloe Savings Account",
+			"url": "http://127.0.0.1:4000/api/accounts?customerNationalID=4000000005&accountTypeName=Savings%20Basic&branchCode=BB001&includeClosed=true",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Exactly one matching sample account was resolved": true,
+				"AccountID exists": true,
+				"Account type is Savings Basic": true,
+				"Branch code is BB001": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Exactly one matching sample account was resolved": {
+					"pass": 1,
+					"fail": 0
+				},
+				"AccountID exists": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account type is Savings Basic": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Branch code is BB001": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Exactly one matching sample account was resolved": true,
+					"AccountID exists": true,
+					"Account type is Savings Basic": true,
+					"Branch code is BB001": true
+				}
+			]
+		},
+		{
+			"id": "8a581614-db36-41f0-a9de-386fb677e361",
+			"name": "Resolve Sophia Business Account",
+			"url": "http://127.0.0.1:4000/api/accounts?customerNationalID=4000000007&accountTypeName=Business%20Account&branchCode=RV001&includeClosed=true",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Exactly one matching sample account was resolved": true,
+				"AccountID exists": true,
+				"Account type is Business Account": true,
+				"Branch code is RV001": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Exactly one matching sample account was resolved": {
+					"pass": 1,
+					"fail": 0
+				},
+				"AccountID exists": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Account type is Business Account": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Branch code is RV001": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Exactly one matching sample account was resolved": true,
+					"AccountID exists": true,
+					"Account type is Business Account": true,
+					"Branch code is RV001": true
+				}
+			]
+		},
+		{
+			"id": "51081ff5-a687-4a17-a185-66c2f1e80a86",
+			"name": "Resolve Realistic Loan IDs",
+			"url": "http://127.0.0.1:4000/api/reports/loan-operational-summary?page=1&pageSize=100",
+			"time": 171,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Eight realistic loan fixtures are visible": true,
+				"Noah working-capital loan is present": true,
+				"Sophia default-case loan is present": true,
+				"Mia small loan is present": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Eight realistic loan fixtures are visible": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Noah working-capital loan is present": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Sophia default-case loan is present": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Mia small loan is present": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				171
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Eight realistic loan fixtures are visible": true,
+					"Noah working-capital loan is present": true,
+					"Sophia default-case loan is present": true,
+					"Mia small loan is present": true
+				}
+			]
+		},
+		{
+			"id": "45bb06dc-b438-4af3-a4b9-b00c625e8b75",
+			"name": "HighAdmin Session Details",
+			"url": "http://127.0.0.1:4000/api/auth/me",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Gandalf is effective HighAdmin": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Gandalf is effective HighAdmin": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Gandalf is effective HighAdmin": true
+				}
+			]
+		},
+		{
+			"id": "46c3aeeb-c531-4fd2-bb1b-3435228e96cf",
+			"name": "Admin Session Details",
+			"url": "http://127.0.0.1:4000/api/auth/me",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"SpongeBob has effective Admin privilege": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"SpongeBob has effective Admin privilege": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"SpongeBob has effective Admin privilege": true
+				}
+			]
+		},
+		{
+			"id": "25cef725-e879-47b6-aef2-efc000a745f9",
+			"name": "Employee Session Details",
+			"url": "http://127.0.0.1:4000/api/auth/me",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Patrick is Employee but not Admin": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Patrick is Employee but not Admin": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Patrick is Employee but not Admin": true
+				}
+			]
+		},
+		{
+			"id": "fe431aee-9973-4f4f-9cfc-dc4d14288add",
+			"name": "Customer Session Details",
+			"url": "http://127.0.0.1:4000/api/auth/me",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Olivia is customer-only": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Olivia is customer-only": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Olivia is customer-only": true
+				}
+			]
+		},
+		{
+			"id": "098f36ef-c24e-4e23-9cf2-136e3ed0ff80",
+			"name": "OnLeave Employee Can Still Login as Customer - Plankton",
+			"url": "http://127.0.0.1:4000/api/auth/login",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Session token was returned": true,
+				"Expected effective role(s) are present": true,
+				"Employee/Admin privileges are no longer effective": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Session token was returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Expected effective role(s) are present": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Employee/Admin privileges are no longer effective": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Session token was returned": true,
+					"Expected effective role(s) are present": true,
+					"Employee/Admin privileges are no longer effective": true
+				}
+			]
+		},
+		{
+			"id": "aa1504d9-7a38-4557-b22d-9276ed2bf3c0",
+			"name": "Terminated Employee Can Still Login as Customer - Bilbo",
+			"url": "http://127.0.0.1:4000/api/auth/login",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Session token was returned": true,
+				"Expected effective role(s) are present": true,
+				"Employee/Admin privileges are no longer effective": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Session token was returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Expected effective role(s) are present": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Employee/Admin privileges are no longer effective": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Session token was returned": true,
+					"Expected effective role(s) are present": true,
+					"Employee/Admin privileges are no longer effective": true
+				}
+			]
+		},
+		{
+			"id": "38df08be-1c67-4d6f-bad6-5e83195bb3c3",
+			"name": "Employee Without Created Login Is Rejected - Shelob",
+			"url": "http://127.0.0.1:4000/api/auth/login",
+			"time": 4,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 400": true,
+				"Structured API error is returned": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 400": true,
+					"Structured API error is returned": true
+				}
+			]
+		},
+		{
+			"id": "714baccc-2243-41f0-905a-a5c5592a8ca8",
+			"name": "Wrong Password Is Rejected",
+			"url": "http://127.0.0.1:4000/api/auth/login",
+			"time": 4,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 400": true,
+				"Structured API error is returned": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 400": true,
+					"Structured API error is returned": true
+				}
+			]
+		},
+		{
+			"id": "9a908dbd-8e56-45b7-8b5b-8745f70f79ee",
+			"name": "Missing Required Password Is Rejected",
+			"url": "http://127.0.0.1:4000/api/auth/login",
+			"time": 2,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 400": true,
+				"Structured API error is returned": true,
+				"Error message contains expected text": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Error message contains expected text": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 400": true,
+					"Structured API error is returned": true,
+					"Error message contains expected text": true
+				}
+			]
+		},
+		{
+			"id": "76cd0e1b-a361-4a3b-972e-65c72fc885b1",
+			"name": "HighAdmin Sees Olivia Customer Profile",
+			"url": "http://127.0.0.1:4000/api/customers?nationalID=4000000001",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Olivia fixture is returned": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Olivia fixture is returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Olivia fixture is returned": true
+				}
+			]
+		},
+		{
+			"id": "324bb3d5-d633-41df-9922-b48e382ab614",
+			"name": "Employee Search - Patrick Teller",
+			"url": "http://127.0.0.1:4000/api/employees?nationalID=3200000001&includeTerminated=true&searchBranchHistory=true",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Patrick Teller fixture is returned": false
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Patrick Teller fixture is returned": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Patrick Teller fixture is returned": false
+				}
+			]
+		},
+		{
+			"id": "409ba651-e4c2-4bf8-a8b5-1d5d2d641672",
+			"name": "Employee State - Plankton Is OnLeave",
+			"url": "http://127.0.0.1:4000/api/employees?nationalID=3200000004&includeTerminated=true&searchBranchHistory=true",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Plankton is OnLeave": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Plankton is OnLeave": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Plankton is OnLeave": true
+				}
+			]
+		},
+		{
+			"id": "7dd13a4e-6323-4816-9cce-4d86fb7f2f18",
+			"name": "Employee State - Bilbo Is Terminated",
+			"url": "http://127.0.0.1:4000/api/employees?nationalID=3200000009&includeTerminated=true&searchBranchHistory=true",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Bilbo is Terminated": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Bilbo is Terminated": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Bilbo is Terminated": true
+				}
+			]
+		},
+		{
+			"id": "0810b0e8-bc2c-4608-95b4-9779128f87cf",
+			"name": "Employee Transfer State - Rosie Reached RV001",
+			"url": "http://127.0.0.1:4000/api/employees?nationalID=3200000008&includeTerminated=true&searchBranchHistory=true",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Rosie's branch history includes Rivendell branch RV001": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Rosie's branch history includes Rivendell branch RV001": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Rosie's branch history includes Rivendell branch RV001": true
+				}
+			]
+		},
+		{
+			"id": "d6b164ca-87a9-4edf-bb40-f2595f682169",
+			"name": "Olivia Sees Only Her Own Accounts",
+			"url": "http://127.0.0.1:4000/api/accounts?includeClosed=true",
+			"time": 8,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Expected number of own accounts is returned": true,
+				"Every returned account belongs to the authenticated customer": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Expected number of own accounts is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Every returned account belongs to the authenticated customer": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				8
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Expected number of own accounts is returned": true,
+					"Every returned account belongs to the authenticated customer": true
+				}
+			]
+		},
+		{
+			"id": "c4e7502e-1126-452e-8473-182935bfdd5a",
+			"name": "Olivia Savings Account History",
+			"url": "http://127.0.0.1:4000/api/accounts/345/history",
+			"time": 24,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"History contains realistic Olivia deposit activity": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"History contains realistic Olivia deposit activity": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				24
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"History contains realistic Olivia deposit activity": true
+				}
+			]
+		},
+		{
+			"id": "14424510-6ae9-44fe-a226-9cbed1555981",
+			"name": "Olivia Current Account History",
+			"url": "http://127.0.0.1:4000/api/accounts/344/history",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"History contains realistic Olivia withdrawal activity": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"History contains realistic Olivia withdrawal activity": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"History contains realistic Olivia withdrawal activity": true
+				}
+			]
+		},
+		{
+			"id": "b99ae73c-6d9a-4c9c-a8e9-4610298704c3",
+			"name": "Noah Loan Status",
+			"url": "http://127.0.0.1:4000/api/loans/46/status",
+			"time": 21,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Loan status includes installment information": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Loan status includes installment information": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				21
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Loan status includes installment information": true
+				}
+			]
+		},
+		{
+			"id": "b7f8564d-2825-421d-87a9-bb87c9e51550",
+			"name": "HighAdmin Reads Frozen Ava Account",
+			"url": "http://127.0.0.1:4000/api/accounts/311",
+			"time": 26,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Ava account remains Frozen": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Ava account remains Frozen": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				26
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Ava account remains Frozen": true
+				}
+			]
+		},
+		{
+			"id": "405fda50-e04b-436f-9b3e-b63c6b794d89",
+			"name": "HighAdmin Reads Closed James Account",
+			"url": "http://127.0.0.1:4000/api/accounts/330",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"James account remains Closed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"James account remains Closed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"James account remains Closed": true
+				}
+			]
+		},
+		{
+			"id": "c92579dd-4806-4576-b4ce-8423bf5c8080",
+			"name": "Pending Transactions Report",
+			"url": "http://127.0.0.1:4000/api/reports/pending-transactions?page=1&pageSize=100",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "0e131d21-1106-45fb-ad9d-5b2d5f0ee26c",
+			"name": "Missing Bearer Token -> 401",
+			"url": "http://127.0.0.1:4000/api/auth/me",
+			"time": 2,
+			"responseCode": {
+				"code": 401,
+				"name": "Unauthorized"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 401": true,
+				"Structured API error is returned": true,
+				"Error message contains expected text": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 401": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Error message contains expected text": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 401": true,
+					"Structured API error is returned": true,
+					"Error message contains expected text": true
+				}
+			]
+		},
+		{
+			"id": "e8795a9a-07e8-4feb-856f-53517764aef2",
+			"name": "Invalid Bearer Token -> 401",
+			"url": "http://127.0.0.1:4000/api/auth/me",
+			"time": 3,
+			"responseCode": {
+				"code": 401,
+				"name": "Unauthorized"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 401": true,
+				"Structured API error is returned": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 401": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 401": true,
+					"Structured API error is returned": true
+				}
+			]
+		},
+		{
+			"id": "3d0f2329-5ccf-4a2f-b746-6b83b7a69fc4",
+			"name": "Customer Cannot Run General Customer Search -> 400",
+			"url": "http://127.0.0.1:4000/api/customers",
+			"time": 5,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 400": true,
+				"Structured API error is returned": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 400": true,
+					"Structured API error is returned": true
+				}
+			]
+		},
+		{
+			"id": "4193f742-6714-4134-a7ea-5f763d87140c",
+			"name": "Customer Cannot List Branches -> 403",
+			"url": "http://127.0.0.1:4000/api/branches",
+			"time": 3,
+			"responseCode": {
+				"code": 403,
+				"name": "Forbidden"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 403": true,
+				"Structured API error is returned": true,
+				"Error message contains expected text": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 403": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Error message contains expected text": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 403": true,
+					"Structured API error is returned": true,
+					"Error message contains expected text": true
+				}
+			]
+		},
+		{
+			"id": "90f09500-e100-48ae-9f0b-ab647f2d58de",
+			"name": "Customer Cannot Read Operational Report -> 403",
+			"url": "http://127.0.0.1:4000/api/reports/account-operational-summary",
+			"time": 3,
+			"responseCode": {
+				"code": 403,
+				"name": "Forbidden"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 403": true,
+				"Structured API error is returned": true,
+				"Error message contains expected text": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 403": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Error message contains expected text": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 403": true,
+					"Structured API error is returned": true,
+					"Error message contains expected text": true
+				}
+			]
+		},
+		{
+			"id": "b7e8326e-0159-4f5f-9591-67d183d19da3",
+			"name": "Employee Can Read Operational Report",
+			"url": "http://127.0.0.1:4000/api/reports/account-operational-summary?page=1&pageSize=20",
+			"time": 11,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				11
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "bdec11e1-d874-4c0b-af5a-bd053a3e3d0a",
+			"name": "Employee Cannot Read Admin Daily Summary -> 403",
+			"url": "http://127.0.0.1:4000/api/reports/daily-transaction-summary",
+			"time": 4,
+			"responseCode": {
+				"code": 403,
+				"name": "Forbidden"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 403": true,
+				"Structured API error is returned": true,
+				"Error message contains expected text": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 403": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Error message contains expected text": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 403": true,
+					"Structured API error is returned": true,
+					"Error message contains expected text": true
+				}
+			]
+		},
+		{
+			"id": "5aff5142-7352-48d4-b33b-ef52846b9640",
+			"name": "Admin Can Read Daily Summary",
+			"url": "http://127.0.0.1:4000/api/reports/daily-transaction-summary?page=1&pageSize=20",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "eeade54f-5a0a-4ea7-8be6-58a3ef08ae37",
+			"name": "Admin Cannot Read HighAdmin User Access Overview -> 403",
+			"url": "http://127.0.0.1:4000/api/reports/highadmin-user-access-overview",
+			"time": 3,
+			"responseCode": {
+				"code": 403,
+				"name": "Forbidden"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 403": true,
+				"Structured API error is returned": true,
+				"Error message contains expected text": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 403": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Error message contains expected text": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 403": true,
+					"Structured API error is returned": true,
+					"Error message contains expected text": true
+				}
+			]
+		},
+		{
+			"id": "6f2a6518-08c6-4726-b84e-54ca5042687a",
+			"name": "Employee Cannot Run HighAdmin Manager Operation -> 403",
+			"url": "http://127.0.0.1:4000/api/highadmin/managers",
+			"time": 3,
+			"responseCode": {
+				"code": 403,
+				"name": "Forbidden"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 403": true,
+				"Structured API error is returned": true,
+				"Error message contains expected text": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 403": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Error message contains expected text": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 403": true,
+					"Structured API error is returned": true,
+					"Error message contains expected text": true
+				}
+			]
+		},
+		{
+			"id": "28acf3fb-c3a3-4b81-abef-22c6fb548216",
+			"name": "Unknown Report Key -> 404",
+			"url": "http://127.0.0.1:4000/api/reports/not-a-real-report",
+			"time": 4,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 404": true,
+				"Structured API error is returned": true,
+				"Error message contains expected text": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 404": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Error message contains expected text": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 404": true,
+					"Structured API error is returned": true,
+					"Error message contains expected text": true
+				}
+			]
+		},
+		{
+			"id": "0760126a-f24a-4d6b-a2b6-38a8ce88bd67",
+			"name": "Unknown Route -> 404",
+			"url": "http://127.0.0.1:4000/api/not-a-real-route",
+			"time": 2,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 404": true,
+				"Structured API error is returned": true,
+				"Error message contains expected text": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 404": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Error message contains expected text": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 404": true,
+					"Structured API error is returned": true,
+					"Error message contains expected text": true
+				}
+			]
+		},
+		{
+			"id": "26132bb9-97e7-4bc9-b372-a43344f4a465",
+			"name": "E01 - Duplicate Self-Service Signup Username",
+			"url": "http://127.0.0.1:4000/api/auth/signup",
+			"time": 14,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 400": true,
+				"Structured API error is returned": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				14
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 400": true,
+					"Structured API error is returned": true
+				}
+			]
+		},
+		{
+			"id": "97f1aa5a-6211-4834-a35d-6ae75c93c460",
+			"name": "E02 - Insufficient-Funds Transfer",
+			"url": "http://127.0.0.1:4000/api/transactions/transfer",
+			"time": 17,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 400": true,
+				"Structured API error is returned": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				17
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 400": true,
+					"Structured API error is returned": true
+				}
+			]
+		},
+		{
+			"id": "ffc4168b-46e1-46aa-8926-2bca995336ee",
+			"name": "E03 - Withdrawal From Closed Account",
+			"url": "http://127.0.0.1:4000/api/transactions/withdraw",
+			"time": 11,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 400": true,
+				"Structured API error is returned": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				11
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 400": true,
+					"Structured API error is returned": true
+				}
+			]
+		},
+		{
+			"id": "f5636366-d155-4c16-92b7-886d56ad968f",
+			"name": "E04 - Deposit Into Frozen Account",
+			"url": "http://127.0.0.1:4000/api/transactions/deposit",
+			"time": 10,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 400": true,
+				"Structured API error is returned": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				10
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 400": true,
+					"Structured API error is returned": true
+				}
+			]
+		},
+		{
+			"id": "b49ed6fb-e939-4794-a949-869b11833b2d",
+			"name": "E05 - Reverse Non-Existing Transaction",
+			"url": "http://127.0.0.1:4000/api/transactions/-999999/reverse",
+			"time": 22,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 400": true,
+				"Structured API error is returned": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				22
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 400": true,
+					"Structured API error is returned": true
+				}
+			]
+		},
+		{
+			"id": "ee0d8fe8-cd59-49ec-aff7-3e63a4abbf75",
+			"name": "E06 - Invalid Negative Loan Amount",
+			"url": "http://127.0.0.1:4000/api/loans",
+			"time": 13,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 400": true,
+				"Structured API error is returned": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				13
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 400": true,
+					"Structured API error is returned": true
+				}
+			]
+		},
+		{
+			"id": "1fdd3782-46ed-431c-a486-242e29b37af0",
+			"name": "E07 - Second Initial HighAdmin Creation",
+			"url": "http://127.0.0.1:4000/api/setup/initial-high-admin",
+			"time": 18,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 400": true,
+				"Structured API error is returned": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				18
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 400": true,
+					"Structured API error is returned": true
+				}
+			]
+		},
+		{
+			"id": "f0ebee76-054c-493c-a237-b7ef85bc3c43",
+			"name": "E08 - Olivia Cannot View Noah Business Account",
+			"url": "http://127.0.0.1:4000/api/accounts/341",
+			"time": 5,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 400": true,
+				"Structured API error is returned": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Structured API error is returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 400": true,
+					"Structured API error is returned": true
+				}
+			]
+		},
+		{
+			"id": "c86b1084-0235-43fd-91ed-407100dedda6",
+			"name": "Report Catalogue",
+			"url": "http://127.0.0.1:4000/api/reports",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"All 14 report keys are registered": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"All 14 report keys are registered": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"All 14 report keys are registered": true
+				}
+			]
+		},
+		{
+			"id": "d0a8cf3c-146d-4bff-bac5-862161eb351c",
+			"name": "Customer Basic Profile",
+			"url": "http://127.0.0.1:4000/api/reports/customer-basic-profile?page=1&pageSize=100",
+			"time": 13,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				13
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "7591ebb8-c133-4ddc-8e9d-b1f51c7f6597",
+			"name": "Customer Account Summary",
+			"url": "http://127.0.0.1:4000/api/reports/customer-account-summary?page=1&pageSize=100",
+			"time": 14,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				14
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "d289849d-c17f-4002-8098-3de95904ab6f",
+			"name": "Account Operational Summary",
+			"url": "http://127.0.0.1:4000/api/reports/account-operational-summary?page=1&pageSize=100",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "5de82bd9-fc14-463b-b26d-8bc6ea7435c7",
+			"name": "Employee Directory",
+			"url": "http://127.0.0.1:4000/api/reports/employee-directory?page=1&pageSize=100",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "7560fa4e-c4f5-4682-a2a5-9fb586efab44",
+			"name": "Pending Transactions",
+			"url": "http://127.0.0.1:4000/api/reports/pending-transactions?page=1&pageSize=100",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "7640d4e0-fc85-44a3-bb19-bbb086bf1b15",
+			"name": "Loan Operational Summary",
+			"url": "http://127.0.0.1:4000/api/reports/loan-operational-summary?page=1&pageSize=100",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "62762231-f42c-4bc5-8e27-fa5513176927",
+			"name": "Daily Transaction Summary",
+			"url": "http://127.0.0.1:4000/api/reports/daily-transaction-summary?page=1&pageSize=100",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "f4a1fdab-0792-4d8b-bd42-6aee3f894739",
+			"name": "Account Status Summary",
+			"url": "http://127.0.0.1:4000/api/reports/account-status-summary?page=1&pageSize=100",
+			"time": 8,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				8
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "824d9cff-4364-48a7-8f56-e2e629df4b3f",
+			"name": "Loan Overdue Summary",
+			"url": "http://127.0.0.1:4000/api/reports/loan-overdue-summary?page=1&pageSize=100",
+			"time": 8,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				8
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "66f2503a-6d18-403e-b2fe-88c17461c8cc",
+			"name": "HighAdmin Employee-Branch Overview",
+			"url": "http://127.0.0.1:4000/api/reports/highadmin-employee-branch-overview?page=1&pageSize=100",
+			"time": 167,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				167
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "f4e81be4-397f-40bb-b2a8-baf3a815a6ce",
+			"name": "HighAdmin Branch Financial Overview",
+			"url": "http://127.0.0.1:4000/api/reports/highadmin-branch-financial-overview?page=1&pageSize=100",
+			"time": 14,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				14
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "24a6d0e1-84a8-49fa-b905-8a89a8a38c4a",
+			"name": "HighAdmin User Access Overview",
+			"url": "http://127.0.0.1:4000/api/reports/highadmin-user-access-overview?page=1&pageSize=100",
+			"time": 15,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				15
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "f50a7c46-9152-4067-a618-c761561a5cec",
+			"name": "Audit Trail",
+			"url": "http://127.0.0.1:4000/api/reports/audit-trail?page=1&pageSize=100",
+			"time": 169,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				169
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "0df345a2-6ea4-4d6c-a572-429d9da97a9b",
+			"name": "Branch Ledger",
+			"url": "http://127.0.0.1:4000/api/reports/branch-ledger?page=1&pageSize=100",
+			"time": 10,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Report response contains an array": true,
+				"Correct SQL view is exposed": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Report response contains an array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Correct SQL view is exposed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				10
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Report response contains an array": true,
+					"Correct SQL view is exposed": true
+				}
+			]
+		},
+		{
+			"id": "d315d8e0-465b-4891-842b-df0b5d228269",
+			"name": "01 - Generate and Sign Up Disposable Customer",
+			"url": "http://127.0.0.1:4000/api/auth/signup",
+			"time": 49,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				49
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "3d2583eb-59ed-4ca6-86b4-6a79ae0db3b7",
+			"name": "02 - Login Disposable Customer",
+			"url": "http://127.0.0.1:4000/api/auth/login",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Session token was returned": true,
+				"Expected effective role(s) are present": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Session token was returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Expected effective role(s) are present": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Session token was returned": true,
+					"Expected effective role(s) are present": true
+				}
+			]
+		},
+		{
+			"id": "6e67520a-11bf-4f42-aea1-80ed2e245231",
+			"name": "03 - Open Savings Account in BB001",
+			"url": "http://127.0.0.1:4000/api/accounts",
+			"time": 26,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				26
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "391174fd-1c2f-474e-8983-36dc61f6e8e6",
+			"name": "04 - Process Ready Initial Deposit",
+			"url": "http://127.0.0.1:4000/api/transactions/maintenance/process-pending-batch",
+			"time": 81,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				81
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "4dbb665d-f0b6-4d7b-9379-9b24fc3e1bf0",
+			"name": "05 - Read Disposable Customer Account",
+			"url": "http://127.0.0.1:4000/api/accounts/363",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "3a535cad-f6a9-44c0-9ca7-c4833d6bfca3",
+			"name": "06 - Employee Deposit Into Disposable Account",
+			"url": "http://127.0.0.1:4000/api/transactions/deposit",
+			"time": 6,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "7b8766d8-da47-4c4d-a6f2-f66b042c68b4",
+			"name": "07 - Process Ready Deposit",
+			"url": "http://127.0.0.1:4000/api/transactions/maintenance/process-pending-batch",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "f8cdb1da-b2ac-4c24-b1a0-a15c3779034f",
+			"name": "08 - Customer Withdraws From Own Account",
+			"url": "http://127.0.0.1:4000/api/transactions/withdraw",
+			"time": 7,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "08334164-b00b-4b2a-aac9-ad21846ee3c9",
+			"name": "09 - Customer Transfers to Olivia Savings",
+			"url": "http://127.0.0.1:4000/api/transactions/transfer",
+			"time": 5,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "276e2232-be3c-42d2-8a03-d6519a64511d",
+			"name": "10 - Process Ready Withdrawal and Transfer",
+			"url": "http://127.0.0.1:4000/api/transactions/maintenance/process-pending-batch",
+			"time": 10,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				10
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "4281cadd-18b4-4f12-ae16-634ab42fc121",
+			"name": "11 - Read Disposable Account History",
+			"url": "http://127.0.0.1:4000/api/accounts/363/history",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true,
+				"Disposable workflow history contains test operations": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Disposable workflow history contains test operations": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true,
+					"Disposable workflow history contains test operations": true
+				}
+			]
+		},
+		{
+			"id": "54a71c13-2708-4b9f-9f8e-816978c33d2e",
+			"name": "12 - Create Disposable Customer Loan",
+			"url": "http://127.0.0.1:4000/api/loans",
+			"time": 12,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				12
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "3257b965-9a6b-4312-b8b6-d48effa9b02d",
+			"name": "13 - Read Disposable Loan and Save Installment",
+			"url": "http://127.0.0.1:4000/api/loans/52/status",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "3233661e-3683-4429-a18c-627008f88266",
+			"name": "14 - Pay Disposable Loan Installment",
+			"url": "http://127.0.0.1:4000/api/loans/installments/691/pay",
+			"time": 13,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				13
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "9854623e-4d40-4854-b537-ec2e3d9a6d2b",
+			"name": "15 - Freeze Disposable Account",
+			"url": "http://127.0.0.1:4000/api/accounts/363/freeze",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "13c6b79f-98c2-450f-ae04-eee34e7560d3",
+			"name": "16 - Unfreeze Disposable Account",
+			"url": "http://127.0.0.1:4000/api/accounts/363/unfreeze",
+			"time": 8,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				8
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "16874619-85e8-407a-bf17-c407a06e727b",
+			"name": "17 - Change Disposable Account Type",
+			"url": "http://127.0.0.1:4000/api/accounts/363/change-type",
+			"time": 11,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": false,
+				"success is true": false
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 0,
+					"fail": 1
+				},
+				"success is true": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				11
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": false,
+					"success is true": false
+				}
+			]
+		},
+		{
+			"id": "42f0a7fa-a30a-4e55-906f-94e3ce55b7fb",
+			"name": "Hire Disposable Employee in SpongeBob's Branch",
+			"url": "http://127.0.0.1:4000/api/employees",
+			"time": 30,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				30
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "2095633b-a924-43ee-a4f1-cca341feedc9",
+			"name": "Create User Account for Disposable Employee",
+			"url": "http://127.0.0.1:4000/api/employees/284/create-user-account",
+			"time": 22,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				22
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "562e1fcf-1c08-4a8a-b812-c2c28efc1b63",
+			"name": "Change Disposable Employee Job Title",
+			"url": "http://127.0.0.1:4000/api/employees/284/change-job-title",
+			"time": 15,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				15
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "4939114e-9eaa-4952-ba69-3f9b4a32a429",
+			"name": "Suspend Disposable Employee",
+			"url": "http://127.0.0.1:4000/api/employees/284/suspend",
+			"time": 14,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				14
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "80f4469a-89ad-4e74-97af-08aed45eb32a",
+			"name": "Fire Disposable Employee",
+			"url": "http://127.0.0.1:4000/api/employees/284/fire",
+			"time": 16,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				16
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "f5c82292-5c2f-4e7f-87fd-5727f9e2e0ac",
+			"name": "Request Patrick Transfer to RV001",
+			"url": "http://127.0.0.1:4000/api/employee-transfers/request-by-employee",
+			"time": 16,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": false,
+				"success is true": false
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 0,
+					"fail": 1
+				},
+				"success is true": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				16
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": false,
+					"success is true": false
+				}
+			]
+		},
+		{
+			"id": "3fd2b454-ea96-404b-a5d0-bc352368e88a",
+			"name": "SpongeBob Approves Current-Manager Stage",
+			"url": "http://127.0.0.1:4000/api/employee-transfers/8/current-manager-decision",
+			"time": 16,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": false,
+				"success is true": false
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 0,
+					"fail": 1
+				},
+				"success is true": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				16
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": false,
+					"success is true": false
+				}
+			]
+		},
+		{
+			"id": "baf7a3af-bb42-4b69-9776-37e460d8cea7",
+			"name": "Galadriel Approves Destination-Manager Stage",
+			"url": "http://127.0.0.1:4000/api/employee-transfers/8/destination-manager-decision",
+			"time": 23,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": false,
+				"success is true": false
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 0,
+					"fail": 1
+				},
+				"success is true": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				23
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": false,
+					"success is true": false
+				}
+			]
+		},
+		{
+			"id": "de937172-a7f0-460b-ae03-d11a1e4306b9",
+			"name": "Process Overdue Installments",
+			"url": "http://127.0.0.1:4000/api/loans/maintenance/process-overdue-installments",
+			"time": 11,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				11
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "38cd1474-5c69-4429-af5f-f00a20463844",
+			"name": "Apply Monthly Interest",
+			"url": "http://127.0.0.1:4000/api/accounts/maintenance/apply-monthly-interest",
+			"time": 35,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				35
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		},
+		{
+			"id": "6a09f873-acbf-4f01-8ebc-5bb2999723f2",
+			"name": "Dormant Account Sweep",
+			"url": "http://127.0.0.1:4000/api/accounts/maintenance/dormant-sweep",
+			"time": 26,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response is JSON": true,
+				"HTTP status is 2xx": true,
+				"success is true": true
+			},
+			"testPassFailCounts": {
+				"Response is JSON": {
+					"pass": 1,
+					"fail": 0
+				},
+				"HTTP status is 2xx": {
+					"pass": 1,
+					"fail": 0
+				},
+				"success is true": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				26
+			],
+			"allTests": [
+				{
+					"Response is JSON": true,
+					"HTTP status is 2xx": true,
+					"success is true": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 1915,
+	"collection": {
+		"requests": [
+			{
+				"id": "51a42faa-3bb8-45db-aafd-226f9f21ea3d",
+				"method": "GET"
+			},
+			{
+				"id": "173756bf-b2bd-458a-b3d4-43660ffe91a5",
+				"method": "POST"
+			},
+			{
+				"id": "b08622a2-e548-45e0-af24-19a2eb2adff1",
+				"method": "POST"
+			},
+			{
+				"id": "d3ea55b9-25c6-4124-92ad-0aff2488a32e",
+				"method": "POST"
+			},
+			{
+				"id": "1bfd80e3-44e0-4a12-b367-90c82fc13e82",
+				"method": "POST"
+			},
+			{
+				"id": "7b99b90e-4525-44a8-a1c5-e4f0b68d1279",
+				"method": "POST"
+			},
+			{
+				"id": "1fe60888-2558-40fa-b4ec-096aa186fea8",
+				"method": "POST"
+			},
+			{
+				"id": "ef459884-47ef-40d6-bb2c-8df04e7b5bfb",
+				"method": "POST"
+			},
+			{
+				"id": "d253356f-814a-4472-a92d-7eac7745c418",
+				"method": "POST"
+			},
+			{
+				"id": "ce1b734b-9883-4b6f-ad73-dd3ab130216d",
+				"method": "POST"
+			},
+			{
+				"id": "e9bc52b1-0bab-454f-be71-9bb7568b8794",
+				"method": "GET"
+			},
+			{
+				"id": "1d53f5d4-7260-4f75-8117-56fe4d9c94be",
+				"method": "GET"
+			},
+			{
+				"id": "b2accbad-bbbc-4447-9766-150bfd7ac84c",
+				"method": "GET"
+			},
+			{
+				"id": "4f2de1aa-1326-4c0f-bef1-5771fff0a57d",
+				"method": "GET"
+			},
+			{
+				"id": "53e9a473-424e-4244-b5eb-e5e8badbdf45",
+				"method": "GET"
+			},
+			{
+				"id": "5e207721-53d0-4ddb-a94b-14d5d95d14d6",
+				"method": "GET"
+			},
+			{
+				"id": "9772451f-3bc7-4c21-af6f-6c4bf477f84e",
+				"method": "GET"
+			},
+			{
+				"id": "2548660a-37d4-4a44-b0e1-66cfd3928742",
+				"method": "GET"
+			},
+			{
+				"id": "95c1ba29-3927-48f2-95c1-80d3d64e1706",
+				"method": "GET"
+			},
+			{
+				"id": "1eb4fc43-96ca-46fe-b265-35c2e1f6e31a",
+				"method": "GET"
+			},
+			{
+				"id": "1cdf6c1d-8755-4249-9d3c-8afb3ae76eb9",
+				"method": "GET"
+			},
+			{
+				"id": "307f7d38-26ee-4525-95f8-e3728056d325",
+				"method": "GET"
+			},
+			{
+				"id": "8a581614-db36-41f0-a9de-386fb677e361",
+				"method": "GET"
+			},
+			{
+				"id": "51081ff5-a687-4a17-a185-66c2f1e80a86",
+				"method": "GET"
+			},
+			{
+				"id": "45bb06dc-b438-4af3-a4b9-b00c625e8b75",
+				"method": "GET"
+			},
+			{
+				"id": "46c3aeeb-c531-4fd2-bb1b-3435228e96cf",
+				"method": "GET"
+			},
+			{
+				"id": "25cef725-e879-47b6-aef2-efc000a745f9",
+				"method": "GET"
+			},
+			{
+				"id": "fe431aee-9973-4f4f-9cfc-dc4d14288add",
+				"method": "GET"
+			},
+			{
+				"id": "098f36ef-c24e-4e23-9cf2-136e3ed0ff80",
+				"method": "POST"
+			},
+			{
+				"id": "aa1504d9-7a38-4557-b22d-9276ed2bf3c0",
+				"method": "POST"
+			},
+			{
+				"id": "38df08be-1c67-4d6f-bad6-5e83195bb3c3",
+				"method": "POST"
+			},
+			{
+				"id": "714baccc-2243-41f0-905a-a5c5592a8ca8",
+				"method": "POST"
+			},
+			{
+				"id": "9a908dbd-8e56-45b7-8b5b-8745f70f79ee",
+				"method": "POST"
+			},
+			{
+				"id": "76cd0e1b-a361-4a3b-972e-65c72fc885b1",
+				"method": "GET"
+			},
+			{
+				"id": "324bb3d5-d633-41df-9922-b48e382ab614",
+				"method": "GET"
+			},
+			{
+				"id": "409ba651-e4c2-4bf8-a8b5-1d5d2d641672",
+				"method": "GET"
+			},
+			{
+				"id": "7dd13a4e-6323-4816-9cce-4d86fb7f2f18",
+				"method": "GET"
+			},
+			{
+				"id": "0810b0e8-bc2c-4608-95b4-9779128f87cf",
+				"method": "GET"
+			},
+			{
+				"id": "d6b164ca-87a9-4edf-bb40-f2595f682169",
+				"method": "GET"
+			},
+			{
+				"id": "c4e7502e-1126-452e-8473-182935bfdd5a",
+				"method": "GET"
+			},
+			{
+				"id": "14424510-6ae9-44fe-a226-9cbed1555981",
+				"method": "GET"
+			},
+			{
+				"id": "b99ae73c-6d9a-4c9c-a8e9-4610298704c3",
+				"method": "GET"
+			},
+			{
+				"id": "b7f8564d-2825-421d-87a9-bb87c9e51550",
+				"method": "GET"
+			},
+			{
+				"id": "405fda50-e04b-436f-9b3e-b63c6b794d89",
+				"method": "GET"
+			},
+			{
+				"id": "c92579dd-4806-4576-b4ce-8423bf5c8080",
+				"method": "GET"
+			},
+			{
+				"id": "0e131d21-1106-45fb-ad9d-5b2d5f0ee26c",
+				"method": "GET"
+			},
+			{
+				"id": "e8795a9a-07e8-4feb-856f-53517764aef2",
+				"method": "GET"
+			},
+			{
+				"id": "3d0f2329-5ccf-4a2f-b746-6b83b7a69fc4",
+				"method": "GET"
+			},
+			{
+				"id": "4193f742-6714-4134-a7ea-5f763d87140c",
+				"method": "GET"
+			},
+			{
+				"id": "90f09500-e100-48ae-9f0b-ab647f2d58de",
+				"method": "GET"
+			},
+			{
+				"id": "b7e8326e-0159-4f5f-9591-67d183d19da3",
+				"method": "GET"
+			},
+			{
+				"id": "bdec11e1-d874-4c0b-af5a-bd053a3e3d0a",
+				"method": "GET"
+			},
+			{
+				"id": "5aff5142-7352-48d4-b33b-ef52846b9640",
+				"method": "GET"
+			},
+			{
+				"id": "eeade54f-5a0a-4ea7-8be6-58a3ef08ae37",
+				"method": "GET"
+			},
+			{
+				"id": "6f2a6518-08c6-4726-b84e-54ca5042687a",
+				"method": "POST"
+			},
+			{
+				"id": "28acf3fb-c3a3-4b81-abef-22c6fb548216",
+				"method": "GET"
+			},
+			{
+				"id": "0760126a-f24a-4d6b-a2b6-38a8ce88bd67",
+				"method": "GET"
+			},
+			{
+				"id": "26132bb9-97e7-4bc9-b372-a43344f4a465",
+				"method": "POST"
+			},
+			{
+				"id": "97f1aa5a-6211-4834-a35d-6ae75c93c460",
+				"method": "POST"
+			},
+			{
+				"id": "ffc4168b-46e1-46aa-8926-2bca995336ee",
+				"method": "POST"
+			},
+			{
+				"id": "f5636366-d155-4c16-92b7-886d56ad968f",
+				"method": "POST"
+			},
+			{
+				"id": "b49ed6fb-e939-4794-a949-869b11833b2d",
+				"method": "POST"
+			},
+			{
+				"id": "ee0d8fe8-cd59-49ec-aff7-3e63a4abbf75",
+				"method": "POST"
+			},
+			{
+				"id": "1fdd3782-46ed-431c-a486-242e29b37af0",
+				"method": "POST"
+			},
+			{
+				"id": "f0ebee76-054c-493c-a237-b7ef85bc3c43",
+				"method": "GET"
+			},
+			{
+				"id": "c86b1084-0235-43fd-91ed-407100dedda6",
+				"method": "GET"
+			},
+			{
+				"id": "d0a8cf3c-146d-4bff-bac5-862161eb351c",
+				"method": "GET"
+			},
+			{
+				"id": "7591ebb8-c133-4ddc-8e9d-b1f51c7f6597",
+				"method": "GET"
+			},
+			{
+				"id": "d289849d-c17f-4002-8098-3de95904ab6f",
+				"method": "GET"
+			},
+			{
+				"id": "5de82bd9-fc14-463b-b26d-8bc6ea7435c7",
+				"method": "GET"
+			},
+			{
+				"id": "7560fa4e-c4f5-4682-a2a5-9fb586efab44",
+				"method": "GET"
+			},
+			{
+				"id": "7640d4e0-fc85-44a3-bb19-bbb086bf1b15",
+				"method": "GET"
+			},
+			{
+				"id": "62762231-f42c-4bc5-8e27-fa5513176927",
+				"method": "GET"
+			},
+			{
+				"id": "f4a1fdab-0792-4d8b-bd42-6aee3f894739",
+				"method": "GET"
+			},
+			{
+				"id": "824d9cff-4364-48a7-8f56-e2e629df4b3f",
+				"method": "GET"
+			},
+			{
+				"id": "66f2503a-6d18-403e-b2fe-88c17461c8cc",
+				"method": "GET"
+			},
+			{
+				"id": "f4e81be4-397f-40bb-b2a8-baf3a815a6ce",
+				"method": "GET"
+			},
+			{
+				"id": "24a6d0e1-84a8-49fa-b905-8a89a8a38c4a",
+				"method": "GET"
+			},
+			{
+				"id": "f50a7c46-9152-4067-a618-c761561a5cec",
+				"method": "GET"
+			},
+			{
+				"id": "0df345a2-6ea4-4d6c-a572-429d9da97a9b",
+				"method": "GET"
+			},
+			{
+				"id": "d315d8e0-465b-4891-842b-df0b5d228269",
+				"method": "POST"
+			},
+			{
+				"id": "3d2583eb-59ed-4ca6-86b4-6a79ae0db3b7",
+				"method": "POST"
+			},
+			{
+				"id": "6e67520a-11bf-4f42-aea1-80ed2e245231",
+				"method": "POST"
+			},
+			{
+				"id": "391174fd-1c2f-474e-8983-36dc61f6e8e6",
+				"method": "POST"
+			},
+			{
+				"id": "4dbb665d-f0b6-4d7b-9379-9b24fc3e1bf0",
+				"method": "GET"
+			},
+			{
+				"id": "3a535cad-f6a9-44c0-9ca7-c4833d6bfca3",
+				"method": "POST"
+			},
+			{
+				"id": "7b8766d8-da47-4c4d-a6f2-f66b042c68b4",
+				"method": "POST"
+			},
+			{
+				"id": "f8cdb1da-b2ac-4c24-b1a0-a15c3779034f",
+				"method": "POST"
+			},
+			{
+				"id": "08334164-b00b-4b2a-aac9-ad21846ee3c9",
+				"method": "POST"
+			},
+			{
+				"id": "276e2232-be3c-42d2-8a03-d6519a64511d",
+				"method": "POST"
+			},
+			{
+				"id": "4281cadd-18b4-4f12-ae16-634ab42fc121",
+				"method": "GET"
+			},
+			{
+				"id": "54a71c13-2708-4b9f-9f8e-816978c33d2e",
+				"method": "POST"
+			},
+			{
+				"id": "3257b965-9a6b-4312-b8b6-d48effa9b02d",
+				"method": "GET"
+			},
+			{
+				"id": "3233661e-3683-4429-a18c-627008f88266",
+				"method": "POST"
+			},
+			{
+				"id": "9854623e-4d40-4854-b537-ec2e3d9a6d2b",
+				"method": "POST"
+			},
+			{
+				"id": "13c6b79f-98c2-450f-ae04-eee34e7560d3",
+				"method": "POST"
+			},
+			{
+				"id": "16874619-85e8-407a-bf17-c407a06e727b",
+				"method": "POST"
+			},
+			{
+				"id": "42f0a7fa-a30a-4e55-906f-94e3ce55b7fb",
+				"method": "POST"
+			},
+			{
+				"id": "2095633b-a924-43ee-a4f1-cca341feedc9",
+				"method": "POST"
+			},
+			{
+				"id": "562e1fcf-1c08-4a8a-b812-c2c28efc1b63",
+				"method": "POST"
+			},
+			{
+				"id": "4939114e-9eaa-4952-ba69-3f9b4a32a429",
+				"method": "POST"
+			},
+			{
+				"id": "80f4469a-89ad-4e74-97af-08aed45eb32a",
+				"method": "POST"
+			},
+			{
+				"id": "f5c82292-5c2f-4e7f-87fd-5727f9e2e0ac",
+				"method": "POST"
+			},
+			{
+				"id": "3fd2b454-ea96-404b-a5d0-bc352368e88a",
+				"method": "POST"
+			},
+			{
+				"id": "baf7a3af-bb42-4b69-9776-37e460d8cea7",
+				"method": "POST"
+			},
+			{
+				"id": "de937172-a7f0-460b-ae03-d11a1e4306b9",
+				"method": "POST"
+			},
+			{
+				"id": "38cd1474-5c69-4429-af5f-f00a20463844",
+				"method": "POST"
+			},
+			{
+				"id": "6a09f873-acbf-4f01-8ebc-5bb2999723f2",
+				"method": "POST"
+			}
+		]
+	}
+}

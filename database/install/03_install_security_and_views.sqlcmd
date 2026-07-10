@@ -1,0 +1,16 @@
+/*
+  Run this after 02_install_bankmanagement_database.sqlcmd.
+  Run in SSMS with SQLCMD Mode enabled.
+*/
+:setvar DbName "BankManagement"
+:setvar ProjectRoot "C:\CHANGE_ME\bank-management-backend-v2"
+
+USE [$(DbName)];
+GO
+
+:r "$(ProjectRoot)\database\security\Views\01_BankManagement_ReportingViews.sql"
+:r "$(ProjectRoot)\database\security\Security\01_DatabaseRolesAndUsers.sql"
+:r "$(ProjectRoot)\database\security\Security\02_DatabasePrivileges.sql"
+
+PRINT 'Security users, roles, permissions, and reporting views installed.';
+GO

@@ -1,0 +1,72 @@
+{
+  "info": {
+    "name": "BankManagement Backend v2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:4000" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/health" }
+    },
+    {
+      "name": "Create Initial HighAdmin",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"highadmin\",\n  \"password\": \"Admin123!\",\n  \"firstName\": \"System\",\n  \"lastName\": \"Owner\",\n  \"nationalID\": \"1234567890\",\n  \"birthDate\": \"1990-01-01\",\n  \"phone\": \"09120000000\",\n  \"email\": \"highadmin@example.com\",\n  \"address\": \"Main office\"\n}"
+        },
+        "url": "{{baseUrl}}/api/setup/initial-high-admin"
+      }
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"highadmin\",\n  \"password\": \"Admin123!\"\n}"
+        },
+        "url": "{{baseUrl}}/api/auth/login"
+      }
+    },
+    {
+      "name": "Me",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/auth/me"
+      }
+    },
+    {
+      "name": "Customers Search",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/customers"
+      }
+    },
+    {
+      "name": "Accounts Search",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/accounts"
+      }
+    },
+    {
+      "name": "Reports List",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/reports"
+      }
+    }
+  ]
+}

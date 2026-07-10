@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BankManagement Postman API Testing Guide</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #18202b;
+      --muted: #5d6877;
+      --border: #d9e1ec;
+      --primary: #0f6fff;
+      --get: #12805c;
+      --post: #b26a00;
+      --put: #6f42c1;
+      --delete: #c93535;
+      --code-bg: #0f172a;
+      --code-text: #e6edf3;
+      --warning-bg: #fff7e6;
+      --warning-border: #ffd58a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f6fff, #003b8f);
+      color: #fff;
+      padding: 36px 24px;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+    }
+
+    header p {
+      margin: 0;
+      max-width: 1000px;
+      opacity: 0.92;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    nav, section, .notice {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    }
+
+    nav h2, section h2 {
+      margin-top: 0;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+
+    nav ul {
+      columns: 2;
+      padding-left: 22px;
+      margin-bottom: 0;
+    }
+
+    nav a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    nav a:hover { text-decoration: underline; }
+
+    .notice {
+      background: var(--warning-bg);
+      border-color: var(--warning-border);
+    }
+
+    .request {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 16px 0;
+      background: #fbfcff;
+    }
+
+    .request h3 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .method {
+      display: inline-block;
+      color: #fff;
+      border-radius: 6px;
+      padding: 3px 9px;
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 0.4px;
+    }
+
+    .GET { background: var(--get); }
+    .POST { background: var(--post); }
+    .PUT { background: var(--put); }
+    .DELETE { background: var(--delete); }
+
+    .meta {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 8px 14px;
+      margin: 10px 0 14px;
+      font-size: 15px;
+    }
+
+    .meta strong { color: var(--muted); }
+
+    code.inline {
+      background: #eef3fb;
+      border: 1px solid #dce6f5;
+      border-radius: 5px;
+      padding: 2px 5px;
+      font-family: Consolas, Monaco, monospace;
+    }
+
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 14px;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-size: 14px;
+      margin: 10px 0 0;
+      position: relative;
+    }
+
+    .subheading {
+      margin-top: 14px;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-weight: bold;
+    }
+
+    .tag {
+      display: inline-block;
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 999px;
+      padding: 2px 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef3fb;
+    }
+
+    footer {
+      max-width: 1180px;
+      margin: 0 auto 32px;
+      padding: 0 24px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 760px) {
+      nav ul { columns: 1; }
+      .meta { grid-template-columns: 1fr; }
+      header h1 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>BankManagement Postman API Testing Guide</h1>
+    <p>Use this file to test the backend APIs in Postman. Base URL: <strong>http://127.0.0.1:4000</strong>. For protected routes, include the session token returned by the login API.</p>
+  </header>
+
+  <main>
+    <div class="notice">
+      <strong>Postman variables to create:</strong>
+      <pre>{{baseUrl}} = http://127.0.0.1:4000
+{{token}} = sessionToken returned by login
+{{highAdminToken}} = HighAdmin sessionToken
+{{customerToken}} = Customer sessionToken
+{{accountID}} = account ID from your database/API response
+{{customerID}} = customer ID from your database/API response
+{{employeeID}} = employee ID from your database/API response
+{{branchID}} = branch ID from your database
+{{loanID}} = loan ID from your database/API response
+{{installmentID}} = installment ID from your database/API response
+{{transactionID}} = transaction ID from your database/API response</pre>
+      <p><strong>Authorization header format:</strong> <code class="inline">Authorization: Bearer {{token}}</code>. Keep the word <code class="inline">Bearer</code> and replace only the token value.</p>
+    </div>
+
+    <nav>
+      <h2>Table of Contents</h2>
+      <ul>
+        <li><a href="#basic">1. Basic Server Test</a></li>
+        <li><a href="#auth">2. Setup and Authentication</a></li>
+        <li><a href="#customers">3. Customer APIs</a></li>
+        <li><a href="#accounts">4. Account APIs</a></li>
+        <li><a href="#transactions">5. Transaction APIs</a></li>
+        <li><a href="#loans">6. Loan APIs</a></li>
+        <li><a href="#employees">7. Employee APIs</a></li>
+        <li><a href="#transfers">8. Employee Transfer APIs</a></li>
+        <li><a href="#branches">9. Branch APIs</a></li>
+        <li><a href="#highadmin">10. HighAdmin APIs</a></li>
+        <li><a href="#reports">11. Report APIs</a></li>
+        <li><a href="#order">12. Safe Testing Order</a></li>
+      </ul>
+    </nav>
+
+    <section id="basic">
+      <h2>1. Basic Server Test</h2>
+
+      <div class="request">
+        <h3><span class="method GET">GET</span> Health Check</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/health</code></span>
+          <strong>Headers</strong><span>None</span>
+          <strong>Body</strong><span>None</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="auth">
+      <h2>2. Setup and Authentication APIs</h2>
+
+      <div class="request">
+        <h3><span class="method POST">POST</span> Create First HighAdmin</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/setup/initial-high-admin</code></span>
+          <strong>Headers</strong><span><code class="inline">Content-Type: application/json</code></span>
+        </div>
+        <div class="subheading">Body</div>
+<pre>{
+  "username": "highadmin",
+  "password": "Admin123!",
+  "firstName": "System",
+  "lastName": "Owner",
+  "nationalID": "1234567890",
+  "birthDate": "1990-01-01",
+  "phone": "09120000000",
+  "email": "highadmin@example.com",
+  "address": "Main office"
+}</pre>
+      </div>
+
+      <div class="request">
+        <h3><span class="method POST">POST</span> Login</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/auth/login</code></span>
+          <strong>Headers</strong><span><code class="inline">Content-Type: application/json</code></span>
+        </div>
+        <div class="subheading">Body</div>
+<pre>{
+  "username": "highadmin",
+  "password": "Admin123!"
+}</pre>
+      </div>
+
+      <div class="request">
+        <h3><span class="method GET">GET</span> Current Logged-in User</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/auth/me</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span>
+          <strong>Body</strong><span>None</span>
+        </div>
+      </div>
+
+      <div class="request">
+        <h3><span class="method POST">POST</span> Logout</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/auth/logout</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span>
+          <strong>Body</strong><span>None</span>
+        </div>
+      </div>
+
+      <div class="request">
+        <h3><span class="method POST">POST</span> Customer Signup</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/auth/signup</code></span>
+          <strong>Headers</strong><span><code class="inline">Content-Type: application/json</code></span>
+        </div>
+        <div class="subheading">Body</div>
+<pre>{
+  "username": "customer_demo",
+  "password": "Customer123!",
+  "firstName": "Demo",
+  "lastName": "Customer",
+  "nationalID": "9998887771",
+  "birthDate": "1998-01-01",
+  "phone": "09129997771",
+  "email": "demo.customer@example.com",
+  "address": "Test address"
+}</pre>
+      </div>
+    </section>
+
+    <section id="customers">
+      <h2>3. Customer APIs</h2>
+
+      <div class="request">
+        <h3><span class="method GET">GET</span> Search Customers</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/customers</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span>
+          <strong>Body</strong><span>None</span>
+        </div>
+        <div class="subheading">Optional query examples</div>
+<pre>{{baseUrl}}/api/customers?nameSearch=Ali
+{{baseUrl}}/api/customers?nationalID=1112223334
+{{baseUrl}}/api/customers?includeInactive=true</pre>
+      </div>
+
+      <div class="request">
+        <h3><span class="method POST">POST</span> Create Customer</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/customers</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span>
+        </div>
+        <div class="subheading">Body</div>
+<pre>{
+  "firstName": "Ali",
+  "lastName": "Ahmadi",
+  "nationalID": "1112223334",
+  "birthDate": "1995-01-01",
+  "phone": "09121112233",
+  "email": "ali.ahmadi@example.com",
+  "address": "Tehran"
+}</pre>
+      </div>
+
+      <div class="request">
+        <h3><span class="method PUT">PUT</span> Update Customer</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/customers/{{customerID}}</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span>
+        </div>
+        <div class="subheading">Body</div>
+<pre>{
+  "firstName": "Ali",
+  "lastName": "Ahmadi Updated",
+  "phone": "09121112233",
+  "email": "ali.updated@example.com",
+  "address": "Tehran - Updated"
+}</pre>
+      </div>
+
+      <div class="request">
+        <h3><span class="method DELETE">DELETE</span> Delete / Deactivate Customer</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/customers/{{customerID}}</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span>
+          <strong>Body</strong><span>None</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="accounts">
+      <h2>4. Account APIs</h2>
+
+      <div class="request">
+        <h3><span class="method GET">GET</span> Search Accounts</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/accounts</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span>
+          <strong>Body</strong><span>None</span>
+        </div>
+        <div class="subheading">Optional query examples</div>
+<pre>{{baseUrl}}/api/accounts?customerID=478
+{{baseUrl}}/api/accounts?accountStatus=Active
+{{baseUrl}}/api/accounts?branchID=1
+{{baseUrl}}/api/accounts?includeClosed=true</pre>
+      </div>
+
+      <div class="request">
+        <h3><span class="method GET">GET</span> Get Account By ID</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/accounts/{{accountID}}</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span>
+          <strong>Body</strong><span>None</span>
+        </div>
+      </div>
+
+      <div class="request">
+        <h3><span class="method GET">GET</span> Get Account History</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/accounts/{{accountID}}/history</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span>
+          <strong>Body</strong><span>None</span>
+        </div>
+        <div class="subheading">Optional query example</div>
+<pre>{{baseUrl}}/api/accounts/{{accountID}}/history?fromDate=2026-07-01&toDate=2026-07-31</pre>
+      </div>
+
+      <div class="request">
+        <h3><span class="method POST">POST</span> Open Account</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/accounts</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{customerToken}}</code><br><code class="inline">Content-Type: application/json</code></span>
+        </div>
+        <div class="subheading">Body</div>
+<pre>{
+  "branchID": 1,
+  "accountTypeID": 1,
+  "initialDeposit": 0
+}</pre>
+      </div>
+
+      <div class="request">
+        <h3><span class="method POST">POST</span> Close Account</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/accounts/{{accountID}}/close</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span>
+        </div>
+        <div class="subheading">Body</div>
+<pre>{
+  "reasonDescription": "Test account closure"
+}</pre>
+      </div>
+
+      <div class="request">
+        <h3><span class="method POST">POST</span> Freeze Account</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/accounts/{{accountID}}/freeze</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span>
+        </div>
+        <div class="subheading">Body</div>
+<pre>{
+  "reasonDescription": "Suspicious activity test"
+}</pre>
+      </div>
+
+      <div class="request">
+        <h3><span class="method POST">POST</span> Unfreeze Account</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/accounts/{{accountID}}/unfreeze</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span>
+        </div>
+        <div class="subheading">Body</div>
+<pre>{
+  "reasonDescription": "Issue resolved"
+}</pre>
+      </div>
+
+      <div class="request">
+        <h3><span class="method POST">POST</span> Change Account Type</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/accounts/{{accountID}}/change-type</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span>
+        </div>
+        <div class="subheading">Body</div>
+<pre>{
+  "newAccountTypeID": 2,
+  "reasonDescription": "Customer requested account type change"
+}</pre>
+      </div>
+
+      <div class="request">
+        <h3><span class="method POST">POST</span> Dormant Account Sweep</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/accounts/maintenance/dormant-sweep</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span>
+        </div>
+        <div class="subheading">Body</div>
+<pre>{
+  "monthsInactive": 12
+}</pre>
+      </div>
+
+      <div class="request">
+        <h3><span class="method POST">POST</span> Apply Monthly Interest</h3>
+        <div class="meta">
+          <strong>URL</strong><span><code class="inline">{{baseUrl}}/api/accounts/maintenance/apply-monthly-interest</code></span>
+          <strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span>
+          <strong>Body</strong><span>None</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="transactions">
+      <h2>5. Transaction APIs</h2>
+
+      <div class="request"><h3><span class="method POST">POST</span> Deposit</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/transactions/deposit</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "accountID": 123,
+  "amount": 5000,
+  "description": "Test deposit"
+}</pre></div>
+
+      <div class="request"><h3><span class="method POST">POST</span> Withdraw</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/transactions/withdraw</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "accountID": 123,
+  "amount": 1000,
+  "description": "Test withdrawal"
+}</pre></div>
+
+      <div class="request"><h3><span class="method POST">POST</span> Transfer</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/transactions/transfer</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "fromAccountID": 123,
+  "toAccountID": 124,
+  "amount": 2000,
+  "description": "Test transfer"
+}</pre></div>
+
+      <div class="request"><h3><span class="method POST">POST</span> Finalize Transaction</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/transactions/{{transactionID}}/finalize</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span><strong>Body</strong><span>None</span></div></div>
+
+      <div class="request"><h3><span class="method POST">POST</span> Reverse Transaction</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/transactions/{{transactionID}}/reverse</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "reasonDescription": "Test reversal"
+}</pre></div>
+
+      <div class="request"><h3><span class="method POST">POST</span> Process Pending Transactions Batch</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/transactions/maintenance/process-pending-batch</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span><strong>Body</strong><span>None</span></div></div>
+    </section>
+
+    <section id="loans">
+      <h2>6. Loan APIs</h2>
+
+      <div class="request"><h3><span class="method POST">POST</span> Create Loan</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/loans</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "customerID": 478,
+  "branchID": 1,
+  "loanAmount": 100000,
+  "interestRate": 10,
+  "numberOfInstallments": 12,
+  "startDate": "2026-07-07"
+}</pre></div>
+
+      <div class="request"><h3><span class="method GET">GET</span> Get Loan Status</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/loans/{{loanID}}/status</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span><strong>Body</strong><span>None</span></div></div>
+
+      <div class="request"><h3><span class="method POST">POST</span> Pay Installment</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/loans/installments/{{installmentID}}/pay</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "fromAccountID": 123
+}</pre></div>
+
+      <div class="request"><h3><span class="method POST">POST</span> Process Overdue Installments</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/loans/maintenance/process-overdue-installments</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span><strong>Body</strong><span>None</span></div></div>
+    </section>
+
+    <section id="employees">
+      <h2>7. Employee APIs</h2>
+
+      <div class="request"><h3><span class="method GET">GET</span> Search Employees</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/employees</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span><strong>Body</strong><span>None</span></div><div class="subheading">Optional query examples</div><pre>{{baseUrl}}/api/employees?nameSearch=Ali
+{{baseUrl}}/api/employees?branchID=1
+{{baseUrl}}/api/employees?jobTitle=Manager
+{{baseUrl}}/api/employees?includeTerminated=true</pre></div>
+
+      <div class="request"><h3><span class="method GET">GET</span> Get Employee By ID</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/employees/{{employeeID}}</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span><strong>Body</strong><span>None</span></div></div>
+
+      <div class="request"><h3><span class="method POST">POST</span> Hire Employee</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/employees</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "nationalID": "2223334445",
+  "firstName": "Reza",
+  "lastName": "Karimi",
+  "hireDate": "2026-07-07",
+  "jobTitle": "Teller",
+  "salary": 35000000,
+  "phone": "09123334445",
+  "email": "reza.karimi@example.com"
+}</pre></div>
+
+      <div class="request"><h3><span class="method POST">POST</span> Create Employee User Account</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/employees/{{employeeID}}/create-user-account</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "username": "employee_demo",
+  "password": "Employee123!",
+  "birthDate": "1995-01-01",
+  "phone": "09123334445",
+  "email": "employee.demo@example.com",
+  "address": "Test employee address"
+}</pre></div>
+
+      <div class="request"><h3><span class="method POST">POST</span> Change Employee Job Title</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/employees/{{employeeID}}/change-job-title</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "newJobTitle": "Senior Teller",
+  "reasonDescription": "Promotion test"
+}</pre></div>
+
+      <div class="request"><h3><span class="method POST">POST</span> Fire Employee</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/employees/{{employeeID}}/fire</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "terminationDate": "2026-07-07",
+  "reason": "Test termination"
+}</pre></div>
+
+      <div class="request"><h3><span class="method POST">POST</span> Suspend Employee</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/employees/{{employeeID}}/suspend</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "reason": "Test suspension"
+}</pre></div>
+
+      <div class="request"><h3><span class="method GET">GET</span> Employee Branch History</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/employees/{{employeeID}}/branch-history</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span><strong>Body</strong><span>None</span></div><div class="subheading">Optional query example</div><pre>{{baseUrl}}/api/employees/{{employeeID}}/branch-history?includeCurrentOnly=true</pre></div>
+    </section>
+
+    <section id="transfers">
+      <h2>8. Employee Transfer APIs</h2>
+      <div class="request"><h3><span class="method POST">POST</span> Request Transfer By Employee</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/employee-transfers/request-by-employee</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "toBranchID": 2,
+  "reason": "Closer to home"
+}</pre></div>
+      <div class="request"><h3><span class="method POST">POST</span> Request Transfer By Manager</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/employee-transfers/request-by-manager</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "employeeID": 10,
+  "toBranchID": 2,
+  "reason": "Operational need"
+}</pre></div>
+      <div class="request"><h3><span class="method POST">POST</span> Current Manager Decision</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/employee-transfers/{{transferRequestID}}/current-manager-decision</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "approve": true,
+  "decisionNote": "Approved by current manager"
+}</pre></div>
+      <div class="request"><h3><span class="method POST">POST</span> Destination Manager Decision</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/employee-transfers/{{transferRequestID}}/destination-manager-decision</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "approve": true,
+  "decisionNote": "Approved by destination manager"
+}</pre></div>
+    </section>
+
+    <section id="branches">
+      <h2>9. Branch APIs</h2>
+      <div class="request"><h3><span class="method GET">GET</span> Get All Branches</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/branches</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span><strong>Body</strong><span>None</span></div></div>
+      <div class="request"><h3><span class="method GET">GET</span> Get Branch By ID</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/branches/{{branchID}}</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span><strong>Body</strong><span>None</span></div></div>
+    </section>
+
+    <section id="highadmin">
+      <h2>10. HighAdmin APIs</h2>
+      <div class="request"><h3><span class="method POST">POST</span> Hire Branch Manager</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/highadmin/managers</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{highAdminToken}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "branchID": 1,
+  "username": "manager_demo",
+  "password": "Manager123!",
+  "nationalID": "5556667778",
+  "firstName": "Manager",
+  "lastName": "Demo",
+  "birthDate": "1985-01-01",
+  "hireDate": "2026-07-07",
+  "jobTitle": "Branch Manager",
+  "salary": 70000000,
+  "phone": "09125556667",
+  "email": "manager.demo@example.com",
+  "address": "Manager test address"
+}</pre></div>
+      <div class="request"><h3><span class="method POST">POST</span> Promote Employee To Manager</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/highadmin/managers/{{employeeID}}/promote</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{highAdminToken}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "branchID": 1,
+  "managerJobTitle": "Branch Manager",
+  "effectiveDate": "2026-07-07",
+  "reason": "Promotion test"
+}</pre></div>
+      <div class="request"><h3><span class="method POST">POST</span> Downgrade Manager</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/highadmin/managers/{{employeeID}}/downgrade</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{highAdminToken}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "newJobTitle": "Senior Employee",
+  "reason": "Downgrade test"
+}</pre></div>
+      <div class="request"><h3><span class="method POST">POST</span> Fire Manager</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/highadmin/managers/{{employeeID}}/fire</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{highAdminToken}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "terminationDate": "2026-07-07",
+  "reason": "Test manager termination"
+}</pre></div>
+      <div class="request"><h3><span class="method POST">POST</span> Suspend Manager</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/highadmin/managers/{{employeeID}}/suspend</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{highAdminToken}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "reason": "Test manager suspension"
+}</pre></div>
+      <div class="request"><h3><span class="method POST">POST</span> Replace Branch Manager</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/highadmin/branches/{{branchID}}/replace-manager</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{highAdminToken}}</code><br><code class="inline">Content-Type: application/json</code></span></div><div class="subheading">Body</div><pre>{
+  "newManagerEmployeeID": 12,
+  "oldManagerNewJobTitle": "Senior Employee",
+  "effectiveDate": "2026-07-07",
+  "reason": "Manager replacement test"
+}</pre></div>
+    </section>
+
+    <section id="reports">
+      <h2>11. Report APIs</h2>
+      <div class="request"><h3><span class="method GET">GET</span> Get Report List</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/reports</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span><strong>Body</strong><span>None</span></div></div>
+      <div class="request"><h3><span class="method GET">GET</span> Read Specific Report</h3><div class="meta"><strong>URL</strong><span><code class="inline">{{baseUrl}}/api/reports/{{reportKey}}?page=1&amp;pageSize=50</code></span><strong>Headers</strong><span><code class="inline">Authorization: Bearer {{token}}</code></span><strong>Body</strong><span>None</span></div><div class="subheading">Example</div><pre>GET {{baseUrl}}/api/reports/account-operational-summary?page=1&pageSize=50</pre></div>
+      <h3>Available report keys</h3>
+      <table>
+        <thead><tr><th>Report key</th><th>Typical access</th></tr></thead>
+        <tbody>
+          <tr><td><code>customer-basic-profile</code></td><td>Employee, Admin, HighAdmin</td></tr>
+          <tr><td><code>customer-account-summary</code></td><td>Employee, Admin, HighAdmin</td></tr>
+          <tr><td><code>account-operational-summary</code></td><td>Employee, Admin, HighAdmin</td></tr>
+          <tr><td><code>employee-directory</code></td><td>Employee, Admin, HighAdmin</td></tr>
+          <tr><td><code>pending-transactions</code></td><td>Employee, Admin, HighAdmin</td></tr>
+          <tr><td><code>loan-operational-summary</code></td><td>Employee, Admin, HighAdmin</td></tr>
+          <tr><td><code>daily-transaction-summary</code></td><td>Admin, HighAdmin</td></tr>
+          <tr><td><code>account-status-summary</code></td><td>Admin, HighAdmin</td></tr>
+          <tr><td><code>loan-overdue-summary</code></td><td>Admin, HighAdmin</td></tr>
+          <tr><td><code>highadmin-employee-branch-overview</code></td><td>HighAdmin only</td></tr>
+          <tr><td><code>highadmin-branch-financial-overview</code></td><td>HighAdmin only</td></tr>
+          <tr><td><code>highadmin-user-access-overview</code></td><td>HighAdmin only</td></tr>
+          <tr><td><code>audit-trail</code></td><td>HighAdmin only</td></tr>
+          <tr><td><code>branch-ledger</code></td><td>HighAdmin only</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="order">
+      <h2>12. Recommended Safe Testing Order</h2>
+      <ol>
+        <li>GET <code class="inline">/api/health</code></li>
+        <li>POST <code class="inline">/api/auth/login</code></li>
+        <li>GET <code class="inline">/api/auth/me</code></li>
+        <li>GET <code class="inline">/api/customers</code></li>
+        <li>GET <code class="inline">/api/accounts</code></li>
+        <li>GET <code class="inline">/api/branches</code></li>
+        <li>GET <code class="inline">/api/reports</code></li>
+        <li>GET <code class="inline">/api/reports/account-operational-summary?page=1&amp;pageSize=50</code></li>
+        <li>POST <code class="inline">/api/auth/signup</code></li>
+        <li>Login as the new customer</li>
+        <li>POST <code class="inline">/api/accounts</code></li>
+        <li>POST <code class="inline">/api/transactions/deposit</code></li>
+        <li>POST <code class="inline">/api/transactions/maintenance/process-pending-batch</code></li>
+        <li>GET <code class="inline">/api/accounts/{{accountID}}/history</code></li>
+      </ol>
+
+      <div class="notice">
+        <strong>Use caution with destructive APIs:</strong>
+        <pre>DELETE /api/customers/{{customerID}}
+POST /api/accounts/{{accountID}}/close
+POST /api/accounts/{{accountID}}/freeze
+POST /api/employees/{{employeeID}}/fire
+POST /api/highadmin/managers/{{employeeID}}/fire
+POST /api/transactions/{{transactionID}}/reverse</pre>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Generated for the BankManagement backend project. Use dummy/test records before running destructive requests.
+  </footer>
+</body>
+</html>

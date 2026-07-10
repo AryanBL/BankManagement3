@@ -1,0 +1,13 @@
+CREATE FUNCTION dbo.fn_HashPassword
+(
+    @Password NVARCHAR(4000)
+)
+RETURNS CHAR(64)
+AS
+BEGIN
+    RETURN CONVERT(
+        CHAR(64),
+        UPPER(CONVERT(VARCHAR(64), HASHBYTES('SHA2_256', @Password), 2))
+    );
+END;
+GO

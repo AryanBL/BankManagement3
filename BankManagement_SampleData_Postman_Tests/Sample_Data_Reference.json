@@ -1,0 +1,1919 @@
+{
+  "sourceFile": "01_Combined_RealisticSampleData_And_ErrorInjection_HTML_FIXED.sql",
+  "generatedAtUtc": "2026-07-10T15:51:32.388988+00:00",
+  "highAdmin": {
+    "username": "gandalf.highadmin",
+    "password": "Mellon#2026",
+    "nationalID": "3000000001"
+  },
+  "branches": [
+    {
+      "branchCode": "BB001",
+      "branchName": "Bikini Bottom Central"
+    },
+    {
+      "branchCode": "RV001",
+      "branchName": "Rivendell Private Banking"
+    },
+    {
+      "branchCode": "GD001",
+      "branchName": "Gondor Capital Branch"
+    },
+    {
+      "branchCode": "SH001",
+      "branchName": "Shire Community Branch"
+    },
+    {
+      "branchCode": "MD001",
+      "branchName": "Mordor Industrial Branch"
+    },
+    {
+      "branchCode": "RH001",
+      "branchName": "Rohan Rural Branch"
+    },
+    {
+      "branchCode": "MT001",
+      "branchName": "Minas Tirith Commercial"
+    },
+    {
+      "branchCode": "MW001",
+      "branchName": "Mirkwood Green Branch"
+    }
+  ],
+  "accountTypes": [
+    {
+      "typeName": "Savings Basic",
+      "minBalance": 100,
+      "interestRate": 1.25
+    },
+    {
+      "typeName": "Savings Premium",
+      "minBalance": 1000,
+      "interestRate": 2.5
+    },
+    {
+      "typeName": "Current Account",
+      "minBalance": 500,
+      "interestRate": 0
+    },
+    {
+      "typeName": "Student Account",
+      "minBalance": 50,
+      "interestRate": 0.75
+    },
+    {
+      "typeName": "Business Account",
+      "minBalance": 5000,
+      "interestRate": 1.1
+    },
+    {
+      "typeName": "Golden Reserve",
+      "minBalance": 10000,
+      "interestRate": 3.1
+    }
+  ],
+  "managers": [
+    {
+      "managerKey": "BM_BIKINI",
+      "branchCode": "BB001",
+      "username": "spongebob.manager",
+      "password": "Pineapple#1",
+      "nationalID": "3100000001",
+      "firstName": "SpongeBob",
+      "lastName": "SquarePants",
+      "birthDate": "1988-07-14",
+      "hireDate": "2024-01-02",
+      "jobTitle": "Branch Manager",
+      "salary": 98000,
+      "phone": "0901000001",
+      "email": "spongebob.manager@bank.local",
+      "address": "Pineapple House, Bikini Bottom"
+    },
+    {
+      "managerKey": "VM_BIKINI",
+      "branchCode": "BB001",
+      "username": "squidward.vice",
+      "password": "Clarinet#2",
+      "nationalID": "3100000002",
+      "firstName": "Squidward",
+      "lastName": "Tentacles",
+      "birthDate": "1979-10-09",
+      "hireDate": "2024-01-04",
+      "jobTitle": "Vice Manager",
+      "salary": 87000,
+      "phone": "0901000002",
+      "email": "squidward.vice@bank.local",
+      "address": "Easter Island Head, Bikini Bottom"
+    },
+    {
+      "managerKey": "BM_RIVENDELL",
+      "branchCode": "RV001",
+      "username": "galadriel.manager",
+      "password": "Lorien#1",
+      "nationalID": "3100000003",
+      "firstName": "Galadriel",
+      "lastName": "Lothlorien",
+      "birthDate": "1970-02-15",
+      "hireDate": "2024-01-05",
+      "jobTitle": "Branch Manager",
+      "salary": 125000,
+      "phone": "0901000003",
+      "email": "galadriel.manager@bank.local",
+      "address": "Golden Wood Residence"
+    },
+    {
+      "managerKey": "VM_RIVENDELL",
+      "branchCode": "RV001",
+      "username": "legolas.vice",
+      "password": "Mirkwood#2",
+      "nationalID": "3100000004",
+      "firstName": "Legolas",
+      "lastName": "Greenleaf",
+      "birthDate": "1983-05-12",
+      "hireDate": "2024-01-06",
+      "jobTitle": "Vice Manager",
+      "salary": 102000,
+      "phone": "0901000004",
+      "email": "legolas.vice@bank.local",
+      "address": "Northern Mirkwood Avenue"
+    },
+    {
+      "managerKey": "BM_GONDOR",
+      "branchCode": "GD001",
+      "username": "aragorn.manager",
+      "password": "Anduril#1",
+      "nationalID": "3100000005",
+      "firstName": "Aragorn",
+      "lastName": "Elessar",
+      "birthDate": "1975-03-01",
+      "hireDate": "2024-01-07",
+      "jobTitle": "Branch Manager",
+      "salary": 130000,
+      "phone": "0901000005",
+      "email": "aragorn.manager@bank.local",
+      "address": "Citadel House, Minas Tirith"
+    },
+    {
+      "managerKey": "VM_GONDOR",
+      "branchCode": "GD001",
+      "username": "faramir.vice",
+      "password": "Ithilien#2",
+      "nationalID": "3100000006",
+      "firstName": "Faramir",
+      "lastName": "Ranger",
+      "birthDate": "1981-09-17",
+      "hireDate": "2024-01-08",
+      "jobTitle": "Vice Manager",
+      "salary": 99000,
+      "phone": "0901000006",
+      "email": "faramir.vice@bank.local",
+      "address": "Ithilien Gardens"
+    },
+    {
+      "managerKey": "BM_SHIRE",
+      "branchCode": "SH001",
+      "username": "frodo.manager",
+      "password": "RingBearer#1",
+      "nationalID": "3100000007",
+      "firstName": "Frodo",
+      "lastName": "Baggins",
+      "birthDate": "1986-09-22",
+      "hireDate": "2024-01-09",
+      "jobTitle": "Branch Manager",
+      "salary": 92000,
+      "phone": "0901000007",
+      "email": "frodo.manager@bank.local",
+      "address": "Bag End, Hobbiton"
+    },
+    {
+      "managerKey": "VM_SHIRE",
+      "branchCode": "SH001",
+      "username": "samwise.vice",
+      "password": "PoTayToes#2",
+      "nationalID": "3100000008",
+      "firstName": "Samwise",
+      "lastName": "Gamgee",
+      "birthDate": "1987-04-06",
+      "hireDate": "2024-01-10",
+      "jobTitle": "Vice Manager",
+      "salary": 86000,
+      "phone": "0901000008",
+      "email": "samwise.vice@bank.local",
+      "address": "Number 3 Bagshot Row"
+    },
+    {
+      "managerKey": "BM_MORDOR",
+      "branchCode": "MD001",
+      "username": "sauron.manager",
+      "password": "OneRing#1",
+      "nationalID": "3100000009",
+      "firstName": "Sauron",
+      "lastName": "Mordor",
+      "birthDate": "1965-11-11",
+      "hireDate": "2024-01-11",
+      "jobTitle": "Branch Manager",
+      "salary": 140000,
+      "phone": "0901000009",
+      "email": "sauron.manager@bank.local",
+      "address": "Barad-dur Executive Floor"
+    },
+    {
+      "managerKey": "BM_ROHAN",
+      "branchCode": "RH001",
+      "username": "theoden.manager",
+      "password": "Rohan#1",
+      "nationalID": "3100000010",
+      "firstName": "Theoden",
+      "lastName": "King",
+      "birthDate": "1968-06-18",
+      "hireDate": "2024-01-12",
+      "jobTitle": "Branch Manager",
+      "salary": 103000,
+      "phone": "0901000010",
+      "email": "theoden.manager@bank.local",
+      "address": "Golden Hall, Edoras"
+    },
+    {
+      "managerKey": "BM_MINAS",
+      "branchCode": "MT001",
+      "username": "boromir.manager",
+      "password": "Horn#1",
+      "nationalID": "3100000011",
+      "firstName": "Boromir",
+      "lastName": "Steward",
+      "birthDate": "1978-12-03",
+      "hireDate": "2024-01-13",
+      "jobTitle": "Branch Manager",
+      "salary": 111000,
+      "phone": "0901000011",
+      "email": "boromir.manager@bank.local",
+      "address": "Captain Quarter, Minas Tirith"
+    },
+    {
+      "managerKey": "BM_MIRKWOOD",
+      "branchCode": "MW001",
+      "username": "thranduil.manager",
+      "password": "Woodland#1",
+      "nationalID": "3100000012",
+      "firstName": "Thranduil",
+      "lastName": "Oropherion",
+      "birthDate": "1969-08-08",
+      "hireDate": "2024-01-14",
+      "jobTitle": "Branch Manager",
+      "salary": 118000,
+      "phone": "0901000012",
+      "email": "thranduil.manager@bank.local",
+      "address": "Woodland Realm Palace"
+    }
+  ],
+  "employees": [
+    {
+      "employeeKey": "EMP_PATRICK",
+      "managerKey": "BM_BIKINI",
+      "username": "patrick.teller",
+      "password": "Starfish#1",
+      "nationalID": "3200000001",
+      "firstName": "Patrick",
+      "lastName": "Star",
+      "birthDate": "1990-02-26",
+      "hireDate": "2024-02-01",
+      "jobTitle": "Teller",
+      "salary": 42000,
+      "phone": "0902000001",
+      "email": "patrick.teller@bank.local",
+      "address": "Rock House, Bikini Bottom",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_SANDY",
+      "managerKey": "BM_BIKINI",
+      "username": "sandy.loan",
+      "password": "Acorn#1",
+      "nationalID": "3200000002",
+      "firstName": "Sandy",
+      "lastName": "Cheeks",
+      "birthDate": "1989-07-17",
+      "hireDate": "2024-02-01",
+      "jobTitle": "Loan Officer",
+      "salary": 62000,
+      "phone": "0902000002",
+      "email": "sandy.loan@bank.local",
+      "address": "Treedome, Bikini Bottom",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_KRABS",
+      "managerKey": "BM_BIKINI",
+      "username": "mrkrabs.cash",
+      "password": "Krabby#1",
+      "nationalID": "3200000003",
+      "firstName": "Eugene",
+      "lastName": "Krabs",
+      "birthDate": "1973-11-30",
+      "hireDate": "2024-02-02",
+      "jobTitle": "Cash Operations Clerk",
+      "salary": 57000,
+      "phone": "0902000003",
+      "email": "mrkrabs.cash@bank.local",
+      "address": "Krusty Krab Office",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_PLANKTON",
+      "managerKey": "BM_BIKINI",
+      "username": "plankton.risk",
+      "password": "ChumBucket#1",
+      "nationalID": "3200000004",
+      "firstName": "Sheldon",
+      "lastName": "Plankton",
+      "birthDate": "1982-04-01",
+      "hireDate": "2024-02-05",
+      "jobTitle": "Risk Analyst",
+      "salary": 59000,
+      "phone": "0902000004",
+      "email": "plankton.risk@bank.local",
+      "address": "Chum Bucket Lab",
+      "createLogin": 1,
+      "finalAction": "Suspend"
+    },
+    {
+      "employeeKey": "EMP_PEARL",
+      "managerKey": "BM_BIKINI",
+      "username": "pearl.support",
+      "password": "Whale#1",
+      "nationalID": "3200000005",
+      "firstName": "Pearl",
+      "lastName": "Krabs",
+      "birthDate": "2001-05-12",
+      "hireDate": "2024-02-07",
+      "jobTitle": "Customer Support Agent",
+      "salary": 41000,
+      "phone": "0902000005",
+      "email": "pearl.support@bank.local",
+      "address": "Anchor Way, Bikini Bottom",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_MERRY",
+      "managerKey": "BM_SHIRE",
+      "username": "merry.accounts",
+      "password": "Buckland#1",
+      "nationalID": "3200000006",
+      "firstName": "Meriadoc",
+      "lastName": "Brandybuck",
+      "birthDate": "1993-03-12",
+      "hireDate": "2024-02-03",
+      "jobTitle": "Account Officer",
+      "salary": 52000,
+      "phone": "0902000006",
+      "email": "merry.accounts@bank.local",
+      "address": "Buckland Lane",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_PIPPIN",
+      "managerKey": "BM_SHIRE",
+      "username": "pippin.teller",
+      "password": "Took#1",
+      "nationalID": "3200000007",
+      "firstName": "Peregrin",
+      "lastName": "Took",
+      "birthDate": "1995-09-21",
+      "hireDate": "2024-02-03",
+      "jobTitle": "Teller",
+      "salary": 43000,
+      "phone": "0902000007",
+      "email": "pippin.teller@bank.local",
+      "address": "Tookborough Road",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_ROSIE",
+      "managerKey": "BM_SHIRE",
+      "username": "rosie.support",
+      "password": "Cotton#1",
+      "nationalID": "3200000008",
+      "firstName": "Rosie",
+      "lastName": "Cotton",
+      "birthDate": "1994-10-02",
+      "hireDate": "2024-02-04",
+      "jobTitle": "Customer Support Agent",
+      "salary": 44000,
+      "phone": "0902000008",
+      "email": "rosie.support@bank.local",
+      "address": "Bywater Village",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_BILBO",
+      "managerKey": "BM_SHIRE",
+      "username": "bilbo.archive",
+      "password": "Adventure#1",
+      "nationalID": "3200000009",
+      "firstName": "Bilbo",
+      "lastName": "Baggins",
+      "birthDate": "1960-09-22",
+      "hireDate": "2024-02-05",
+      "jobTitle": "Archive Clerk",
+      "salary": 39000,
+      "phone": "0902000009",
+      "email": "bilbo.archive@bank.local",
+      "address": "Bag End Old Study",
+      "createLogin": 1,
+      "finalAction": "Fire"
+    },
+    {
+      "employeeKey": "EMP_ARWEN",
+      "managerKey": "BM_RIVENDELL",
+      "username": "arwen.private",
+      "password": "Evenstar#1",
+      "nationalID": "3200000010",
+      "firstName": "Arwen",
+      "lastName": "Undomiel",
+      "birthDate": "1988-12-12",
+      "hireDate": "2024-02-03",
+      "jobTitle": "Private Banking Officer",
+      "salary": 76000,
+      "phone": "0902000010",
+      "email": "arwen.private@bank.local",
+      "address": "Rivendell Terrace",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_ELROND",
+      "managerKey": "BM_RIVENDELL",
+      "username": "elrond.compliance",
+      "password": "Halfelven#1",
+      "nationalID": "3200000011",
+      "firstName": "Elrond",
+      "lastName": "Halfelven",
+      "birthDate": "1971-01-01",
+      "hireDate": "2024-02-03",
+      "jobTitle": "Compliance Officer",
+      "salary": 88000,
+      "phone": "0902000011",
+      "email": "elrond.compliance@bank.local",
+      "address": "Council Chamber Residence",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_GIMLI",
+      "managerKey": "BM_RIVENDELL",
+      "username": "gimli.vault",
+      "password": "AxeStrong#1",
+      "nationalID": "3200000012",
+      "firstName": "Gimli",
+      "lastName": "Gloinsson",
+      "birthDate": "1980-06-06",
+      "hireDate": "2024-02-05",
+      "jobTitle": "Vault Officer",
+      "salary": 60000,
+      "phone": "0902000012",
+      "email": "gimli.vault@bank.local",
+      "address": "Stone Hall Apartment",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_EOWYN",
+      "managerKey": "BM_GONDOR",
+      "username": "eowyn.service",
+      "password": "Shieldmaiden#1",
+      "nationalID": "3200000013",
+      "firstName": "Eowyn",
+      "lastName": "Rohan",
+      "birthDate": "1987-02-19",
+      "hireDate": "2024-02-06",
+      "jobTitle": "Service Officer",
+      "salary": 56000,
+      "phone": "0902000013",
+      "email": "eowyn.service@bank.local",
+      "address": "White City Residence",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_DENETHOR",
+      "managerKey": "BM_GONDOR",
+      "username": "denethor.audit",
+      "password": "Steward#1",
+      "nationalID": "3200000014",
+      "firstName": "Denethor",
+      "lastName": "Steward",
+      "birthDate": "1962-09-20",
+      "hireDate": "2024-02-06",
+      "jobTitle": "Internal Audit Clerk",
+      "salary": 68000,
+      "phone": "0902000014",
+      "email": "denethor.audit@bank.local",
+      "address": "Hall of Records",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_BEREGOND",
+      "managerKey": "BM_GONDOR",
+      "username": "beregond.teller",
+      "password": "Guard#1",
+      "nationalID": "3200000015",
+      "firstName": "Beregond",
+      "lastName": "Guard",
+      "birthDate": "1991-03-08",
+      "hireDate": "2024-02-08",
+      "jobTitle": "Teller",
+      "salary": 45000,
+      "phone": "0902000015",
+      "email": "beregond.teller@bank.local",
+      "address": "Guard Street",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_GOLLUM",
+      "managerKey": "BM_MORDOR",
+      "username": "gollum.collections",
+      "password": "Precious#1",
+      "nationalID": "3200000016",
+      "firstName": "Smeagol",
+      "lastName": "Gollum",
+      "birthDate": "1977-05-05",
+      "hireDate": "2024-02-07",
+      "jobTitle": "Collections Clerk",
+      "salary": 47000,
+      "phone": "0902000016",
+      "email": "gollum.collections@bank.local",
+      "address": "Cave Side Road",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_SARUMAN",
+      "managerKey": "BM_MORDOR",
+      "username": "saruman.risk",
+      "password": "ManyColors#1",
+      "nationalID": "3200000017",
+      "firstName": "Saruman",
+      "lastName": "White",
+      "birthDate": "1961-04-04",
+      "hireDate": "2024-02-08",
+      "jobTitle": "Risk Monitoring Officer",
+      "salary": 73000,
+      "phone": "0902000017",
+      "email": "saruman.risk@bank.local",
+      "address": "Orthanc Annex",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_SHELOB",
+      "managerKey": "BM_MORDOR",
+      "username": "shelob.vault",
+      "password": "WebStrong#1",
+      "nationalID": "3200000018",
+      "firstName": "Shelob",
+      "lastName": "Weaver",
+      "birthDate": "1985-08-14",
+      "hireDate": "2024-02-09",
+      "jobTitle": "Vault Assistant",
+      "salary": 48000,
+      "phone": "0902000018",
+      "email": "shelob.vault@bank.local",
+      "address": "Pass of Cirith Ungol",
+      "createLogin": 0,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_EOMER",
+      "managerKey": "BM_ROHAN",
+      "username": "eomer.field",
+      "password": "Marshal#1",
+      "nationalID": "3200000019",
+      "firstName": "Eomer",
+      "lastName": "Marshal",
+      "birthDate": "1984-03-03",
+      "hireDate": "2024-02-10",
+      "jobTitle": "Field Banking Officer",
+      "salary": 61000,
+      "phone": "0902000019",
+      "email": "eomer.field@bank.local",
+      "address": "Eastfold Quarter",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_TREEBEARD",
+      "managerKey": "BM_ROHAN",
+      "username": "treebeard.advisor",
+      "password": "Entmoot#1",
+      "nationalID": "3200000020",
+      "firstName": "Treebeard",
+      "lastName": "Ent",
+      "birthDate": "1959-07-07",
+      "hireDate": "2024-02-10",
+      "jobTitle": "Senior Customer Advisor",
+      "salary": 65000,
+      "phone": "0902000020",
+      "email": "treebeard.advisor@bank.local",
+      "address": "Fangorn Desk",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_WORMTONGUE",
+      "managerKey": "BM_ROHAN",
+      "username": "wormtongue.ops",
+      "password": "Whisper#1",
+      "nationalID": "3200000021",
+      "firstName": "Grima",
+      "lastName": "Wormtongue",
+      "birthDate": "1974-01-15",
+      "hireDate": "2024-02-11",
+      "jobTitle": "Operations Clerk",
+      "salary": 44000,
+      "phone": "0902000021",
+      "email": "wormtongue.ops@bank.local",
+      "address": "Edoras Back Office",
+      "createLogin": 1,
+      "finalAction": "Fire"
+    },
+    {
+      "employeeKey": "EMP_TOM",
+      "managerKey": "BM_MINAS",
+      "username": "tom.teller",
+      "password": "Bombadil#1",
+      "nationalID": "3200000022",
+      "firstName": "Tom",
+      "lastName": "Bombadil",
+      "birthDate": "1964-12-25",
+      "hireDate": "2024-02-12",
+      "jobTitle": "Teller",
+      "salary": 46000,
+      "phone": "0902000022",
+      "email": "tom.teller@bank.local",
+      "address": "Riverbank House",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_GOLDBERRY",
+      "managerKey": "BM_MINAS",
+      "username": "goldberry.service",
+      "password": "River#1",
+      "nationalID": "3200000023",
+      "firstName": "Goldberry",
+      "lastName": "Riverdaughter",
+      "birthDate": "1986-06-01",
+      "hireDate": "2024-02-12",
+      "jobTitle": "Service Officer",
+      "salary": 52000,
+      "phone": "0902000023",
+      "email": "goldberry.service@bank.local",
+      "address": "Water Garden Lane",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_TAURIEL",
+      "managerKey": "BM_MIRKWOOD",
+      "username": "tauriel.private",
+      "password": "Forest#1",
+      "nationalID": "3200000024",
+      "firstName": "Tauriel",
+      "lastName": "Mirkwood",
+      "birthDate": "1990-11-11",
+      "hireDate": "2024-02-13",
+      "jobTitle": "Private Banking Officer",
+      "salary": 69000,
+      "phone": "0902000024",
+      "email": "tauriel.private@bank.local",
+      "address": "Greenwood Path",
+      "createLogin": 1,
+      "finalAction": "Active"
+    },
+    {
+      "employeeKey": "EMP_BARD",
+      "managerKey": "BM_MIRKWOOD",
+      "username": "bard.loan",
+      "password": "Laketown#1",
+      "nationalID": "3200000025",
+      "firstName": "Bard",
+      "lastName": "Bowman",
+      "birthDate": "1982-01-22",
+      "hireDate": "2024-02-13",
+      "jobTitle": "Loan Officer",
+      "salary": 64000,
+      "phone": "0902000025",
+      "email": "bard.loan@bank.local",
+      "address": "Lake-town Street",
+      "createLogin": 1,
+      "finalAction": "Active"
+    }
+  ],
+  "customers": [
+    {
+      "customerKey": "CUST_OLIVIA",
+      "username": "olivia.harper",
+      "password": "Olivia#2026",
+      "firstName": "Olivia",
+      "lastName": "Harper",
+      "nationalID": "4000000001",
+      "birthDate": "1988-05-04",
+      "phone": "0913000001",
+      "email": "olivia.harper@example.com",
+      "address": "12 Cedar Street"
+    },
+    {
+      "customerKey": "CUST_DANIEL",
+      "username": "daniel.reed",
+      "password": "Daniel#2026",
+      "firstName": "Daniel",
+      "lastName": "Reed",
+      "nationalID": "4000000002",
+      "birthDate": "1982-02-14",
+      "phone": "0913000002",
+      "email": "daniel.reed@example.com",
+      "address": "44 Lake Avenue"
+    },
+    {
+      "customerKey": "CUST_MAYA",
+      "username": "maya.foster",
+      "password": "Maya#2026",
+      "firstName": "Maya",
+      "lastName": "Foster",
+      "nationalID": "4000000003",
+      "birthDate": "1999-08-10",
+      "phone": "0913000003",
+      "email": "maya.foster@example.com",
+      "address": "78 Elm Road"
+    },
+    {
+      "customerKey": "CUST_NOAH",
+      "username": "noah.bennett",
+      "password": "Noah#2026",
+      "firstName": "Noah",
+      "lastName": "Bennett",
+      "nationalID": "4000000004",
+      "birthDate": "1976-12-01",
+      "phone": "0913000004",
+      "email": "noah.bennett@example.com",
+      "address": "9 Market Street"
+    },
+    {
+      "customerKey": "CUST_CHLOE",
+      "username": "chloe.mason",
+      "password": "Chloe#2026",
+      "firstName": "Chloe",
+      "lastName": "Mason",
+      "nationalID": "4000000005",
+      "birthDate": "1991-01-18",
+      "phone": "0913000005",
+      "email": "chloe.mason@example.com",
+      "address": "51 Orchard Lane"
+    },
+    {
+      "customerKey": "CUST_RYAN",
+      "username": "ryan.brooks",
+      "password": "Ryan#2026",
+      "firstName": "Ryan",
+      "lastName": "Brooks",
+      "nationalID": "4000000006",
+      "birthDate": "1985-04-22",
+      "phone": "0913000006",
+      "email": "ryan.brooks@example.com",
+      "address": "6 Maple Court"
+    },
+    {
+      "customerKey": "CUST_SOPHIA",
+      "username": "sophia.lane",
+      "password": "Sophia#2026",
+      "firstName": "Sophia",
+      "lastName": "Lane",
+      "nationalID": "4000000007",
+      "birthDate": "1979-07-07",
+      "phone": "0913000007",
+      "email": "sophia.lane@example.com",
+      "address": "88 King Street"
+    },
+    {
+      "customerKey": "CUST_LIAM",
+      "username": "liam.carter",
+      "password": "Liam#2026",
+      "firstName": "Liam",
+      "lastName": "Carter",
+      "nationalID": "4000000008",
+      "birthDate": "2000-09-13",
+      "phone": "0913000008",
+      "email": "liam.carter@example.com",
+      "address": "33 University Ave"
+    },
+    {
+      "customerKey": "CUST_EMMA",
+      "username": "emma.collins",
+      "password": "Emma#2026",
+      "firstName": "Emma",
+      "lastName": "Collins",
+      "nationalID": "4000000009",
+      "birthDate": "1993-03-23",
+      "phone": "0913000009",
+      "email": "emma.collins@example.com",
+      "address": "17 River Road"
+    },
+    {
+      "customerKey": "CUST_ETHAN",
+      "username": "ethan.price",
+      "password": "Ethan#2026",
+      "firstName": "Ethan",
+      "lastName": "Price",
+      "nationalID": "4000000010",
+      "birthDate": "1989-11-19",
+      "phone": "0913000010",
+      "email": "ethan.price@example.com",
+      "address": "21 Hill Drive"
+    },
+    {
+      "customerKey": "CUST_AVA",
+      "username": "ava.morgan",
+      "password": "Ava#2026",
+      "firstName": "Ava",
+      "lastName": "Morgan",
+      "nationalID": "4000000011",
+      "birthDate": "1996-06-06",
+      "phone": "0913000011",
+      "email": "ava.morgan@example.com",
+      "address": "4 Willow Close"
+    },
+    {
+      "customerKey": "CUST_JAMES",
+      "username": "james.parker",
+      "password": "James#2026",
+      "firstName": "James",
+      "lastName": "Parker",
+      "nationalID": "4000000012",
+      "birthDate": "1980-10-27",
+      "phone": "0913000012",
+      "email": "james.parker@example.com",
+      "address": "90 Station Road"
+    },
+    {
+      "customerKey": "CUST_ISABELLA",
+      "username": "isabella.hughes",
+      "password": "Isabella#2026",
+      "firstName": "Isabella",
+      "lastName": "Hughes",
+      "nationalID": "4000000013",
+      "birthDate": "1992-12-12",
+      "phone": "0913000013",
+      "email": "isabella.hughes@example.com",
+      "address": "18 Garden Square"
+    },
+    {
+      "customerKey": "CUST_LOGAN",
+      "username": "logan.evans",
+      "password": "Logan#2026",
+      "firstName": "Logan",
+      "lastName": "Evans",
+      "nationalID": "4000000014",
+      "birthDate": "1987-07-30",
+      "phone": "0913000014",
+      "email": "logan.evans@example.com",
+      "address": "61 Bridge Lane"
+    },
+    {
+      "customerKey": "CUST_GRACE",
+      "username": "grace.murphy",
+      "password": "Grace#2026",
+      "firstName": "Grace",
+      "lastName": "Murphy",
+      "nationalID": "4000000015",
+      "birthDate": "1998-04-04",
+      "phone": "0913000015",
+      "email": "grace.murphy@example.com",
+      "address": "10 Pine Street"
+    },
+    {
+      "customerKey": "CUST_HENRY",
+      "username": "henry.cooper",
+      "password": "Henry#2026",
+      "firstName": "Henry",
+      "lastName": "Cooper",
+      "nationalID": "4000000016",
+      "birthDate": "1974-09-09",
+      "phone": "0913000016",
+      "email": "henry.cooper@example.com",
+      "address": "31 Plaza Road"
+    },
+    {
+      "customerKey": "CUST_AMELIA",
+      "username": "amelia.ross",
+      "password": "Amelia#2026",
+      "firstName": "Amelia",
+      "lastName": "Ross",
+      "nationalID": "4000000017",
+      "birthDate": "1983-08-26",
+      "phone": "0913000017",
+      "email": "amelia.ross@example.com",
+      "address": "27 Forest Way"
+    },
+    {
+      "customerKey": "CUST_LUCAS",
+      "username": "lucas.ward",
+      "password": "Lucas#2026",
+      "firstName": "Lucas",
+      "lastName": "Ward",
+      "nationalID": "4000000018",
+      "birthDate": "1990-05-15",
+      "phone": "0913000018",
+      "email": "lucas.ward@example.com",
+      "address": "70 Sunset Blvd"
+    },
+    {
+      "customerKey": "CUST_MIA",
+      "username": "mia.richardson",
+      "password": "Mia#2026",
+      "firstName": "Mia",
+      "lastName": "Richardson",
+      "nationalID": "4000000019",
+      "birthDate": "1997-02-02",
+      "phone": "0913000019",
+      "email": "mia.richardson@example.com",
+      "address": "5 Crescent Street"
+    },
+    {
+      "customerKey": "CUST_OSCAR",
+      "username": "oscar.bailey",
+      "password": "Oscar#2026",
+      "firstName": "Oscar",
+      "lastName": "Bailey",
+      "nationalID": "4000000020",
+      "birthDate": "1981-01-20",
+      "phone": "0913000020",
+      "email": "oscar.bailey@example.com",
+      "address": "38 Harbor Road"
+    },
+    {
+      "customerKey": "CUST_ZOE",
+      "username": "zoe.cox",
+      "password": "Zoe#2026",
+      "firstName": "Zoe",
+      "lastName": "Cox",
+      "nationalID": "4000000021",
+      "birthDate": "1994-03-11",
+      "phone": "0913000021",
+      "email": "zoe.cox@example.com",
+      "address": "73 Hillcrest Drive"
+    },
+    {
+      "customerKey": "CUST_MASON",
+      "username": "mason.gray",
+      "password": "Mason#2026",
+      "firstName": "Mason",
+      "lastName": "Gray",
+      "nationalID": "4000000022",
+      "birthDate": "1986-06-17",
+      "phone": "0913000022",
+      "email": "mason.gray@example.com",
+      "address": "45 Industrial Park"
+    },
+    {
+      "customerKey": "CUST_LILY",
+      "username": "lily.howard",
+      "password": "Lily#2026",
+      "firstName": "Lily",
+      "lastName": "Howard",
+      "nationalID": "4000000023",
+      "birthDate": "1995-10-05",
+      "phone": "0913000023",
+      "email": "lily.howard@example.com",
+      "address": "11 Elm Court"
+    },
+    {
+      "customerKey": "CUST_JACK",
+      "username": "jack.king",
+      "password": "Jack#2026",
+      "firstName": "Jack",
+      "lastName": "King",
+      "nationalID": "4000000024",
+      "birthDate": "1978-12-24",
+      "phone": "0913000024",
+      "email": "jack.king@example.com",
+      "address": "2 Commerce Street"
+    },
+    {
+      "customerKey": "CUST_NORA",
+      "username": "nora.scott",
+      "password": "Nora#2026",
+      "firstName": "Nora",
+      "lastName": "Scott",
+      "nationalID": "4000000025",
+      "birthDate": "1991-04-29",
+      "phone": "0913000025",
+      "email": "nora.scott@example.com",
+      "address": "64 Lake View"
+    },
+    {
+      "customerKey": "CUST_LEO",
+      "username": "leo.green",
+      "password": "Leo#2026",
+      "firstName": "Leo",
+      "lastName": "Green",
+      "nationalID": "4000000026",
+      "birthDate": "1984-07-08",
+      "phone": "0913000026",
+      "email": "leo.green@example.com",
+      "address": "84 Valley Road"
+    },
+    {
+      "customerKey": "CUST_ELLA",
+      "username": "ella.adams",
+      "password": "Ella#2026",
+      "firstName": "Ella",
+      "lastName": "Adams",
+      "nationalID": "4000000027",
+      "birthDate": "1998-01-07",
+      "phone": "0913000027",
+      "email": "ella.adams@example.com",
+      "address": "29 Meadow Lane"
+    },
+    {
+      "customerKey": "CUST_MAX",
+      "username": "max.baker",
+      "password": "Max#2026",
+      "firstName": "Max",
+      "lastName": "Baker",
+      "nationalID": "4000000028",
+      "birthDate": "1988-09-28",
+      "phone": "0913000028",
+      "email": "max.baker@example.com",
+      "address": "55 Bakery Street"
+    },
+    {
+      "customerKey": "CUST_IVY",
+      "username": "ivy.nelson",
+      "password": "Ivy#2026",
+      "firstName": "Ivy",
+      "lastName": "Nelson",
+      "nationalID": "4000000029",
+      "birthDate": "1992-05-19",
+      "phone": "0913000029",
+      "email": "ivy.nelson@example.com",
+      "address": "16 Green Road"
+    },
+    {
+      "customerKey": "CUST_ADAM",
+      "username": "adam.turner",
+      "password": "Adam#2026",
+      "firstName": "Adam",
+      "lastName": "Turner",
+      "nationalID": "4000000030",
+      "birthDate": "1977-11-03",
+      "phone": "0913000030",
+      "email": "adam.turner@example.com",
+      "address": "7 North Road"
+    },
+    {
+      "customerKey": "CUST_RUBY",
+      "username": "ruby.phillips",
+      "password": "Ruby#2026",
+      "firstName": "Ruby",
+      "lastName": "Phillips",
+      "nationalID": "4000000031",
+      "birthDate": "1999-06-24",
+      "phone": "0913000031",
+      "email": "ruby.phillips@example.com",
+      "address": "39 Pearl Street"
+    },
+    {
+      "customerKey": "CUST_FINN",
+      "username": "finn.campbell",
+      "password": "Finn#2026",
+      "firstName": "Finn",
+      "lastName": "Campbell",
+      "nationalID": "4000000032",
+      "birthDate": "1990-08-08",
+      "phone": "0913000032",
+      "email": "finn.campbell@example.com",
+      "address": "23 Windmill Road"
+    }
+  ],
+  "accountPlan": [
+    {
+      "accountKey": "A_OLIVIA_SAV",
+      "userKey": "CUST_OLIVIA",
+      "branchCode": "BB001",
+      "accountTypeName": "Savings Basic",
+      "initialDeposit": 6500
+    },
+    {
+      "accountKey": "A_OLIVIA_CUR",
+      "userKey": "CUST_OLIVIA",
+      "branchCode": "GD001",
+      "accountTypeName": "Current Account",
+      "initialDeposit": 2500
+    },
+    {
+      "accountKey": "A_DANIEL_CUR",
+      "userKey": "CUST_DANIEL",
+      "branchCode": "RV001",
+      "accountTypeName": "Current Account",
+      "initialDeposit": 8500
+    },
+    {
+      "accountKey": "A_DANIEL_PRE",
+      "userKey": "CUST_DANIEL",
+      "branchCode": "RV001",
+      "accountTypeName": "Savings Premium",
+      "initialDeposit": 6000
+    },
+    {
+      "accountKey": "A_MAYA_STU",
+      "userKey": "CUST_MAYA",
+      "branchCode": "SH001",
+      "accountTypeName": "Student Account",
+      "initialDeposit": 1200
+    },
+    {
+      "accountKey": "A_NOAH_BUS",
+      "userKey": "CUST_NOAH",
+      "branchCode": "GD001",
+      "accountTypeName": "Business Account",
+      "initialDeposit": 35000
+    },
+    {
+      "accountKey": "A_NOAH_SAV",
+      "userKey": "CUST_NOAH",
+      "branchCode": "GD001",
+      "accountTypeName": "Savings Basic",
+      "initialDeposit": 4000
+    },
+    {
+      "accountKey": "A_CHLOE_SAV",
+      "userKey": "CUST_CHLOE",
+      "branchCode": "BB001",
+      "accountTypeName": "Savings Basic",
+      "initialDeposit": 7000
+    },
+    {
+      "accountKey": "A_RYAN_PRE",
+      "userKey": "CUST_RYAN",
+      "branchCode": "SH001",
+      "accountTypeName": "Savings Premium",
+      "initialDeposit": 15000
+    },
+    {
+      "accountKey": "A_RYAN_CUR",
+      "userKey": "CUST_RYAN",
+      "branchCode": "SH001",
+      "accountTypeName": "Current Account",
+      "initialDeposit": 3000
+    },
+    {
+      "accountKey": "A_SOPHIA_BUS",
+      "userKey": "CUST_SOPHIA",
+      "branchCode": "RV001",
+      "accountTypeName": "Business Account",
+      "initialDeposit": 60000
+    },
+    {
+      "accountKey": "A_SOPHIA_PRE",
+      "userKey": "CUST_SOPHIA",
+      "branchCode": "BB001",
+      "accountTypeName": "Savings Premium",
+      "initialDeposit": 8000
+    },
+    {
+      "accountKey": "A_LIAM_STU",
+      "userKey": "CUST_LIAM",
+      "branchCode": "BB001",
+      "accountTypeName": "Student Account",
+      "initialDeposit": 1300
+    },
+    {
+      "accountKey": "A_EMMA_CUR",
+      "userKey": "CUST_EMMA",
+      "branchCode": "RH001",
+      "accountTypeName": "Current Account",
+      "initialDeposit": 7000
+    },
+    {
+      "accountKey": "A_ETHAN_SAV",
+      "userKey": "CUST_ETHAN",
+      "branchCode": "GD001",
+      "accountTypeName": "Savings Basic",
+      "initialDeposit": 5200
+    },
+    {
+      "accountKey": "A_AVA_SAV",
+      "userKey": "CUST_AVA",
+      "branchCode": "MW001",
+      "accountTypeName": "Savings Basic",
+      "initialDeposit": 4400
+    },
+    {
+      "accountKey": "A_AVA_CUR",
+      "userKey": "CUST_AVA",
+      "branchCode": "MW001",
+      "accountTypeName": "Current Account",
+      "initialDeposit": 2600
+    },
+    {
+      "accountKey": "A_JAMES_STU",
+      "userKey": "CUST_JAMES",
+      "branchCode": "SH001",
+      "accountTypeName": "Student Account",
+      "initialDeposit": 900
+    },
+    {
+      "accountKey": "A_ISABELLA_PRE",
+      "userKey": "CUST_ISABELLA",
+      "branchCode": "RV001",
+      "accountTypeName": "Savings Premium",
+      "initialDeposit": 11000
+    },
+    {
+      "accountKey": "A_ISABELLA_CUR",
+      "userKey": "CUST_ISABELLA",
+      "branchCode": "GD001",
+      "accountTypeName": "Current Account",
+      "initialDeposit": 3400
+    },
+    {
+      "accountKey": "A_LOGAN_SAV",
+      "userKey": "CUST_LOGAN",
+      "branchCode": "BB001",
+      "accountTypeName": "Savings Basic",
+      "initialDeposit": 2000
+    },
+    {
+      "accountKey": "A_GRACE_STU",
+      "userKey": "CUST_GRACE",
+      "branchCode": "SH001",
+      "accountTypeName": "Student Account",
+      "initialDeposit": 600
+    },
+    {
+      "accountKey": "A_HENRY_BUS",
+      "userKey": "CUST_HENRY",
+      "branchCode": "MD001",
+      "accountTypeName": "Business Account",
+      "initialDeposit": 42000
+    },
+    {
+      "accountKey": "A_HENRY_RES",
+      "userKey": "CUST_HENRY",
+      "branchCode": "MT001",
+      "accountTypeName": "Golden Reserve",
+      "initialDeposit": 25000
+    },
+    {
+      "accountKey": "A_AMELIA_SAV",
+      "userKey": "CUST_AMELIA",
+      "branchCode": "RH001",
+      "accountTypeName": "Savings Basic",
+      "initialDeposit": 9000
+    },
+    {
+      "accountKey": "A_LUCAS_PRE",
+      "userKey": "CUST_LUCAS",
+      "branchCode": "GD001",
+      "accountTypeName": "Savings Premium",
+      "initialDeposit": 15000
+    },
+    {
+      "accountKey": "A_MIA_CUR",
+      "userKey": "CUST_MIA",
+      "branchCode": "MT001",
+      "accountTypeName": "Current Account",
+      "initialDeposit": 7000
+    },
+    {
+      "accountKey": "A_OSCAR_BUS",
+      "userKey": "CUST_OSCAR",
+      "branchCode": "MT001",
+      "accountTypeName": "Business Account",
+      "initialDeposit": 85000
+    },
+    {
+      "accountKey": "A_OSCAR_SAV",
+      "userKey": "CUST_OSCAR",
+      "branchCode": "MT001",
+      "accountTypeName": "Savings Basic",
+      "initialDeposit": 10000
+    },
+    {
+      "accountKey": "A_ZOE_SAV",
+      "userKey": "CUST_ZOE",
+      "branchCode": "MW001",
+      "accountTypeName": "Savings Basic",
+      "initialDeposit": 5500
+    },
+    {
+      "accountKey": "A_MASON_BUS",
+      "userKey": "CUST_MASON",
+      "branchCode": "MD001",
+      "accountTypeName": "Business Account",
+      "initialDeposit": 70000
+    },
+    {
+      "accountKey": "A_LILY_STU",
+      "userKey": "CUST_LILY",
+      "branchCode": "BB001",
+      "accountTypeName": "Student Account",
+      "initialDeposit": 1500
+    },
+    {
+      "accountKey": "A_JACK_CUR",
+      "userKey": "CUST_JACK",
+      "branchCode": "RH001",
+      "accountTypeName": "Current Account",
+      "initialDeposit": 6800
+    },
+    {
+      "accountKey": "A_NORA_PRE",
+      "userKey": "CUST_NORA",
+      "branchCode": "RV001",
+      "accountTypeName": "Savings Premium",
+      "initialDeposit": 12500
+    },
+    {
+      "accountKey": "A_LEO_SAV",
+      "userKey": "CUST_LEO",
+      "branchCode": "SH001",
+      "accountTypeName": "Savings Basic",
+      "initialDeposit": 3000
+    },
+    {
+      "accountKey": "A_ELLA_STU",
+      "userKey": "CUST_ELLA",
+      "branchCode": "MW001",
+      "accountTypeName": "Student Account",
+      "initialDeposit": 800
+    },
+    {
+      "accountKey": "A_MAX_BUS",
+      "userKey": "CUST_MAX",
+      "branchCode": "GD001",
+      "accountTypeName": "Business Account",
+      "initialDeposit": 95000
+    },
+    {
+      "accountKey": "A_IVY_SAV",
+      "userKey": "CUST_IVY",
+      "branchCode": "BB001",
+      "accountTypeName": "Savings Basic",
+      "initialDeposit": 4500
+    },
+    {
+      "accountKey": "A_ADAM_RES",
+      "userKey": "CUST_ADAM",
+      "branchCode": "RV001",
+      "accountTypeName": "Golden Reserve",
+      "initialDeposit": 50000
+    },
+    {
+      "accountKey": "A_RUBY_CUR",
+      "userKey": "CUST_RUBY",
+      "branchCode": "SH001",
+      "accountTypeName": "Current Account",
+      "initialDeposit": 2500
+    },
+    {
+      "accountKey": "A_FINN_SAV",
+      "userKey": "CUST_FINN",
+      "branchCode": "RH001",
+      "accountTypeName": "Savings Basic",
+      "initialDeposit": 7700
+    },
+    {
+      "accountKey": "A_SPONGEBOB_CUR",
+      "userKey": "BM_BIKINI",
+      "branchCode": "BB001",
+      "accountTypeName": "Current Account",
+      "initialDeposit": 9000
+    },
+    {
+      "accountKey": "A_SQUIDWARD_PRE",
+      "userKey": "VM_BIKINI",
+      "branchCode": "BB001",
+      "accountTypeName": "Savings Premium",
+      "initialDeposit": 13000
+    },
+    {
+      "accountKey": "A_ARAGORN_RES",
+      "userKey": "BM_GONDOR",
+      "branchCode": "GD001",
+      "accountTypeName": "Golden Reserve",
+      "initialDeposit": 35000
+    },
+    {
+      "accountKey": "A_GALADRIEL_RES",
+      "userKey": "BM_RIVENDELL",
+      "branchCode": "RV001",
+      "accountTypeName": "Golden Reserve",
+      "initialDeposit": 80000
+    },
+    {
+      "accountKey": "A_PATRICK_STU",
+      "userKey": "EMP_PATRICK",
+      "branchCode": "BB001",
+      "accountTypeName": "Student Account",
+      "initialDeposit": 600
+    },
+    {
+      "accountKey": "A_SANDY_SAV",
+      "userKey": "EMP_SANDY",
+      "branchCode": "BB001",
+      "accountTypeName": "Savings Basic",
+      "initialDeposit": 5000
+    },
+    {
+      "accountKey": "A_MERRY_CUR",
+      "userKey": "EMP_MERRY",
+      "branchCode": "SH001",
+      "accountTypeName": "Current Account",
+      "initialDeposit": 2200
+    },
+    {
+      "accountKey": "A_ARWEN_PRE",
+      "userKey": "EMP_ARWEN",
+      "branchCode": "RV001",
+      "accountTypeName": "Savings Premium",
+      "initialDeposit": 6000
+    },
+    {
+      "accountKey": "A_EOWYN_SAV",
+      "userKey": "EMP_EOWYN",
+      "branchCode": "GD001",
+      "accountTypeName": "Savings Basic",
+      "initialDeposit": 4800
+    },
+    {
+      "accountKey": "A_GOLLUM_SAV",
+      "userKey": "EMP_GOLLUM",
+      "branchCode": "MD001",
+      "accountTypeName": "Savings Basic",
+      "initialDeposit": 3500
+    }
+  ],
+  "transactionPlan": [
+    {
+      "transactionKey": "TX01",
+      "actionName": "Deposit",
+      "actorUserKey": "CUST_OLIVIA",
+      "fromAccountKey": null,
+      "toAccountKey": "A_OLIVIA_SAV",
+      "amount": 750,
+      "description": "Mobile check deposit",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX02",
+      "actionName": "Withdrawal",
+      "actorUserKey": "CUST_OLIVIA",
+      "fromAccountKey": "A_OLIVIA_CUR",
+      "toAccountKey": null,
+      "amount": 300,
+      "description": "ATM withdrawal",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX03",
+      "actionName": "Transfer",
+      "actorUserKey": "CUST_DANIEL",
+      "fromAccountKey": "A_DANIEL_CUR",
+      "toAccountKey": "A_MAYA_STU",
+      "amount": 1250,
+      "description": "Rent support transfer",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX04",
+      "actionName": "Deposit",
+      "actorUserKey": "EMP_KRABS",
+      "fromAccountKey": null,
+      "toAccountKey": "A_NOAH_BUS",
+      "amount": 4000,
+      "description": "Teller-assisted business cash deposit",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX05",
+      "actionName": "Withdrawal",
+      "actorUserKey": "CUST_NOAH",
+      "fromAccountKey": "A_NOAH_BUS",
+      "toAccountKey": null,
+      "amount": 10000,
+      "description": "Supplier cash withdrawal",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX06",
+      "actionName": "Transfer",
+      "actorUserKey": "CUST_SOPHIA",
+      "fromAccountKey": "A_SOPHIA_BUS",
+      "toAccountKey": "A_RYAN_PRE",
+      "amount": 12000,
+      "description": "Vendor settlement transfer",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX07",
+      "actionName": "Deposit",
+      "actorUserKey": "CUST_CHLOE",
+      "fromAccountKey": null,
+      "toAccountKey": "A_CHLOE_SAV",
+      "amount": 500,
+      "description": "Small savings deposit",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX08",
+      "actionName": "Transfer",
+      "actorUserKey": "CUST_RYAN",
+      "fromAccountKey": "A_RYAN_PRE",
+      "toAccountKey": "A_LIAM_STU",
+      "amount": 850,
+      "description": "Family support transfer",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX09",
+      "actionName": "Withdrawal",
+      "actorUserKey": "CUST_EMMA",
+      "fromAccountKey": "A_EMMA_CUR",
+      "toAccountKey": null,
+      "amount": 750,
+      "description": "Cardless cash withdrawal",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX10",
+      "actionName": "Deposit",
+      "actorUserKey": "CUST_ETHAN",
+      "fromAccountKey": null,
+      "toAccountKey": "A_ETHAN_SAV",
+      "amount": 900,
+      "description": "Salary top-up deposit",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX11",
+      "actionName": "Transfer",
+      "actorUserKey": "CUST_HENRY",
+      "fromAccountKey": "A_HENRY_BUS",
+      "toAccountKey": "A_OSCAR_BUS",
+      "amount": 18000,
+      "description": "Business-to-business payment",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX12",
+      "actionName": "Withdrawal",
+      "actorUserKey": "CUST_OSCAR",
+      "fromAccountKey": "A_OSCAR_BUS",
+      "toAccountKey": null,
+      "amount": 14000,
+      "description": "Payroll withdrawal",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX13",
+      "actionName": "Deposit",
+      "actorUserKey": "EMP_ARWEN",
+      "fromAccountKey": null,
+      "toAccountKey": "A_NORA_PRE",
+      "amount": 2200,
+      "description": "Private banking deposit assistance",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX14",
+      "actionName": "Transfer",
+      "actorUserKey": "CUST_ADAM",
+      "fromAccountKey": "A_ADAM_RES",
+      "toAccountKey": "A_GALADRIEL_RES",
+      "amount": 15000,
+      "description": "High-value internal transfer",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX15",
+      "actionName": "Withdrawal",
+      "actorUserKey": "CUST_MAX",
+      "fromAccountKey": "A_MAX_BUS",
+      "toAccountKey": null,
+      "amount": 20000,
+      "description": "Business expense withdrawal",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX16",
+      "actionName": "Deposit",
+      "actorUserKey": "CUST_IVY",
+      "fromAccountKey": null,
+      "toAccountKey": "A_IVY_SAV",
+      "amount": 650,
+      "description": "Branch counter deposit",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX17",
+      "actionName": "Transfer",
+      "actorUserKey": "CUST_FINN",
+      "fromAccountKey": "A_FINN_SAV",
+      "toAccountKey": "A_JACK_CUR",
+      "amount": 1200,
+      "description": "Shared trip reimbursement",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX18",
+      "actionName": "Deposit",
+      "actorUserKey": "CUST_LILY",
+      "fromAccountKey": null,
+      "toAccountKey": "A_LILY_STU",
+      "amount": 300,
+      "description": "Student savings cash-in",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX19",
+      "actionName": "Withdrawal",
+      "actorUserKey": "EMP_SANDY",
+      "fromAccountKey": "A_SANDY_SAV",
+      "toAccountKey": null,
+      "amount": 650,
+      "description": "Employee personal ATM withdrawal",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX20",
+      "actionName": "Transfer",
+      "actorUserKey": "BM_BIKINI",
+      "fromAccountKey": "A_SPONGEBOB_CUR",
+      "toAccountKey": "A_PATRICK_STU",
+      "amount": 400,
+      "description": "Staff lunch reimbursement",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX21",
+      "actionName": "Deposit",
+      "actorUserKey": "CUST_CHLOE",
+      "fromAccountKey": null,
+      "toAccountKey": "A_CHLOE_SAV",
+      "amount": 125000,
+      "description": "Large pending deposit kept for queue demo",
+      "outcome": "LeavePending"
+    },
+    {
+      "transactionKey": "TX22",
+      "actionName": "Transfer",
+      "actorUserKey": "CUST_NOAH",
+      "fromAccountKey": "A_NOAH_BUS",
+      "toAccountKey": "A_SOPHIA_BUS",
+      "amount": 28000,
+      "description": "Large pending supplier transfer",
+      "outcome": "LeavePending"
+    },
+    {
+      "transactionKey": "TX23",
+      "actionName": "Transfer",
+      "actorUserKey": "CUST_RYAN",
+      "fromAccountKey": "A_RYAN_CUR",
+      "toAccountKey": "A_LIAM_STU",
+      "amount": 1000,
+      "description": "Customer changed mind before completion",
+      "outcome": "CancelPending"
+    },
+    {
+      "transactionKey": "TX24",
+      "actionName": "Withdrawal",
+      "actorUserKey": "CUST_ETHAN",
+      "fromAccountKey": "A_ETHAN_SAV",
+      "toAccountKey": null,
+      "amount": 500,
+      "description": "Fraud check failure by temporary freeze",
+      "outcome": "FailByFreeze"
+    },
+    {
+      "transactionKey": "TX25",
+      "actionName": "Deposit",
+      "actorUserKey": "CUST_DANIEL",
+      "fromAccountKey": null,
+      "toAccountKey": "A_DANIEL_PRE",
+      "amount": 600,
+      "description": "Deposit later reversed by operations",
+      "outcome": "ReverseCompleted"
+    },
+    {
+      "transactionKey": "TX26",
+      "actionName": "Transfer",
+      "actorUserKey": "CUST_AMELIA",
+      "fromAccountKey": "A_AMELIA_SAV",
+      "toAccountKey": "A_FINN_SAV",
+      "amount": 1700,
+      "description": "Family transfer",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX27",
+      "actionName": "Withdrawal",
+      "actorUserKey": "CUST_NORA",
+      "fromAccountKey": "A_NORA_PRE",
+      "toAccountKey": null,
+      "amount": 950,
+      "description": "ATM withdrawal",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX28",
+      "actionName": "Deposit",
+      "actorUserKey": "CUST_LEO",
+      "fromAccountKey": null,
+      "toAccountKey": "A_LEO_SAV",
+      "amount": 400,
+      "description": "Cash deposit",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX29",
+      "actionName": "Transfer",
+      "actorUserKey": "CUST_MASON",
+      "fromAccountKey": "A_MASON_BUS",
+      "toAccountKey": "A_HENRY_BUS",
+      "amount": 22000,
+      "description": "Industrial supply payment",
+      "outcome": "CompleteNow"
+    },
+    {
+      "transactionKey": "TX30",
+      "actionName": "Withdrawal",
+      "actorUserKey": "CUST_ADAM",
+      "fromAccountKey": "A_ADAM_RES",
+      "toAccountKey": null,
+      "amount": 5000,
+      "description": "Reserve account withdrawal",
+      "outcome": "CompleteNow"
+    }
+  ],
+  "loanPlan": [
+    {
+      "loanKey": "LN_NOAH_WORKING_CAPITAL",
+      "customerKey": "CUST_NOAH",
+      "branchCode": "GD001",
+      "creatorUserKey": "BM_GONDOR",
+      "loanAmount": 25000,
+      "interestRate": 8.5,
+      "numberOfInstallments": 12,
+      "startDate": "2026-05-01",
+      "scenario": "PayFirst",
+      "payAccountKey": "A_NOAH_SAV"
+    },
+    {
+      "loanKey": "LN_SOPHIA_DEFAULT_CASE",
+      "customerKey": "CUST_SOPHIA",
+      "branchCode": "RV001",
+      "creatorUserKey": "BM_RIVENDELL",
+      "loanAmount": 50000,
+      "interestRate": 9.5,
+      "numberOfInstallments": 10,
+      "startDate": "2025-10-01",
+      "scenario": "DefaultOverdue",
+      "payAccountKey": null
+    },
+    {
+      "loanKey": "LN_LUCAS_PERSONAL",
+      "customerKey": "CUST_LUCAS",
+      "branchCode": "GD001",
+      "creatorUserKey": "BM_GONDOR",
+      "loanAmount": 18000,
+      "interestRate": 7.2,
+      "numberOfInstallments": 18,
+      "startDate": "2026-04-01",
+      "scenario": "PayFirst",
+      "payAccountKey": "A_LUCAS_PRE"
+    },
+    {
+      "loanKey": "LN_OSCAR_EXPANSION",
+      "customerKey": "CUST_OSCAR",
+      "branchCode": "MT001",
+      "creatorUserKey": "BM_MINAS",
+      "loanAmount": 120000,
+      "interestRate": 10.0,
+      "numberOfInstallments": 24,
+      "startDate": "2026-03-01",
+      "scenario": "PayTwo",
+      "payAccountKey": "A_OSCAR_BUS"
+    },
+    {
+      "loanKey": "LN_MIA_SMALL",
+      "customerKey": "CUST_MIA",
+      "branchCode": "MT001",
+      "creatorUserKey": "BM_MINAS",
+      "loanAmount": 5000,
+      "interestRate": 6.0,
+      "numberOfInstallments": 6,
+      "startDate": "2026-07-01",
+      "scenario": "ActiveNoPayment",
+      "payAccountKey": null
+    },
+    {
+      "loanKey": "LN_JACK_DEFAULT_CASE",
+      "customerKey": "CUST_JACK",
+      "branchCode": "RH001",
+      "creatorUserKey": "BM_ROHAN",
+      "loanAmount": 30000,
+      "interestRate": 9.0,
+      "numberOfInstallments": 12,
+      "startDate": "2025-09-01",
+      "scenario": "DefaultOverdue",
+      "payAccountKey": null
+    },
+    {
+      "loanKey": "LN_DANIEL_LATE_CASE",
+      "customerKey": "CUST_DANIEL",
+      "branchCode": "RV001",
+      "creatorUserKey": "BM_RIVENDELL",
+      "loanAmount": 15000,
+      "interestRate": 7.0,
+      "numberOfInstallments": 12,
+      "startDate": "2026-02-01",
+      "scenario": "LateButActive",
+      "payAccountKey": null
+    },
+    {
+      "loanKey": "LN_AMELIA_CAR",
+      "customerKey": "CUST_AMELIA",
+      "branchCode": "RH001",
+      "creatorUserKey": "BM_ROHAN",
+      "loanAmount": 22000,
+      "interestRate": 8.0,
+      "numberOfInstallments": 18,
+      "startDate": "2026-06-01",
+      "scenario": "PayFirst",
+      "payAccountKey": "A_AMELIA_SAV"
+    }
+  ],
+  "expectedSpecialStates": {
+    "plankton.risk": "Employee status OnLeave; login remains available as Customer only",
+    "bilbo.archive": "Employee status Terminated; login remains available as Customer only",
+    "wormtongue.ops": "Employee status Terminated; login remains available as Customer only",
+    "shelob.vault": "Employee exists but CreateLogin=0, so application login should fail",
+    "ava.morgan / Current Account / MW001": "Frozen",
+    "james.parker / Student Account / SH001": "Closed",
+    "logan.evans / Savings Basic / BB001": "Dormant",
+    "isabella.hughes / Savings Premium / RV001": "Reactivated after deposit",
+    "rosie.support": "Transferred from SH001 to RV001"
+  },
+  "errorInjectionScenarios": [
+    {
+      "code": "E01",
+      "name": "Duplicate self-service signup username",
+      "expectedHttpStatus": 400
+    },
+    {
+      "code": "E02",
+      "name": "Insufficient-funds transfer",
+      "expectedHttpStatus": 400
+    },
+    {
+      "code": "E03",
+      "name": "Withdrawal from closed account",
+      "expectedHttpStatus": 400
+    },
+    {
+      "code": "E04",
+      "name": "Deposit into frozen account",
+      "expectedHttpStatus": 400
+    },
+    {
+      "code": "E05",
+      "name": "Reverse non-existing transaction",
+      "expectedHttpStatus": 400
+    },
+    {
+      "code": "E06",
+      "name": "Invalid negative loan amount",
+      "expectedHttpStatus": 400
+    },
+    {
+      "code": "E07",
+      "name": "Second initial HighAdmin creation",
+      "expectedHttpStatus": 400
+    },
+    {
+      "code": "E08",
+      "name": "Unauthorized customer account view",
+      "expectedHttpStatus": 400
+    }
+  ]
+}
