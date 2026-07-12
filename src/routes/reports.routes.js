@@ -7,21 +7,68 @@ const { hasRole, httpError } = require('../utils/access-scope');
 const router = express.Router();
 router.use(authenticate());
 
+/*
+ * Every orderBy value below is a hard-coded SQL fragment, never client input.
+ * Date-bearing reports are intentionally ordered newest first. Reports without
+ * a date column use the newest/highest identity key first for stable paging.
+ */
 const REPORT_VIEWS = {
-  'customer-basic-profile': { view: 'vw_CustomerBasicProfile', poolName: 'report', roles: ['Employee', 'Admin', 'HighAdmin'] },
-  'customer-account-summary': { view: 'vw_CustomerAccountSummary', poolName: 'report', roles: ['Employee', 'Admin', 'HighAdmin'], branchMode: 'column' },
-  'account-operational-summary': { view: 'vw_AccountOperationalSummary', poolName: 'report', roles: ['Employee', 'Admin', 'HighAdmin'], branchMode: 'column' },
-  'employee-directory': { view: 'vw_EmployeeDirectory', poolName: 'report', roles: ['Employee', 'Admin', 'HighAdmin'], branchMode: 'column' },
-  'pending-transactions': { view: 'vw_PendingTransactions', poolName: 'report', roles: ['Employee', 'Admin', 'HighAdmin'], branchMode: 'account-link' },
-  'loan-operational-summary': { view: 'vw_LoanOperationalSummary', poolName: 'report', roles: ['Employee', 'Admin', 'HighAdmin'], branchMode: 'column' },
-  'daily-transaction-summary': { view: 'vw_DailyTransactionSummary', poolName: 'report', roles: ['Admin', 'HighAdmin'] },
-  'account-status-summary': { view: 'vw_AccountStatusSummary', poolName: 'report', roles: ['Admin', 'HighAdmin'], branchMode: 'column' },
-  'loan-overdue-summary': { view: 'vw_LoanOverdueSummary', poolName: 'report', roles: ['Admin', 'HighAdmin'], branchMode: 'column' },
-  'highadmin-employee-branch-overview': { view: 'vw_HighAdmin_EmployeeBranchOverview', poolName: 'highadminReport', roles: ['HighAdmin'] },
-  'highadmin-branch-financial-overview': { view: 'vw_HighAdmin_BranchFinancialOverview', poolName: 'highadminReport', roles: ['HighAdmin'] },
-  'highadmin-user-access-overview': { view: 'vw_HighAdmin_UserAccessOverview', poolName: 'highadminReport', roles: ['HighAdmin'] },
-  'audit-trail': { view: 'vw_AuditTrail_Safe', poolName: 'audit', roles: ['HighAdmin'] },
-  'branch-ledger': { view: 'vw_BranchLedgerReport', poolName: 'audit', roles: ['HighAdmin'] }
+  'customer-basic-profile': {
+    view: 'vw_CustomerBasicProfile', poolName: 'report', roles: ['Employee', 'Admin', 'HighAdmin'],
+    orderBy: 'R.RegistrationDate DESC, R.CustomerID DESC'
+  },
+  'customer-account-summary': {
+    view: 'vw_CustomerAccountSummary', poolName: 'report', roles: ['Employee', 'Admin', 'HighAdmin'], branchMode: 'column',
+    orderBy: 'R.OpenDate DESC, R.AccountID DESC'
+  },
+  'account-operational-summary': {
+    view: 'vw_AccountOperationalSummary', poolName: 'report', roles: ['Employee', 'Admin', 'HighAdmin'], branchMode: 'column',
+    orderBy: 'R.OpenDate DESC, R.AccountID DESC'
+  },
+  'employee-directory': {
+    view: 'vw_EmployeeDirectory', poolName: 'report', roles: ['Employee', 'Admin', 'HighAdmin'], branchMode: 'column',
+    orderBy: 'R.HireDate DESC, R.EmployeeID DESC'
+  },
+  'pending-transactions': {
+    view: 'vw_PendingTransactions', poolName: 'report', roles: ['Employee', 'Admin', 'HighAdmin'], branchMode: 'account-link',
+    orderBy: 'R.TransactionDate DESC, R.TransactionID DESC'
+  },
+  'loan-operational-summary': {
+    view: 'vw_LoanOperationalSummary', poolName: 'report', roles: ['Employee', 'Admin', 'HighAdmin'], branchMode: 'column',
+    orderBy: 'R.StartDate DESC, R.LoanID DESC'
+  },
+  'daily-transaction-summary': {
+    view: 'vw_DailyTransactionSummary', poolName: 'report', roles: ['Admin', 'HighAdmin'],
+    orderBy: 'R.TransactionDay DESC, R.TransactionType ASC, R.TransactionStatus ASC'
+  },
+  'account-status-summary': {
+    view: 'vw_AccountStatusSummary', poolName: 'report', roles: ['Admin', 'HighAdmin'], branchMode: 'column',
+    orderBy: 'R.BranchID DESC, R.AccountStatus ASC'
+  },
+  'loan-overdue-summary': {
+    view: 'vw_LoanOverdueSummary', poolName: 'report', roles: ['Admin', 'HighAdmin'], branchMode: 'column',
+    orderBy: 'R.OldestOverdueDueDate DESC, R.LoanID DESC'
+  },
+  'highadmin-employee-branch-overview': {
+    view: 'vw_HighAdmin_EmployeeBranchOverview', poolName: 'highadminReport', roles: ['HighAdmin'],
+    orderBy: 'R.StartDate DESC, R.EMPBID DESC, R.EmployeeID DESC'
+  },
+  'highadmin-branch-financial-overview': {
+    view: 'vw_HighAdmin_BranchFinancialOverview', poolName: 'highadminReport', roles: ['HighAdmin'],
+    orderBy: 'R.BranchID DESC'
+  },
+  'highadmin-user-access-overview': {
+    view: 'vw_HighAdmin_UserAccessOverview', poolName: 'highadminReport', roles: ['HighAdmin'],
+    orderBy: 'R.UserID DESC'
+  },
+  'audit-trail': {
+    view: 'vw_AuditTrail_Safe', poolName: 'audit', roles: ['HighAdmin'],
+    orderBy: 'R.ActionDate DESC, R.AuditID DESC'
+  },
+  'branch-ledger': {
+    view: 'vw_BranchLedgerReport', poolName: 'audit', roles: ['HighAdmin'],
+    orderBy: 'R.EntryDate DESC, R.BranchLedgerID DESC'
+  }
 };
 
 function reportBranchScope(req, report) {
@@ -40,29 +87,29 @@ async function selectFromView(report, req) {
 
   if (report.branchMode === 'account-link' && branchID) {
     queryText = `
-      SELECT P.*
-      FROM dbo.${report.view} AS P
+      SELECT R.*
+      FROM dbo.${report.view} AS R
       WHERE EXISTS
       (
         SELECT 1
         FROM dbo.vw_AccountOperationalSummary AS A
         WHERE A.BranchID = @BranchID
-          AND (A.AccountID = P.FromAccountID OR A.AccountID = P.ToAccountID)
+          AND (A.AccountID = R.FromAccountID OR A.AccountID = R.ToAccountID)
       )
-      ORDER BY 1
+      ORDER BY ${report.orderBy}
       OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;`;
   } else if (report.branchMode === 'column' && branchID) {
     queryText = `
-      SELECT *
-      FROM dbo.${report.view}
-      WHERE BranchID = @BranchID
-      ORDER BY 1
+      SELECT R.*
+      FROM dbo.${report.view} AS R
+      WHERE R.BranchID = @BranchID
+      ORDER BY ${report.orderBy}
       OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;`;
   } else {
     queryText = `
-      SELECT *
-      FROM dbo.${report.view}
-      ORDER BY 1
+      SELECT R.*
+      FROM dbo.${report.view} AS R
+      ORDER BY ${report.orderBy}
       OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;`;
   }
 
@@ -95,7 +142,8 @@ router.get('/', asyncHandler(async (req, res) => {
       key,
       url: `/api/reports/${key}`,
       requiredRoles: REPORT_VIEWS[key].roles,
-      branchScopedForStaff: Boolean(REPORT_VIEWS[key].branchMode)
+      branchScopedForStaff: Boolean(REPORT_VIEWS[key].branchMode),
+      defaultSort: 'newest-first'
     }))
   });
 }));
@@ -119,6 +167,7 @@ router.get('/:reportKey', asyncHandler(async (req, res) => {
       page: data.page,
       pageSize: data.pageSize,
       view: report.view,
+      sort: 'newest-first',
       accessScope: data.branchID ? 'branch' : 'all',
       branchID: data.branchID || null
     }

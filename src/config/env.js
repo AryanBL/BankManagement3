@@ -34,6 +34,7 @@ const env = {
     password: required('DB_PASSWORD'),
     encrypt: bool(process.env.DB_ENCRYPT, false),
     trustServerCertificate: bool(process.env.DB_TRUST_SERVER_CERTIFICATE, true),
+    useUTC: bool(process.env.DB_USE_UTC, false),
     requestTimeout: number(process.env.DB_REQUEST_TIMEOUT_MS, 30000),
     connectionTimeout: number(process.env.DB_CONNECTION_TIMEOUT_MS, 15000),
     poolMax: number(process.env.DB_POOL_MAX, 10),

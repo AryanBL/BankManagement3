@@ -263,7 +263,7 @@
         history.sort((a, b) => new Date(b.TransactionDate || b.CreatedAt || 0) - new Date(a.TransactionDate || a.CreatedAt || 0));
         return { accounts, history };
       },
-      render: ({ accounts, history }) => `<div class="content-grid"><div class="span-8">${card('Transaction history', UI().renderTable(history, { hide: ['Description'], maxColumns: 10 }))}</div><div class="span-4">${card('Account balances', accounts.map((account) => `<div class="account-mini"><strong>${UI().escapeHtml(account.AccountNumber || '')}</strong><span>${UI().formatMoney(account.Balance || 0)}</span>${UI().statusBadge(account.AccountStatus || 'Active')}</div>`).join('') || UI().emptyState('No accounts', 'No account balance is available.'))}${card('Processing rule', '<div class="alert alert-info">New financial operations can be created as <strong>Pending</strong>. The backend and SQL Server finalizer apply them only when their completion time is reached.</div>', '', 'section-spacer')}</div></div>`
+      render: ({ accounts, history }) => `<div class="content-grid"><div class="span-8">${card('Transaction history', UI().renderTable(history, { hide: ['Description'], maxColumns: 10 }))}</div><div class="span-4">${card('Account balances', accounts.map((account) => `<div class="account-mini"><strong>${UI().escapeHtml(account.AccountNumber || '')}</strong><span>${UI().formatMoney(account.Balance || 0)}</span>${UI().statusBadge(account.AccountStatus || 'Active')}</div>`).join('') || UI().emptyState('No accounts', 'No account balance is available.'))}${card('Processing rule', '<div class="alert alert-info"><strong>Transaction Date</strong> is the creation time. <strong>Ready To Complete At</strong> is a scheduled processing time and can be 0–5 minutes later depending on the amount. Both are displayed in the browser\'s local time.</div>', '', 'section-spacer')}</div></div>`
     },
 
     customerLoans: {
@@ -355,10 +355,10 @@
         const response = await API().get('/api/accounts', filters);
         return { filters, accounts: rows(response), meta: response.meta || {} };
       },
-      render: ({ filters, accounts, meta }) => `${UI().filterSummary(filters)}${card(meta?.accessScope === 'all' ? 'All bank accounts' : 'Current branch accounts', `<div class="alert alert-info"><strong>Read-only operational view.</strong> Employees and branch managers see only their current branch. HighAdmin sees all accounts. Financial transactions must be initiated from the separate personal-account section.</div>${UI().renderTable(accounts, {
+      render: ({ filters, accounts, meta }, state) => `${UI().filterSummary(filters)}${card(meta?.accessScope === 'all' ? 'All bank accounts' : 'Current branch accounts', `<div class="alert alert-info"><strong>Operational account management.</strong> Employees and branch managers can view and manage eligible accounts in their current branch. HighAdmin can manage eligible accounts across all branches. Deposit, withdrawal, transfer, finalization, reversal, and installment payment remain owner-only operations.</div>${UI().renderTable(accounts, {
         hide: ['OpeningDate', 'CustomerID'],
         maxColumns: 11,
-        actions: (account) => `${smallAction('view-account', 'View', 'eye', `data-id="${account.AccountID}" data-scope="viewable"`)}${smallAction('account-history', 'History', 'reports', `data-id="${account.AccountID}" data-scope="viewable"`)}`
+        actions: (account) => `${smallAction('view-account', 'View', 'eye', `data-id="${account.AccountID}" data-scope="viewable"`)}${smallAction('account-history', 'History', 'reports', `data-id="${account.AccountID}" data-scope="viewable"`)}${smallAction('account-more', 'Manage', 'settings', `data-row="${encodeRow(account)}"`)}`
       })}`)}`
     },
 
@@ -371,7 +371,7 @@
           const payload = await safeGet(`/api/accounts/${account.AccountID}/history`, { scope: 'mine' });
           rows(payload).forEach((transaction) => history.push({ ...transaction, AccountNumber: account.AccountNumber }));
         }
-        history.sort((a, b) => new Date(b.TransactionDate || 0) - new Date(a.TransactionDate || 0));
+        history.sort((a, b) => new Date(b.TransactionDate || b.CreatedAt || 0) - new Date(a.TransactionDate || a.CreatedAt || 0));
         return { accounts, history };
       },
       render: ({ accounts, history }) => `<div class="content-grid"><div class="span-8">${card('My transaction history', UI().renderTable(history, { hide: ['Description'], maxColumns: 11 }))}</div><div class="span-4">${card('Owner-only controls', `<div class="alert alert-info">Your Employee, Admin, or HighAdmin role does not authorize transactions on another customer account. Deposit, withdrawal, transfer, finalization, reversal, and installment-payment ownership are enforced by the API and SQL procedures.</div>${accounts.map((account) => `<div class="account-mini"><strong>${UI().escapeHtml(account.AccountNumber || '')}</strong><span>${UI().formatMoney(account.Balance || 0)}</span>${UI().statusBadge(account.AccountStatus || 'Active')}</div>`).join('') || UI().emptyState('No personal accounts', 'Open a personal account before creating a transaction.')}`)}</div></div>`
@@ -530,7 +530,7 @@
     UI().openModal({
       title: `Account ${accountID} history`,
       size: 'lg',
-      content: `${UI().renderTable(rows(response), { maxColumns: 12 })}<div class="form-actions"><button class="btn btn-secondary" data-action="account-history-filter" data-id="${accountID}" data-scope="${scope}">${icon('filter', 16)} Filter dates</button><button class="btn btn-secondary" data-action="export-account-history" data-id="${accountID}">${icon('download', 16)} Export CSV</button></div>`
+      content: `<div class="alert alert-info"><strong>Local time display:</strong> Transaction Date is when the transaction was created. Ready To Complete At is the scheduled processing time and may be later. Existing sample records keep their seeded historical dates.</div>${UI().renderTable(rows(response), { maxColumns: 12 })}<div class="form-actions"><button class="btn btn-secondary" data-action="account-history-filter" data-id="${accountID}" data-scope="${scope}">${icon('filter', 16)} Filter dates</button><button class="btn btn-secondary" data-action="export-account-history" data-id="${accountID}">${icon('download', 16)} Export CSV</button></div>`
     });
     const state = window.BankWorkspace.getState();
     state.activeAccountHistory = { accountID, rows: rows(response), fromDate, toDate, scope };
@@ -550,7 +550,7 @@
     UI().openModal({
       title: UI().humanize(reportKey),
       size: 'lg',
-      content: `<div class="report-meta"><span>Page ${page}</span><span>${reportRows.length} row${reportRows.length === 1 ? '' : 's'}</span><span>${UI().escapeHtml(response.meta?.view || '')}</span></div>${UI().renderTable(reportRows, { maxColumns: 14 })}`,
+      content: `<div class="report-meta"><span>Page ${page}</span><span>${reportRows.length} row${reportRows.length === 1 ? '' : 's'}</span><span>${response.meta?.sort === 'newest-first' ? 'Newest first' : 'Sorted by report definition'}</span><span>${UI().escapeHtml(response.meta?.view || '')}</span></div>${UI().renderTable(reportRows, { maxColumns: 14 })}`,
       footer: `<div class="report-footer"><button class="btn btn-secondary" data-action="report-page" data-report="${reportKey}" data-page="${Math.max(1, page - 1)}" ${page <= 1 ? 'disabled' : ''}>${icon('arrow', 14, 'icon-reverse')} Previous</button><button class="btn btn-secondary" data-action="export-current-report">${icon('download', 15)} Export CSV</button><button class="btn btn-primary" data-action="report-page" data-report="${reportKey}" data-page="${page + 1}" ${hasNext ? '' : 'disabled'}>Next ${icon('arrow', 14)}</button></div>`
     });
   }
@@ -693,9 +693,22 @@
       const account = decodeRow(element.dataset.row);
       const isAdmin = roleAtLeast(state, 'Admin');
       const accountID = account.AccountID;
+      const status = String(account.AccountStatus || '').toLowerCase();
+      const canFreeze = status !== 'frozen' && status !== 'closed';
+      const canUnfreeze = isAdmin && status === 'frozen';
+      const canChangeType = status === 'active' || status === 'dormant';
+      const canClose = status !== 'closed' && status !== 'frozen';
+      const availableActions = [
+        canFreeze ? `<button class="quick-action" data-action="freeze-account" data-id="${accountID}">${icon('lock', 21)}<strong>Freeze</strong><span>Restrict financial operations</span></button>` : '',
+        canUnfreeze ? `<button class="quick-action" data-action="unfreeze-account" data-id="${accountID}">${icon('refresh', 21)}<strong>Unfreeze</strong><span>Restore an eligible account</span></button>` : '',
+        canChangeType ? `<button class="quick-action" data-action="change-account-type" data-id="${accountID}">${icon('card', 21)}<strong>Change type</strong><span>Move to another account type</span></button>` : '',
+        canClose ? `<button class="quick-action" data-action="close-account" data-id="${accountID}">${icon('trash', 21)}<strong>Close account</strong><span>Close an eligible account</span></button>` : ''
+      ].filter(Boolean).join('');
       UI().openModal({
         title: `Manage account ${account.AccountNumber || accountID}`,
-        content: `<div class="quick-actions"><button class="quick-action" data-action="freeze-account" data-id="${accountID}">${icon('lock', 21)}<strong>Freeze</strong><span>Restrict financial operations</span></button>${isAdmin ? `<button class="quick-action" data-action="unfreeze-account" data-id="${accountID}">${icon('refresh', 21)}<strong>Unfreeze</strong><span>Restore an eligible account</span></button>` : ''}<button class="quick-action" data-action="change-account-type" data-id="${accountID}">${icon('card', 21)}<strong>Change type</strong><span>Move to another account type</span></button><button class="quick-action" data-action="close-account" data-id="${accountID}">${icon('trash', 21)}<strong>Close account</strong><span>Close an eligible zero-balance account</span></button></div>`
+        content: availableActions
+          ? `<div class="alert alert-info">These are account-management operations, not financial transactions. Branch scope and role authorization are enforced by the backend.</div><div class="quick-actions section-spacer">${availableActions}</div>`
+          : UI().emptyState('No eligible actions', 'The current account status does not allow another management action for your role.')
       });
     },
 

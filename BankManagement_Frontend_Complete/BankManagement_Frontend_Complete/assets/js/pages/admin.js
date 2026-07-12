@@ -5,7 +5,7 @@
     nav: [
       { id:'overview', label:'Admin overview', shortLabel:'Home', icon:'dashboard', group:'Workspace', title:'Administrative command centre', description:'Track branch operations, staffing, account visibility and loan exposure.' },
       { id:'customers', label:'Customers', shortLabel:'Customers', icon:'users', group:'Branch operations', title:'Customer management', description:'Search, register, update and deactivate customer records.' },
-      { id:'accounts', label:'Branch accounts', shortLabel:'Branch', icon:'card', group:'Branch operations', title:'Current branch accounts', description:'Read account details and histories only for your current branch.' },
+      { id:'accounts', label:'Branch accounts', shortLabel:'Branch', icon:'card', group:'Branch operations', title:'Current branch accounts', description:'View and manage eligible accounts in your current branch. Financial transactions remain restricted to the account owner.' },
       { id:'loans', label:'Branch loans', shortLabel:'Loans', icon:'loan', group:'Branch operations', title:'Current branch loans', description:'Create and inspect loans and installment schedules for your current branch. Manually process overdue installments for this branch.' },
       { id:'my-accounts', label:'My accounts', shortLabel:'My accounts', icon:'wallet', group:'Personal banking', title:'My personal accounts', description:'Accounts owned by the CustomerID linked to your manager login.' },
       { id:'transactions', label:'My transactions', shortLabel:'Transfer', icon:'transfer', group:'Personal banking', title:'My transactions', description:'Create financial transactions only from your own accounts.' },

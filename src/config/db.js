@@ -11,7 +11,8 @@ function makeConfig(user, password) {
     options: {
       encrypt: env.db.encrypt,
       trustServerCertificate: env.db.trustServerCertificate,
-      enableArithAbort: true
+      enableArithAbort: true,
+      useUTC: env.db.useUTC
     },
     requestTimeout: env.db.requestTimeout,
     connectionTimeout: env.db.connectionTimeout,

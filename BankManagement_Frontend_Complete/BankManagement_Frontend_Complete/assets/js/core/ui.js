@@ -1,7 +1,18 @@
 (function () {
   const icon = (...args) => window.BankIcons.icon(...args);
   const moneyKeys = /amount|balance|salary|deposit|payment|principal|interest|penalty|outstanding/i;
-  const dateKeys = /date|at$/i;
+
+  function isDateKey(key) {
+    const words = String(key || '')
+      .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+      .replace(/[_-]/g, ' ')
+      .trim()
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean);
+    const lastWord = words[words.length - 1] || '';
+    return ['date', 'time', 'day', 'timestamp', 'at'].includes(lastWord);
+  }
 
   function escapeHtml(value) {
     return String(value ?? '').replace(/[&<>'"]/g, (character) => ({
@@ -26,14 +37,20 @@
 
   function formatDate(value) {
     if (!value) return '—';
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return escapeHtml(value);
-    const includesTime = String(value).includes('T') || String(value).includes(':');
-    return new Intl.DateTimeFormat('en-GB', {
-      year: 'numeric', month: 'short', day: '2-digit',
-      hour: includesTime ? '2-digit' : undefined,
-      minute: includesTime ? '2-digit' : undefined
-    }).format(date);
+    const date = value instanceof Date ? value : new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+
+    const raw = String(value);
+    const includesTime = value instanceof Date || raw.includes('T') || /\d{1,2}:\d{2}/.test(raw);
+    const locale = document.documentElement.lang || navigator.language || undefined;
+    const options = includesTime
+      ? {
+          year: 'numeric', month: 'short', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit'
+        }
+      : { year: 'numeric', month: 'short', day: '2-digit' };
+
+    return new Intl.DateTimeFormat(locale, options).format(date);
   }
 
   function statusBadge(value) {
@@ -55,7 +72,12 @@
     }
     if (moneyKeys.test(key) && !/rate/i.test(key)) return formatMoney(value);
     if (/rate/i.test(key) && Number.isFinite(Number(value))) return `${escapeHtml(value)}%`;
-    if (dateKeys.test(key)) return formatDate(value);
+    if (isDateKey(key)) {
+      const formatted = formatDate(value);
+      const date = value instanceof Date ? value : new Date(value);
+      const title = Number.isNaN(date.getTime()) ? String(value) : date.toString();
+      return `<time title="${escapeHtml(title)}">${escapeHtml(formatted)}</time>`;
+    }
     if (typeof value === 'boolean') return value ? 'Yes' : 'No';
     if (typeof value === 'object') return `<code>${escapeHtml(JSON.stringify(value))}</code>`;
     return escapeHtml(value);

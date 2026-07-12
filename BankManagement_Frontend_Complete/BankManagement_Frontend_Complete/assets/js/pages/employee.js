@@ -5,7 +5,7 @@
     nav: [
       { id:'overview', label:'Operations overview', shortLabel:'Home', icon:'dashboard', group:'Workspace', title:'Branch operations', description:'Monitor customers, branch-scoped accounts, loans and operational activity.' },
       { id:'customers', label:'Customers', shortLabel:'Customers', icon:'users', group:'Branch operations', title:'Customer management', description:'Search, register, update and deactivate customer records.' },
-      { id:'accounts', label:'Branch accounts', shortLabel:'Branch', icon:'card', group:'Branch operations', title:'Current branch accounts', description:'Read-only account information and history for your active branch.' },
+      { id:'accounts', label:'Branch accounts', shortLabel:'Branch', icon:'card', group:'Branch operations', title:'Current branch accounts', description:'View account details and history, then perform permitted account-management actions for your active branch. Financial transactions remain owner-only.' },
       { id:'loans', label:'Branch loans', shortLabel:'Loans', icon:'loan', group:'Branch operations', title:'Current branch loans', description:'Create loans and inspect loan details and installment schedules for your active branch.' },
       { id:'my-accounts', label:'My accounts', shortLabel:'My accounts', icon:'wallet', group:'Personal banking', title:'My personal accounts', description:'Accounts owned by the CustomerID linked to your employee login.' },
       { id:'transactions', label:'My transactions', shortLabel:'Transfer', icon:'transfer', group:'Personal banking', title:'My transactions', description:'Deposit, withdraw and transfer only from your own accounts.' },
