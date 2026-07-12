@@ -49,6 +49,44 @@
     return hierarchy.indexOf(state.config.role) >= hierarchy.indexOf(minimumRole);
   }
 
+
+  function isManagerLevelEmployee(employee) {
+    return Boolean(employee?.CanAccessAdmin) || /^(branch manager|vice manager)$/i.test(String(employee?.JobTitle || '').trim());
+  }
+
+  function canManageEmployee(state, employee) {
+    if (!roleAtLeast(state, 'Admin') || !employee?.EmployeeID) return false;
+    if (Number(employee.EmployeeID) === Number(state.user?.EmployeeID)) return false;
+    return !isManagerLevelEmployee(employee);
+  }
+
+  function employeeDirectoryTitle(state) {
+    if (state.config.role === 'HighAdmin') return 'All employees';
+    if (state.config.role === 'Admin') return 'Current branch employees';
+    return 'My employee profile';
+  }
+
+  function employeeDirectoryNotice(state) {
+    if (state.config.role === 'HighAdmin') {
+      return '<div class="alert alert-info"><strong>Enterprise scope.</strong> HighAdmin can view employees across all branches. Manager-level changes remain in Manager governance.</div>';
+    }
+    if (state.config.role === 'Admin') {
+      return '<div class="alert alert-info"><strong>Current-branch scope.</strong> The API and stored procedures return only employees currently assigned to your branch. Actions are available only for eligible ordinary employees in that branch.</div>';
+    }
+    return '<div class="alert alert-info"><strong>Personal scope.</strong> Normal employees can view only their own employee record and branch history.</div>';
+  }
+
+  function customerDirectoryTitle(state) {
+    return state.config.role === 'HighAdmin' ? 'All customers' : 'Current branch customers';
+  }
+
+  function customerDirectoryNotice(state) {
+    if (state.config.role === 'HighAdmin') {
+      return '<div class="alert alert-info"><strong>Enterprise scope.</strong> HighAdmin can view and manage customers across all branches.</div>';
+    }
+    return `<div class="alert alert-info"><strong>Current-branch scope.</strong> Only customers who own at least one account in ${UI().escapeHtml(state.user?.CurrentBranchName || `Branch ${state.user?.CurrentBranchID || ''}`)} are returned. Customers with accounts in more than one branch are visible to each corresponding branch.</div>`;
+  }
+
   function cleanObject(object) {
     return Object.fromEntries(Object.entries(object || {}).filter(([, value]) => value !== '' && value !== undefined && value !== null));
   }
@@ -219,7 +257,7 @@
           const payload = await safeGet(`/api/accounts/${account.AccountID}/history`, { scope: 'mine' });
           rows(payload).forEach((transaction) => history.push({ ...transaction, AccountNumber: account.AccountNumber }));
         }
-        history.sort((a, b) => new Date(b.TransactionDate || b.CreatedAt || 0) - new Date(a.TransactionDate || a.CreatedAt || 0));
+        history.sort((a, b) => UI().dateSortValue(b.TransactionDate || b.CreatedAt || b.date, 'datetime') - UI().dateSortValue(a.TransactionDate || a.CreatedAt || a.date, 'datetime'));
         return { accounts, history };
       },
       render: ({ accounts, history }) => {
@@ -260,7 +298,7 @@
           const payload = await safeGet(`/api/accounts/${account.AccountID}/history`, { scope: 'mine' });
           rows(payload).forEach((transaction) => history.push({ ...transaction, AccountNumber: account.AccountNumber }));
         }
-        history.sort((a, b) => new Date(b.TransactionDate || b.CreatedAt || 0) - new Date(a.TransactionDate || a.CreatedAt || 0));
+        history.sort((a, b) => UI().dateSortValue(b.TransactionDate || b.CreatedAt || b.date, 'datetime') - UI().dateSortValue(a.TransactionDate || a.CreatedAt || a.date, 'datetime'));
         return { accounts, history };
       },
       render: ({ accounts, history }) => `<div class="content-grid"><div class="span-8">${card('Transaction history', UI().renderTable(history, { hide: ['Description'], maxColumns: 10 }))}</div><div class="span-4">${card('Account balances', accounts.map((account) => `<div class="account-mini"><strong>${UI().escapeHtml(account.AccountNumber || '')}</strong><span>${UI().formatMoney(account.Balance || 0)}</span>${UI().statusBadge(account.AccountStatus || 'Active')}</div>`).join('') || UI().emptyState('No accounts', 'No account balance is available.'))}${card('Processing rule', '<div class="alert alert-info"><strong>Transaction Date</strong> is the creation time. <strong>Ready To Complete At</strong> is a scheduled processing time and can be 0–5 minutes later depending on the amount. Both are displayed in the browser\'s local time.</div>', '', 'section-spacer')}</div></div>`
@@ -332,10 +370,11 @@
         const filters = cleanObject(state.filters.customers || {});
         return { filters, customers: rows(await API().get('/api/customers', filters)) };
       },
-      render: ({ filters, customers }) => `${UI().filterSummary(filters)}${card('Customer directory', UI().renderTable(customers, {
-        hide: ['Address', 'BirthDate', 'RegistrationDate'],
+      render: ({ filters, customers }, state) => `${UI().filterSummary(filters)}${card(customerDirectoryTitle(state), `${customerDirectoryNotice(state)}${UI().renderTable(customers, {
+        hide: ['Address'],
+        maxColumns: 11,
         actions: (customer) => `${smallAction('edit-customer', 'Edit', 'edit', `data-row="${encodeRow(customer)}"`)}${smallAction('delete-customer', 'Deactivate', 'trash', `data-id="${customer.CustomerID}" data-name="${UI().escapeHtml(`${customer.FirstName || ''} ${customer.LastName || ''}`)}"`, 'btn-danger')}`
-      }))}`
+      })}`)}`
     },
 
     staffOwnAccounts: {
@@ -371,7 +410,7 @@
           const payload = await safeGet(`/api/accounts/${account.AccountID}/history`, { scope: 'mine' });
           rows(payload).forEach((transaction) => history.push({ ...transaction, AccountNumber: account.AccountNumber }));
         }
-        history.sort((a, b) => new Date(b.TransactionDate || b.CreatedAt || 0) - new Date(a.TransactionDate || a.CreatedAt || 0));
+        history.sort((a, b) => UI().dateSortValue(b.TransactionDate || b.CreatedAt || b.date, 'datetime') - UI().dateSortValue(a.TransactionDate || a.CreatedAt || a.date, 'datetime'));
         return { accounts, history };
       },
       render: ({ accounts, history }) => `<div class="content-grid"><div class="span-8">${card('My transaction history', UI().renderTable(history, { hide: ['Description'], maxColumns: 11 }))}</div><div class="span-4">${card('Owner-only controls', `<div class="alert alert-info">Your Employee, Admin, or HighAdmin role does not authorize transactions on another customer account. Deposit, withdrawal, transfer, finalization, reversal, and installment-payment ownership are enforced by the API and SQL procedures.</div>${accounts.map((account) => `<div class="account-mini"><strong>${UI().escapeHtml(account.AccountNumber || '')}</strong><span>${UI().formatMoney(account.Balance || 0)}</span>${UI().statusBadge(account.AccountStatus || 'Active')}</div>`).join('') || UI().emptyState('No personal accounts', 'Open a personal account before creating a transaction.')}`)}</div></div>`
@@ -410,16 +449,18 @@
     },
 
     employees: {
-      actions: (state) => `${roleAtLeast(state, 'Admin') ? actionButton('hire-employee', 'Hire employee', 'userPlus') : ''} ${filterTools('employee-filters', 'clear-employee-filters', Boolean(Object.keys(state.filters.employees || {}).length))}`,
+      actions: (state) => state.config.role === 'Employee'
+        ? actionButton('refresh-section', 'Refresh', 'refresh', 'btn-secondary')
+        : `${actionButton('hire-employee', 'Hire employee', 'userPlus')} ${filterTools('employee-filters', 'clear-employee-filters', Boolean(Object.keys(state.filters.employees || {}).length))}`,
       load: async (state) => {
         const filters = { includeTerminated: true, ...cleanObject(state.filters.employees || {}) };
         return { filters, employees: rows(await API().get('/api/employees', filters)) };
       },
-      render: ({ filters, employees }, state) => `${UI().filterSummary(filters)}${card('Employee directory', UI().renderTable(employees, {
+      render: ({ filters, employees }, state) => `${state.config.role === 'Employee' ? '' : UI().filterSummary(filters)}${card(employeeDirectoryTitle(state), `${employeeDirectoryNotice(state)}${UI().renderTable(employees, {
         hide: ['Phone', 'Email', 'HireDate'],
         maxColumns: 11,
-        actions: (employee) => `${smallAction('employee-details', 'View', 'eye', `data-id="${employee.EmployeeID}"`)}${roleAtLeast(state, 'Admin') ? `${smallAction('change-job', 'Job title', 'briefcase', `data-id="${employee.EmployeeID}"`)}${smallAction('employee-more', 'Manage', 'settings', `data-row="${encodeRow(employee)}"`)}` : ''}`
-      }))}`
+        actions: (employee) => `${smallAction('employee-details', 'View', 'eye', `data-id="${employee.EmployeeID}"`)}${canManageEmployee(state, employee) ? `${smallAction('change-job', 'Job title', 'briefcase', `data-id="${employee.EmployeeID}"`)}${smallAction('employee-more', 'Manage', 'settings', `data-row="${encodeRow(employee)}"`)}` : ''}`
+      })}`)}`
     },
 
     transfers: {
@@ -545,12 +586,13 @@
     const response = await API().get(`/api/reports/${reportKey}`, { page, pageSize });
     const reportRows = rows(response);
     const state = window.BankWorkspace.getState();
-    state.activeReport = { key: reportKey, page, pageSize, rows: reportRows, meta: response.meta || {} };
+    const dateFields = response.meta?.dateFields || {};
+    state.activeReport = { key: reportKey, page, pageSize, rows: reportRows, meta: response.meta || {}, dateFields };
     const hasNext = reportRows.length === pageSize;
     UI().openModal({
       title: UI().humanize(reportKey),
       size: 'lg',
-      content: `<div class="report-meta"><span>Page ${page}</span><span>${reportRows.length} row${reportRows.length === 1 ? '' : 's'}</span><span>${response.meta?.sort === 'newest-first' ? 'Newest first' : 'Sorted by report definition'}</span><span>${UI().escapeHtml(response.meta?.view || '')}</span></div>${UI().renderTable(reportRows, { maxColumns: 14 })}`,
+      content: `<div class="report-meta"><span>Page ${page}</span><span>${reportRows.length} row${reportRows.length === 1 ? '' : 's'}</span><span>${response.meta?.sort === 'newest-first' ? 'Newest first' : 'Sorted by report definition'}</span><span>Dates use your browser locale</span><span>${UI().escapeHtml(response.meta?.view || '')}</span></div>${UI().renderTable(reportRows, { maxColumns: 14, dateFields })}`,
       footer: `<div class="report-footer"><button class="btn btn-secondary" data-action="report-page" data-report="${reportKey}" data-page="${Math.max(1, page - 1)}" ${page <= 1 ? 'disabled' : ''}>${icon('arrow', 14, 'icon-reverse')} Previous</button><button class="btn btn-secondary" data-action="export-current-report">${icon('download', 15)} Export CSV</button><button class="btn btn-primary" data-action="report-page" data-report="${reportKey}" data-page="${page + 1}" ${hasNext ? '' : 'disabled'}>Next ${icon('arrow', 14)}</button></div>`
     });
   }
@@ -939,21 +981,31 @@
 
     'employee-filters': async ({ state, refresh }) => {
       const current = state.filters.employees || {};
+      const fields = [
+        numberField('employeeID', 'Employee ID', false, current.employeeID || ''),
+        { name: 'nameSearch', label: 'Name contains', value: current.nameSearch || '' },
+        { name: 'nationalID', label: 'National ID', value: current.nationalID || '' },
+        { name: 'jobTitle', label: 'Job title', value: current.jobTitle || '' },
+        selectField('empStatus', 'Employment status', ['Active', 'OnLeave', 'Terminated'], false, current.empStatus || ''),
+        selectField('includeTerminated', 'Include terminated', [option('true', 'Yes'), option('false', 'No')], false, String(current.includeTerminated ?? 'true'))
+      ];
+
+      if (state.config.role === 'HighAdmin') {
+        fields.splice(5, 0,
+          { name: 'branchCode', label: 'Branch code', value: current.branchCode || '' },
+          selectField('workingStatus', 'Working status', ['Working', 'Transferred', 'Ended'], false, current.workingStatus || '')
+        );
+        fields.push(selectField('searchBranchHistory', 'Search branch history', [option('true', 'Yes'), option('false', 'No')], false, String(current.searchBranchHistory ?? 'false')));
+      }
+
       UI().openForm({
-        title: 'Employee filters',
+        title: state.config.role === 'HighAdmin' ? 'Employee filters' : 'Current branch employee filters',
         submitText: 'Apply filters',
         size: 'lg',
-        fields: [
-          numberField('employeeID', 'Employee ID', false, current.employeeID || ''),
-          { name: 'nameSearch', label: 'Name contains', value: current.nameSearch || '' },
-          { name: 'nationalID', label: 'National ID', value: current.nationalID || '' },
-          { name: 'jobTitle', label: 'Job title', value: current.jobTitle || '' },
-          selectField('empStatus', 'Employment status', ['Active', 'OnLeave', 'Terminated'], false, current.empStatus || ''),
-          { name: 'branchCode', label: 'Branch code', value: current.branchCode || '' },
-          selectField('workingStatus', 'Working status', ['Working', 'NotWorking'], false, current.workingStatus || ''),
-          selectField('includeTerminated', 'Include terminated', [option('true', 'Yes'), option('false', 'No')], false, String(current.includeTerminated ?? 'true')),
-          selectField('searchBranchHistory', 'Search branch history', [option('true', 'Yes'), option('false', 'No')], false, String(current.searchBranchHistory ?? 'false'))
-        ],
+        intro: state.config.role === 'Admin'
+          ? '<div class="alert alert-info">Branch selection is fixed to your current branch and cannot be changed from the browser.</div>'
+          : '',
+        fields,
         onSubmit: async (data) => {
           state.filters.employees = cleanObject(data);
           await refresh();
@@ -989,11 +1041,13 @@
 
     'employee-details': async ({ element, state }) => {
       const response = await API().get(`/api/employees/${element.dataset.id}`);
-      const canManage = roleAtLeast(state, 'Admin');
+      const sets = recordsets(response);
+      const target = sets.flat().find((row) => Number(row?.EmployeeID) === Number(element.dataset.id)) || sets.flat()[0] || {};
+      const canManage = canManageEmployee(state, target);
       UI().openModal({
         title: `Employee ${element.dataset.id}`,
         size: 'lg',
-        content: `${UI().renderRecordsets(recordsets(response), { titles: ['Employee details', 'Current branch assignment', 'Access details'] })}<div class="form-actions"><button class="btn btn-secondary" data-action="employee-branch-history" data-id="${element.dataset.id}">${icon('branch', 16)} Branch history</button>${canManage ? `<button class="btn btn-primary" data-action="create-employee-user" data-id="${element.dataset.id}">${icon('userPlus', 16)} Create login</button>` : ''}</div>`
+        content: `${UI().renderRecordsets(sets, { titles: ['Employee details', 'Current branch assignment', 'Access details'] })}<div class="form-actions"><button class="btn btn-secondary" data-action="employee-branch-history" data-id="${element.dataset.id}">${icon('branch', 16)} Branch history</button>${canManage ? `<button class="btn btn-primary" data-action="create-employee-user" data-id="${element.dataset.id}">${icon('userPlus', 16)} Create login</button>` : ''}</div>`
       });
     },
 
@@ -1131,7 +1185,7 @@
 
     'export-current-report': async () => {
       const report = window.BankWorkspace.getState().activeReport;
-      UI().downloadCSV(report?.rows || [], `${report?.key || 'bank-report'}-page-${report?.page || 1}.csv`);
+      UI().downloadCSV(report?.rows || [], `${report?.key || 'bank-report'}-page-${report?.page || 1}.csv`, { dateFields: report?.dateFields || report?.meta?.dateFields || {} });
     },
 
     'apply-interest': async ({ state, refresh }) => UI().confirmAction({

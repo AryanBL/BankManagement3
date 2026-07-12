@@ -2,16 +2,70 @@
   const icon = (...args) => window.BankIcons.icon(...args);
   const moneyKeys = /amount|balance|salary|deposit|payment|principal|interest|penalty|outstanding/i;
 
-  function isDateKey(key) {
-    const words = String(key || '')
-      .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-      .replace(/[_-]/g, ' ')
-      .trim()
-      .toLowerCase()
-      .split(/\s+/)
-      .filter(Boolean);
-    const lastWord = words[words.length - 1] || '';
-    return ['date', 'time', 'day', 'timestamp', 'at'].includes(lastWord);
+  const DATE_ONLY_KEYS = new Set([
+    'birthdate', 'registrationdate', 'opendate', 'closedate', 'hiredate',
+    'startdate', 'enddate', 'duedate', 'paiddate', 'effectivedate',
+    'terminationdate', 'transactionday', 'oldestoverdueduedate',
+    'currentbranchstartdate'
+  ]);
+
+  const DATE_TIME_KEYS = new Set([
+    'date', 'transactiondate', 'readytocompleteat', 'paymentreadytocompleteat',
+    'actiondate', 'entrydate', 'logintime', 'logouttime', 'createdat',
+    'updatedat', 'processedat', 'completedat'
+  ]);
+
+  function compactKey(key) {
+    return String(key || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
+  }
+
+  function dateKindForKey(key, explicitKind = null) {
+    const normalizedExplicit = String(explicitKind || '').toLowerCase();
+    if (normalizedExplicit === 'date' || normalizedExplicit === 'datetime') return normalizedExplicit;
+
+    const compact = compactKey(key);
+    if (DATE_TIME_KEYS.has(compact)) return 'datetime';
+    if (DATE_ONLY_KEYS.has(compact)) return 'date';
+
+    if (/(?:timestamp|datetime|time|at)$/.test(compact)) return 'datetime';
+    if (/(?:date|day)$/.test(compact)) return 'date';
+    return null;
+  }
+
+  function parseDateValue(value, kind = 'datetime') {
+    if (value === null || value === undefined || value === '') return null;
+    if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : new Date(value.getTime());
+
+    const raw = String(value).trim();
+    if (!raw) return null;
+
+    const dotNet = raw.match(/^\/Date\((-?\d+)\)\/$/);
+    if (dotNet) {
+      const parsed = new Date(Number(dotNet[1]));
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    const parts = raw.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{1,7}))?)?)?/);
+    if (parts) {
+      const [, year, month, day, hour = '0', minute = '0', second = '0', fraction = '0'] = parts;
+      if (kind === 'date') {
+        const localDate = new Date(Number(year), Number(month) - 1, Number(day));
+        return Number.isNaN(localDate.getTime()) ? null : localDate;
+      }
+
+      const hasZone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(raw);
+      if (!hasZone) {
+        const milliseconds = Number((fraction + '000').slice(0, 3));
+        const localDateTime = new Date(
+          Number(year), Number(month) - 1, Number(day),
+          Number(hour), Number(minute), Number(second), milliseconds
+        );
+        return Number.isNaN(localDateTime.getTime()) ? null : localDateTime;
+      }
+    }
+
+    const parsed = new Date(raw);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
   }
 
   function escapeHtml(value) {
@@ -35,22 +89,29 @@
     return new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(number);
   }
 
-  function formatDate(value) {
-    if (!value) return '—';
-    const date = value instanceof Date ? value : new Date(value);
-    if (Number.isNaN(date.getTime())) return String(value);
-
+  function formatDate(value, options = {}) {
+    if (value === null || value === undefined || value === '') return '—';
+    const suppliedKind = typeof options === 'string' ? options : options.kind;
     const raw = String(value);
-    const includesTime = value instanceof Date || raw.includes('T') || /\d{1,2}:\d{2}/.test(raw);
-    const locale = document.documentElement.lang || navigator.language || undefined;
-    const options = includesTime
-      ? {
-          year: 'numeric', month: 'short', day: '2-digit',
-          hour: '2-digit', minute: '2-digit', second: '2-digit'
-        }
-      : { year: 'numeric', month: 'short', day: '2-digit' };
+    const inferredKind = suppliedKind || (/^\d{4}-\d{2}-\d{2}$/.test(raw.trim()) ? 'date' : 'datetime');
+    const date = parseDateValue(value, inferredKind);
+    if (!date) return String(value);
 
-    return new Intl.DateTimeFormat(locale, options).format(date);
+    const locale = document.documentElement.lang || navigator.language || undefined;
+    const formatOptions = inferredKind === 'date'
+      ? { year: 'numeric', month: 'short', day: '2-digit' }
+      : {
+          year: 'numeric', month: 'short', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit',
+          timeZoneName: 'short'
+        };
+
+    return new Intl.DateTimeFormat(locale, formatOptions).format(date);
+  }
+
+  function dateSortValue(value, kind = 'datetime') {
+    const date = parseDateValue(value, kind);
+    return date ? date.getTime() : 0;
   }
 
   function statusBadge(value) {
@@ -65,18 +126,21 @@
     return `<span class="badge ${cssClass}">${escapeHtml(status)}</span>`;
   }
 
-  function formatCell(key, value) {
+  function formatCell(key, value, options = {}) {
     if (value === null || value === undefined || value === '') return '<span class="muted">—</span>';
     if (/status|isactive|workingstatus/i.test(key)) {
       return statusBadge(typeof value === 'boolean' ? (value ? 'Active' : 'Inactive') : value);
     }
     if (moneyKeys.test(key) && !/rate/i.test(key)) return formatMoney(value);
     if (/rate/i.test(key) && Number.isFinite(Number(value))) return `${escapeHtml(value)}%`;
-    if (isDateKey(key)) {
-      const formatted = formatDate(value);
-      const date = value instanceof Date ? value : new Date(value);
-      const title = Number.isNaN(date.getTime()) ? String(value) : date.toString();
-      return `<time title="${escapeHtml(title)}">${escapeHtml(formatted)}</time>`;
+
+    const dateKind = dateKindForKey(key, options.dateKind);
+    if (dateKind) {
+      const formatted = formatDate(value, { kind: dateKind });
+      const date = parseDateValue(value, dateKind);
+      const title = date ? `${date.toString()} | Source: ${String(value)}` : String(value);
+      const datetime = date ? date.toISOString() : '';
+      return `<time${datetime ? ` datetime="${escapeHtml(datetime)}"` : ''} title="${escapeHtml(title)}">${escapeHtml(formatted)}</time>`;
     }
     if (typeof value === 'boolean') return value ? 'Yes' : 'No';
     if (typeof value === 'object') return `<code>${escapeHtml(JSON.stringify(value))}</code>`;
@@ -109,7 +173,8 @@
     const body = rows.map((row, rowIndex) => {
       const cells = columns.map((column) => {
         const value = row?.[column.key];
-        return `<td>${column.render ? column.render(value, row, rowIndex) : formatCell(column.key, value)}</td>`;
+        const explicitDateKind = column.dateKind || column.type || options.dateFields?.[column.key];
+        return `<td>${column.render ? column.render(value, row, rowIndex) : formatCell(column.key, value, { dateKind: explicitDateKind })}</td>`;
       }).join('');
       const actions = options.actions
         ? `<td class="sticky-actions"><div class="table-actions">${options.actions(row, rowIndex)}</div></td>`
@@ -281,15 +346,23 @@
     return `<article class="card stat-card" style="--stat-color:${color};--stat-tint:${tint}"><div class="stat-top"><div><div class="stat-label">${escapeHtml(label)}</div><div class="stat-value">${escapeHtml(value)}</div><div class="stat-meta">${escapeHtml(meta || '')}</div></div><div class="stat-icon">${icon(iconName, 21)}</div></div></article>`;
   }
 
-  function downloadCSV(rows, fileName = 'report.csv') {
+  function downloadCSV(rows, fileName = 'report.csv', options = {}) {
     if (!Array.isArray(rows) || !rows.length) {
       toast('There is no data to export.', 'info');
       return;
     }
     const keys = unionKeys(rows);
+    const exportValue = (key, value) => {
+      const kind = dateKindForKey(key, options.dateFields?.[key]);
+      if (kind && value !== null && value !== undefined && value !== '') {
+        return formatDate(value, { kind });
+      }
+      if (value && typeof value === 'object') return JSON.stringify(value);
+      return String(value ?? '');
+    };
     const csvRows = [
       keys.map((key) => `"${humanize(key).replace(/"/g, '""')}"`).join(','),
-      ...rows.map((row) => keys.map((key) => `"${String(row?.[key] ?? '').replace(/"/g, '""')}"`).join(','))
+      ...rows.map((row) => keys.map((key) => `"${exportValue(key, row?.[key]).replace(/"/g, '""')}"`).join(','))
     ];
     const blob = new Blob([`\uFEFF${csvRows.join('\r\n')}`], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -305,7 +378,11 @@
   function filterSummary(filters = {}) {
     const active = Object.entries(filters).filter(([, value]) => value !== '' && value !== undefined && value !== null && value !== false);
     if (!active.length) return '';
-    return `<div class="filter-summary"><strong>Active filters:</strong>${active.map(([key, value]) => `<span class="badge badge-info">${escapeHtml(humanize(key))}: ${escapeHtml(value)}</span>`).join('')}</div>`;
+    return `<div class="filter-summary"><strong>Active filters:</strong>${active.map(([key, value]) => {
+      const kind = dateKindForKey(key);
+      const displayValue = kind ? formatDate(value, { kind }) : value;
+      return `<span class="badge badge-info">${escapeHtml(humanize(key))}: ${escapeHtml(displayValue)}</span>`;
+    }).join('')}</div>`;
   }
 
   window.BankUI = {
@@ -313,6 +390,9 @@
     humanize,
     formatMoney,
     formatDate,
+    parseDateValue,
+    dateKindForKey,
+    dateSortValue,
     statusBadge,
     formatCell,
     renderTable,

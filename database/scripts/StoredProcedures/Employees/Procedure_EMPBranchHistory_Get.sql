@@ -8,8 +8,10 @@
 
    FINAL ACCESS RULES:
    - Normal Employee: own history only.
-   - Vice Manager: global history except Branch Manager records.
-   - Branch Manager: global history.
+   - Vice Manager: history only for employees currently assigned
+     to the vice manager's branch, except Branch Manager records.
+   - Branch Manager: history only for employees currently assigned
+     to the branch manager's branch.
    - HighAdmin: global history for every employee and branch.
 
    NOTE:
@@ -39,6 +41,7 @@ BEGIN
         @CallerEmpStatus NVARCHAR(20),
         @CallerCanAccessAdmin BIT,
         @CallerCurrentBranchID INT,
+        @TargetCurrentBranchID INT,
         @HasCustomerRole BIT,
         @HasEmployeeRole BIT,
         @HasAdminRole BIT,
@@ -120,8 +123,8 @@ BEGIN
            AND @CallerCurrentBranchID IS NOT NULL
         BEGIN
             SET @AccessMode = CASE
-                WHEN @CallerJobTitle = N'Branch Manager' THEN N'BranchManagerGlobal'
-                ELSE N'ViceManagerGlobalNoBranchManager'
+                WHEN @CallerJobTitle = N'Branch Manager' THEN N'BranchManagerCurrentBranch'
+                ELSE N'ViceManagerCurrentBranchNoBranchManager'
             END;
         END;
         ELSE IF @HasEmployeeRole = 1 AND @CallerEmpStatus = N'Active'
@@ -141,7 +144,25 @@ BEGIN
         END;
     END;
 
-    IF @AccessMode = N'ViceManagerGlobalNoBranchManager'
+    IF @AccessMode IN (N'BranchManagerCurrentBranch', N'ViceManagerCurrentBranchNoBranchManager')
+       AND @EmployeeID IS NOT NULL
+    BEGIN
+        SELECT TOP (1)
+            @TargetCurrentBranchID = EB.BranchID
+        FROM dbo.EMPB AS EB
+        WHERE EB.EmployeeID = @EmployeeID
+          AND EB.WorkingStatus = N'Working'
+          AND EB.EndDate IS NULL
+        ORDER BY EB.StartDate DESC, EB.EMPBID DESC;
+
+        IF @TargetCurrentBranchID IS NULL OR @TargetCurrentBranchID <> @CallerCurrentBranchID
+        BEGIN
+            RAISERROR('Managers can view branch history only for employees in their own current branch.', 16, 1);
+            RETURN;
+        END;
+    END;
+
+    IF @AccessMode = N'ViceManagerCurrentBranchNoBranchManager'
        AND @EmployeeID IS NOT NULL
        AND EXISTS (SELECT 1 FROM dbo.Employee WHERE EmployeeID = @EmployeeID AND JobTitle = N'Branch Manager')
     BEGIN
@@ -169,9 +190,22 @@ BEGIN
     INNER JOIN dbo.Employee AS E ON E.EmployeeID = EB.EmployeeID
     INNER JOIN dbo.Branch AS B ON B.BranchID = EB.BranchID
     WHERE (@EmployeeID IS NULL OR EB.EmployeeID = @EmployeeID)
+      AND
+      (
+          @AccessMode NOT IN (N'BranchManagerCurrentBranch', N'ViceManagerCurrentBranchNoBranchManager')
+          OR EXISTS
+          (
+              SELECT 1
+              FROM dbo.EMPB AS ScopeEB
+              WHERE ScopeEB.EmployeeID = E.EmployeeID
+                AND ScopeEB.BranchID = @CallerCurrentBranchID
+                AND ScopeEB.WorkingStatus = N'Working'
+                AND ScopeEB.EndDate IS NULL
+          )
+      )
       AND (@BranchID IS NULL OR EB.BranchID = @BranchID)
       AND (@IncludeCurrentOnly = 0 OR (EB.WorkingStatus = N'Working' AND EB.EndDate IS NULL))
-      AND (@AccessMode <> N'ViceManagerGlobalNoBranchManager' OR E.JobTitle <> N'Branch Manager')
+      AND (@AccessMode <> N'ViceManagerCurrentBranchNoBranchManager' OR E.JobTitle <> N'Branch Manager')
     ORDER BY EB.BranchID, EB.EmployeeID, EB.StartDate DESC, EB.EMPBID DESC;
 
     INSERT INTO dbo.AuditLog (UserID, ActionType, TableName, RecordID, ActionDate, Details)
@@ -186,7 +220,8 @@ BEGIN
             'EmployeeFilter=', ISNULL(CONVERT(NVARCHAR(30), @EmployeeID), N'ALL'),
             '; BranchFilter=', ISNULL(CONVERT(NVARCHAR(30), @BranchID), N'ALL'),
             '; IncludeCurrentOnly=', @IncludeCurrentOnly,
-            '; AccessMode=', @AccessMode
+            '; AccessMode=', @AccessMode,
+            '; CallerCurrentBranchID=', ISNULL(CONVERT(NVARCHAR(30), @CallerCurrentBranchID), N'NULL')
         )
     );
 END;

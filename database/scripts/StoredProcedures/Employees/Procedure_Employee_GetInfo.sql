@@ -12,14 +12,12 @@
        Can see own EMPB history with any WorkingStatus.
 
    - Vice Manager:
-       Can view employees globally with any EmpStatus and any
-       EMPB.WorkingStatus, EXCEPT Branch Manager records.
-       This enforces the rule that a Vice Manager cannot see
-       Branch Manager information.
+       Can view employees whose current branch assignment is the
+       vice manager's current branch, except Branch Manager records.
 
    - Branch Manager:
-       Can view employees globally with any EmpStatus and any
-       EMPB.WorkingStatus.
+       Can view employees whose current branch assignment is the
+       branch manager's current branch.
 
    - HighAdmin:
        Can view every employee globally with any EmpStatus and
@@ -62,6 +60,7 @@ BEGIN
         @CallerCanAccessAdmin BIT,
         @CallerEmpStatus NVARCHAR(20),
         @CallerCurrentBranchID INT,
+        @TargetCurrentBranchID INT,
         @HasCustomerRole BIT,
         @HasEmployeeRole BIT,
         @HasAdminRole BIT,
@@ -212,9 +211,9 @@ BEGIN
     IF @IsHighAdminEffective = 0 AND @IsAdminEffective = 1
     BEGIN
         SET @AccessMode = CASE
-            WHEN @CallerJobTitle = N'Branch Manager' THEN N'BranchManagerGlobal'
-            WHEN @CallerJobTitle = N'Vice Manager' THEN N'ViceManagerGlobalNoBranchManager'
-            ELSE N'AdminGlobal'
+            WHEN @CallerJobTitle = N'Branch Manager' THEN N'BranchManagerCurrentBranch'
+            WHEN @CallerJobTitle = N'Vice Manager' THEN N'ViceManagerCurrentBranchNoBranchManager'
+            ELSE N'AdminCurrentBranch'
         END;
     END;
 
@@ -238,10 +237,28 @@ BEGIN
         RETURN;
     END;
 
+
+    IF @IsHighAdminEffective = 0 AND @IsAdminEffective = 1 AND @EmployeeID IS NOT NULL
+    BEGIN
+        SELECT TOP (1)
+            @TargetCurrentBranchID = EB.BranchID
+        FROM dbo.EMPB AS EB
+        WHERE EB.EmployeeID = @EmployeeID
+          AND EB.WorkingStatus = N'Working'
+          AND EB.EndDate IS NULL
+        ORDER BY EB.StartDate DESC, EB.EMPBID DESC;
+
+        IF @TargetCurrentBranchID IS NULL OR @TargetCurrentBranchID <> @CallerCurrentBranchID
+        BEGIN
+            RAISERROR('Managers can view employee details only for employees in their own current branch.', 16, 1);
+            RETURN;
+        END;
+    END;
+
     ------------------------------------------------------------
     -- 5. Vice Manager cannot view Branch Manager information.
     ------------------------------------------------------------
-    IF @AccessMode = N'ViceManagerGlobalNoBranchManager'
+    IF @AccessMode = N'ViceManagerCurrentBranchNoBranchManager'
        AND @EmployeeID IS NOT NULL
        AND EXISTS
        (
@@ -287,7 +304,25 @@ BEGIN
     WHERE (@EmployeeID IS NULL OR E.EmployeeID = @EmployeeID)
       AND
       (
-          @AccessMode <> N'ViceManagerGlobalNoBranchManager'
+          @AccessMode NOT IN
+          (
+              N'BranchManagerCurrentBranch',
+              N'ViceManagerCurrentBranchNoBranchManager',
+              N'AdminCurrentBranch'
+          )
+          OR EXISTS
+          (
+              SELECT 1
+              FROM dbo.EMPB AS ScopeEB
+              WHERE ScopeEB.EmployeeID = E.EmployeeID
+                AND ScopeEB.BranchID = @CallerCurrentBranchID
+                AND ScopeEB.WorkingStatus = N'Working'
+                AND ScopeEB.EndDate IS NULL
+          )
+      )
+      AND
+      (
+          @AccessMode <> N'ViceManagerCurrentBranchNoBranchManager'
           OR E.JobTitle <> N'Branch Manager'
       )
     ORDER BY
@@ -305,7 +340,8 @@ BEGIN
         GETDATE(),
         CONCAT(
             'EmployeeFilter=', ISNULL(CONVERT(NVARCHAR(30), @EmployeeID), N'ALL'),
-            '; AccessMode=', @AccessMode
+            '; AccessMode=', @AccessMode,
+            '; CallerCurrentBranchID=', ISNULL(CONVERT(NVARCHAR(30), @CallerCurrentBranchID), N'NULL')
         )
     );
 END;

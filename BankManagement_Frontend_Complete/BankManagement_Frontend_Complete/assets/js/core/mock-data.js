@@ -23,10 +23,10 @@
     { CustomerID: 491, FirstName: 'Logan', LastName: 'Evans', NationalID: '4000000014', Phone: '0913000014', Email: 'logan.evans@example.com', IsActive: false }
   ];
   const employees = [
-    { EmployeeID: 121, FirstName: 'Frodo', LastName: 'Baggins', JobTitle: 'Branch Manager', BranchName: 'Central Branch', Salary: 78000000, EmploymentStatus: 'Active' },
-    { EmployeeID: 204, FirstName: 'Meriadoc', LastName: 'Brandybuck', JobTitle: 'Accounts Officer', BranchName: 'North Branch', Salary: 46000000, EmploymentStatus: 'Active' },
-    { EmployeeID: 217, FirstName: 'Patrick', LastName: 'Star', JobTitle: 'Teller', BranchName: 'West Branch', Salary: 39000000, EmploymentStatus: 'Active' },
-    { EmployeeID: 236, FirstName: 'Elrond', LastName: 'Halfelven', JobTitle: 'Compliance Officer', BranchName: 'Central Branch', Salary: 64000000, EmploymentStatus: 'Suspended' }
+    { EmployeeID: 121, FirstName: 'Frodo', LastName: 'Baggins', JobTitle: 'Branch Manager', BranchID: 1, CurrentBranchID: 1, BranchName: 'Central Branch', CurrentBranchName: 'Central Branch', Salary: 78000000, EmpStatus: 'Active', CanAccessAdmin: true },
+    { EmployeeID: 204, FirstName: 'Meriadoc', LastName: 'Brandybuck', JobTitle: 'Accounts Officer', BranchID: 2, CurrentBranchID: 2, BranchName: 'North Branch', CurrentBranchName: 'North Branch', Salary: 46000000, EmpStatus: 'Active', CanAccessAdmin: false },
+    { EmployeeID: 217, FirstName: 'Patrick', LastName: 'Star', JobTitle: 'Teller', BranchID: 3, CurrentBranchID: 3, BranchName: 'West Branch', CurrentBranchName: 'West Branch', Salary: 39000000, EmpStatus: 'Active', CanAccessAdmin: false },
+    { EmployeeID: 236, FirstName: 'Elrond', LastName: 'Halfelven', JobTitle: 'Compliance Officer', BranchID: 1, CurrentBranchID: 1, BranchName: 'Central Branch', CurrentBranchName: 'Central Branch', Salary: 64000000, EmpStatus: 'OnLeave', CanAccessAdmin: false }
   ];
   const branches = [
     { BranchID: 1, BranchCode: 'BR-001', BranchName: 'Central Branch', City: 'Tehran', ManagerName: 'Frodo Baggins', EmployeeCount: 18 },
@@ -115,6 +115,19 @@
     return loans.filter((loan) => Number(loan.CustomerID) === Number(previewUser.CustomerID));
   }
 
+
+  function scopedEmployees() {
+    const previewUser = users[role()];
+    if (role() === 'HighAdmin') return employees;
+    if (role() === 'Admin') {
+      return employees.filter((employee) => Number(employee.CurrentBranchID) === Number(previewUser.CurrentBranchID));
+    }
+    if (role() === 'Employee') {
+      return employees.filter((employee) => Number(employee.EmployeeID) === Number(previewUser.EmployeeID));
+    }
+    return [];
+  }
+
   async function respond(path, options = {}) {
     await new Promise((r) => setTimeout(r, 220));
     const method = (options.method || 'GET').toUpperCase();
@@ -160,7 +173,18 @@
     }
     if (pathname.startsWith('/api/loans/')) return { success: true, data: { message: 'Preview loan operation completed.' } };
 
-    if (pathname.startsWith('/api/employees')) return { success: true, data: method === 'GET' ? employees : { EmployeeID: 299, message: 'Preview employee operation completed.' } };
+    if (/^\/api\/employees\/\d+\/branch-history$/.test(pathname)) {
+      const employeeID = Number(pathname.split('/')[3]);
+      const employee = scopedEmployees().find((row) => Number(row.EmployeeID) === employeeID);
+      return { success: true, data: employee ? [{ EMPBID: employeeID * 10, EmployeeID: employeeID, BranchID: employee.CurrentBranchID, BranchName: employee.CurrentBranchName, StartDate: iso(-180), EndDate: null, WorkingStatus: 'Working', IsCurrentAssignment: 1 }] : [] };
+    }
+    if (/^\/api\/employees\/\d+$/.test(pathname) && method === 'GET') {
+      const employeeID = Number(pathname.split('/')[3]);
+      const employee = scopedEmployees().find((row) => Number(row.EmployeeID) === employeeID);
+      return { success: true, data: employee ? [employee] : [] };
+    }
+    if (pathname === '/api/employees' && method === 'GET') return { success: true, data: scopedEmployees() };
+    if (pathname.startsWith('/api/employees')) return { success: true, data: { EmployeeID: 299, message: 'Preview employee operation completed.' } };
     if (pathname.startsWith('/api/employee-transfers')) return { success: true, data: { TransferRequestID: 84, status: 'Pending', message: 'Preview transfer request submitted.' } };
     if (pathname.startsWith('/api/branches')) return { success: true, data: /^\/api\/branches\/\d+$/.test(pathname) ? branches[0] : branches };
     if (pathname.startsWith('/api/highadmin')) return { success: true, data: { message: 'Preview HighAdmin operation completed.' } };

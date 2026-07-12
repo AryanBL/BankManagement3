@@ -3,9 +3,85 @@ const { TYPES, executeProcedure } = require('../utils/procedure');
 const { asyncHandler, ok, created } = require('../utils/http');
 const { authenticate, authorize } = require('../middleware/auth');
 const { requireBodyFields } = require('../middleware/validation');
+const { hasRole, httpError } = require('../utils/access-scope');
 
 const router = express.Router();
 router.use(authenticate());
+
+function scopedEmployeeSearchValues(req) {
+  const values = { ...req.query };
+
+  if (hasRole(req.user, 'HighAdmin')) {
+    return values;
+  }
+
+  if (hasRole(req.user, 'Admin')) {
+    const currentBranchID = Number(req.user.CurrentBranchID);
+    if (!Number.isInteger(currentBranchID) || currentBranchID <= 0) {
+      throw httpError(403, 'The current manager does not have an active branch assignment.');
+    }
+
+    if (values.branchID !== undefined && values.branchID !== '') {
+      const requestedBranchID = Number(values.branchID);
+      if (!Number.isInteger(requestedBranchID) || requestedBranchID !== currentBranchID) {
+        throw httpError(403, 'Managers can search employees only in their own current branch.');
+      }
+    }
+
+    values.branchID = currentBranchID;
+    values.searchBranchHistory = false;
+    delete values.branchCode;
+    return values;
+  }
+
+  values.employeeID = req.user.EmployeeID;
+  values.searchBranchHistory = false;
+  delete values.branchID;
+  delete values.branchCode;
+  return values;
+}
+
+async function assertEmployeeTargetVisible(req, employeeID) {
+  if (hasRole(req.user, 'HighAdmin')) return;
+
+  const targetID = Number(employeeID);
+  if (!Number.isInteger(targetID) || targetID <= 0) {
+    throw httpError(400, 'A valid employee ID is required.');
+  }
+
+  if (!hasRole(req.user, 'Admin')) {
+    if (targetID !== Number(req.user.EmployeeID)) {
+      throw httpError(403, 'Normal employees can view only their own employee record.');
+    }
+    return;
+  }
+
+  try {
+    const result = await executeProcedure('dbo.sp_Employee_Search', {
+      inputs: {
+        UserID: TYPES.int,
+        EmployeeID: TYPES.int,
+        BranchID: TYPES.int,
+        IncludeTerminated: TYPES.bit,
+        SearchBranchHistory: TYPES.bit
+      },
+      values: {
+        UserID: req.user.UserID,
+        EmployeeID: targetID,
+        BranchID: req.user.CurrentBranchID,
+        IncludeTerminated: true,
+        SearchBranchHistory: false
+      }
+    });
+
+    if (!result.recordset[0]) {
+      throw httpError(403, 'Managers can access only employees in their own current branch.');
+    }
+  } catch (error) {
+    if (error.status) throw error;
+    throw httpError(403, 'Managers can access only eligible employees in their own current branch.');
+  }
+}
 
 router.get('/', authorize('Employee', 'Admin', 'HighAdmin'), asyncHandler(async (req, res) => {
   const result = await executeProcedure('dbo.sp_Employee_Search', {
@@ -24,12 +100,13 @@ router.get('/', authorize('Employee', 'Admin', 'HighAdmin'), asyncHandler(async 
       IncludeTerminated: [TYPES.bit, 'includeTerminated'],
       SearchBranchHistory: [TYPES.bit, 'searchBranchHistory']
     },
-    values: { ...req.query, UserID: req.user.UserID }
+    values: { ...scopedEmployeeSearchValues(req), UserID: req.user.UserID }
   });
   ok(res, { data: result.recordset });
 }));
 
 router.get('/:employeeID', authorize('Employee', 'Admin', 'HighAdmin'), asyncHandler(async (req, res) => {
+  await assertEmployeeTargetVisible(req, req.params.employeeID);
   const result = await executeProcedure('dbo.sp_Employee_GetInfo', {
     inputs: {
       UserID: TYPES.int,
@@ -63,6 +140,7 @@ router.post('/', authorize('Admin', 'HighAdmin'), requireBodyFields(['nationalID
 }));
 
 router.post('/:employeeID/create-user-account', authorize('Admin', 'HighAdmin'), requireBodyFields(['username', 'password', 'birthDate']), asyncHandler(async (req, res) => {
+  await assertEmployeeTargetVisible(req, req.params.employeeID);
   const result = await executeProcedure('dbo.sp_Employee_CreateUserAccount', {
     inputs: {
       ManagerUserID: TYPES.int,
@@ -84,6 +162,7 @@ router.post('/:employeeID/create-user-account', authorize('Admin', 'HighAdmin'),
 }));
 
 router.post('/:employeeID/change-job-title', authorize('Admin', 'HighAdmin'), requireBodyFields(['newJobTitle']), asyncHandler(async (req, res) => {
+  await assertEmployeeTargetVisible(req, req.params.employeeID);
   const result = await executeProcedure('dbo.sp_Employee_ChangeJobTitle', {
     inputs: {
       ManagerUserID: TYPES.int,
@@ -97,6 +176,7 @@ router.post('/:employeeID/change-job-title', authorize('Admin', 'HighAdmin'), re
 }));
 
 router.post('/:employeeID/fire', authorize('Admin', 'HighAdmin'), asyncHandler(async (req, res) => {
+  await assertEmployeeTargetVisible(req, req.params.employeeID);
   const result = await executeProcedure('dbo.sp_Employee_Fire', {
     inputs: {
       ManagerUserID: TYPES.int,
@@ -110,6 +190,7 @@ router.post('/:employeeID/fire', authorize('Admin', 'HighAdmin'), asyncHandler(a
 }));
 
 router.post('/:employeeID/suspend', authorize('Admin', 'HighAdmin'), asyncHandler(async (req, res) => {
+  await assertEmployeeTargetVisible(req, req.params.employeeID);
   const result = await executeProcedure('dbo.sp_Employee_Suspend', {
     inputs: {
       ManagerUserID: TYPES.int,
@@ -122,6 +203,7 @@ router.post('/:employeeID/suspend', authorize('Admin', 'HighAdmin'), asyncHandle
 }));
 
 router.get('/:employeeID/branch-history', authorize('Employee', 'Admin', 'HighAdmin'), asyncHandler(async (req, res) => {
+  await assertEmployeeTargetVisible(req, req.params.employeeID);
   const result = await executeProcedure('dbo.sp_EMPBranchHistory_Get', {
     inputs: {
       UserID: TYPES.int,

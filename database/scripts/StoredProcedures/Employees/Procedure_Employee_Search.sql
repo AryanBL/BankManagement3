@@ -20,9 +20,10 @@
 
    PRIVILEGES:
    - Effective HighAdmin may search all employees.
-   - Effective Branch Manager may search all employees.
-   - Effective Vice Manager may search all employees EXCEPT
-     Branch Manager records.
+   - Effective Branch Manager may search employees whose current
+     branch assignment is the manager's current branch.
+   - Effective Vice Manager has the same current-branch scope,
+     except Branch Manager records remain hidden.
    - Effective normal Employee may search/view only own employee
      record.
    - Customer-only / fired / suspended users cannot perform
@@ -180,9 +181,9 @@ BEGIN
         IF @IsHighAdminEffective = 0 AND @IsAdminEffective = 1
         BEGIN
             SET @AccessMode = CASE
-                WHEN @CallerJobTitle = N'Branch Manager' THEN N'BranchManagerGlobalEmployees'
-                WHEN @CallerJobTitle = N'Vice Manager' THEN N'ViceManagerGlobalNoBranchManager'
-                ELSE N'AdminGlobalEmployees'
+                WHEN @CallerJobTitle = N'Branch Manager' THEN N'BranchManagerCurrentBranch'
+                WHEN @CallerJobTitle = N'Vice Manager' THEN N'ViceManagerCurrentBranchNoBranchManager'
+                ELSE N'AdminCurrentBranch'
             END;
         END;
 
@@ -197,6 +198,32 @@ BEGIN
             END;
 
             SET @EmployeeID = @RequesterEmployeeID;
+        END;
+
+        IF @IsHighAdminEffective = 0 AND @IsAdminEffective = 1
+        BEGIN
+            IF @BranchID IS NOT NULL AND @BranchID <> @CallerCurrentBranchID
+            BEGIN
+                RAISERROR('Managers can search employees only in their own current branch.', 16, 1);
+                RETURN;
+            END;
+
+            IF NULLIF(LTRIM(RTRIM(@BranchCode)), N'') IS NOT NULL
+               AND NOT EXISTS
+               (
+                   SELECT 1
+                   FROM dbo.Branch AS B
+                   WHERE B.BranchID = @CallerCurrentBranchID
+                     AND B.BranchCode = LTRIM(RTRIM(@BranchCode))
+               )
+            BEGIN
+                RAISERROR('Managers cannot search employees by another branch code.', 16, 1);
+                RETURN;
+            END;
+
+            SET @BranchID = @CallerCurrentBranchID;
+            SET @BranchCode = NULL;
+            SET @SearchBranchHistory = 0;
         END;
 
         ------------------------------------------------------------
@@ -324,8 +351,18 @@ BEGIN
           AND (@CleanEmpStatus IS NOT NULL OR @IncludeTerminated = 1 OR E.EmpStatus <> N'Terminated')
           AND
           (
-              @AccessMode <> N'ViceManagerGlobalNoBranchManager'
+              @AccessMode <> N'ViceManagerCurrentBranchNoBranchManager'
               OR E.JobTitle <> N'Branch Manager'
+          )
+          AND
+          (
+              @AccessMode NOT IN
+              (
+                  N'BranchManagerCurrentBranch',
+                  N'ViceManagerCurrentBranchNoBranchManager',
+                  N'AdminCurrentBranch'
+              )
+              OR CurrentEB.BranchID = @CallerCurrentBranchID
           )
           AND
           (

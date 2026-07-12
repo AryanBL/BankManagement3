@@ -3,11 +3,17 @@ const { TYPES, executeProcedure } = require('../utils/procedure');
 const { asyncHandler, ok, created } = require('../utils/http');
 const { authenticate, authorize } = require('../middleware/auth');
 const { requireBodyFields } = require('../middleware/validation');
+const { hasRole, httpError } = require('../utils/access-scope');
 
 const router = express.Router();
 router.use(authenticate());
 
 router.get('/', asyncHandler(async (req, res) => {
+  const isHighAdmin = hasRole(req.user, 'HighAdmin');
+  if (!isHighAdmin && (!req.user.CurrentBranchID || (!hasRole(req.user, 'Employee') && !hasRole(req.user, 'Admin')))) {
+    throw httpError(403, 'Customer directory access requires an active employee branch assignment.');
+  }
+
   const result = await executeProcedure('dbo.sp_Customer_Search', {
     inputs: {
       UserID: TYPES.int,
@@ -19,7 +25,13 @@ router.get('/', asyncHandler(async (req, res) => {
     },
     values: { ...req.query, UserID: req.user.UserID }
   });
-  ok(res, { data: result.recordset });
+  ok(res, {
+    data: result.recordset,
+    meta: {
+      accessScope: isHighAdmin ? 'all' : 'branch',
+      branchID: isHighAdmin ? null : req.user.CurrentBranchID
+    }
+  });
 }));
 
 router.post('/', authorize('Employee', 'Admin', 'HighAdmin'), requireBodyFields(['firstName', 'lastName', 'nationalID', 'birthDate', 'phone', 'email']), asyncHandler(async (req, res) => {
