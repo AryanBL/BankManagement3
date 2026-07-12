@@ -3,9 +3,9 @@
    sp_Loan_PayInstallment
    ---------------------------------------------------------
    FINAL AUTHORIZATION:
-   - Customer can pay own loan using own account.
-   - Effective Employee/Admin/HighAdmin can initiate payment for
-     any customer account that belongs to the loan owner.
+   - Only the borrower can pay an installment.
+   - The paying account must also belong to the borrower.
+   - Employee/Admin/HighAdmin privileges do not bypass ownership.
    ========================================================= */
 
 IF OBJECT_ID('dbo.sp_Loan_PayInstallment','P') IS NOT NULL DROP PROCEDURE dbo.sp_Loan_PayInstallment;
@@ -29,7 +29,7 @@ BEGIN
         IF @ExistingPaymentTxID IS NOT NULL AND EXISTS(SELECT 1 FROM dbo.Transactions WHERE TransactionID=@ExistingPaymentTxID AND TransactionStatus='Pending') BEGIN RAISERROR('A payment for this installment is already pending completion.',16,1); ROLLBACK TRANSACTION; RETURN; END;
         SELECT @LoanCustomerID=CustomerID,@LoanStatus=LoanStatus FROM dbo.Loan WHERE LoanID=@LoanID;
         IF @LoanStatus<>'Active' BEGIN RAISERROR('This loan is not Active; no further payments are expected.',16,1); ROLLBACK TRANSACTION; RETURN; END;
-        IF dbo.fn_UserHasEffectiveRole(@UserID,N'Employee')=0 AND dbo.fn_UserHasEffectiveRole(@UserID,N'Admin')=0 AND dbo.fn_UserHasEffectiveRole(@UserID,N'HighAdmin')=0 AND @LoanCustomerID<>@CallerCustomerID BEGIN RAISERROR('Customer users can pay only their own loans.',16,1); ROLLBACK TRANSACTION; RETURN; END;
+        IF @LoanCustomerID<>@CallerCustomerID BEGIN RAISERROR('Only the borrower can pay this loan installment.',16,1); ROLLBACK TRANSACTION; RETURN; END;
         IF NOT EXISTS(SELECT 1 FROM dbo.Account WHERE AccountID=@FromAccountID AND CustomerID=@LoanCustomerID) BEGIN RAISERROR('The paying account does not belong to the customer who owns this loan.',16,1); ROLLBACK TRANSACTION; RETURN; END;
         EXEC dbo.sp_Transaction_Withdrawal @AccountID=@FromAccountID,@Amount=@Amount,@EmployeeID=@EmployeeID,@Description=N'Loan installment payment',@TransactionID=@TransactionID OUTPUT,@ReadyToCompleteAt=@ReadyToCompleteAt OUTPUT,@UserID=@UserID;
         IF @@TRANCOUNT=0 BEGIN RAISERROR('Installment payment could not be initiated: the withdrawal was rejected.',16,1); RETURN; END;

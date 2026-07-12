@@ -2,145 +2,212 @@
    Procedure_Loan_ProcessOverdueInstallments.sql
    sp_Loan_ProcessOverdueInstallments
 
-   Higher-level protocol (same pattern as
-   sp_Transaction_ProcessPendingBatch) that sweeps for
-   installments that are seriously overdue and marks them, and
-   their loan, 'Defaulted'.
+   Manual/API scope:
+   - Effective Admin (branch manager / vice manager): current
+     branch only.
+   - Effective HighAdmin: all branches, or one optional BranchID.
 
-   RULE: an installment becomes Defaulted when:
-     - InstallmentStatus is NOT already 'Paid' or 'Defaulted', AND
-     - DueDate is more than 90 days in the past, AND
-     - it does NOT currently have a payment attempt in flight
-       (PaymentTransactionID pointing at a still-'Pending'
-       Transactions row).
+   Scheduled scope:
+   - SQL Server Agent may call the procedure without @UserID;
+     that trusted system call processes all branches.
 
-   The third condition is deliberate: if a customer already
-   initiated a withdrawal to pay an overdue installment, this
-   sweep lets that attempt resolve first rather than yanking the
-   installment into Defaulted out from under an in-progress
-   payment. If that payment later succeeds, the existing
-   TR_Transactions_SyncInstallmentStatus trigger marks it Paid as
-   usual. If it fails, that same trigger reverts the installment
-   to Late/Pending, and it becomes eligible for default again on
-   a future run of this sweep if still 90+ days overdue.
-
-   EFFECT ON THE LOAN: when ANY installment under a loan
-   defaults, the WHOLE loan is marked 'Defaulted'. This has an
-   immediate practical consequence with no further code needed:
-   dbo.sp_Loan_PayInstallment already refuses to act on any loan
-   whose LoanStatus is not 'Active' (see its
-   "IF @LoanStatus <> 'Active'" check), so once a loan is
-   Defaulted here, every other installment on it automatically
-   becomes unpayable through the normal payment path.
-
-   Intended caller: a SQL Server Agent job, run once daily (see
-   AgentJob_ProcessOverdueInstallments.sql). Can also be run
-   manually.
-
-   Must run AFTER TableCreation.sql.
+   Default rule:
+   - Installment is not Paid or Defaulted.
+   - DueDate is more than 90 days in the past.
+   - No payment transaction is currently Pending.
    ========================================================= */
 
 CREATE OR ALTER PROCEDURE dbo.sp_Loan_ProcessOverdueInstallments
+(
+    @UserID   INT = NULL,
+    @BranchID INT = NULL
+)
 AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
 
     BEGIN TRY
-        BEGIN TRANSACTION;
+        DECLARE
+            @EffectiveBranchID INT = NULL,
+            @AccessMode NVARCHAR(30) = N'SystemAllBranches';
 
         ----------------------------------------------------
-        -- Snapshot every installment eligible to default.
+        -- Resolve API caller scope. NULL @UserID is reserved
+        -- for SQL Agent / trusted scheduled execution.
         ----------------------------------------------------
+        IF @UserID IS NOT NULL
+        BEGIN
+            IF dbo.fn_UserHasEffectiveRole(@UserID, N'HighAdmin') = 1
+            BEGIN
+                SET @EffectiveBranchID = @BranchID;
+                SET @AccessMode = CASE WHEN @BranchID IS NULL
+                    THEN N'HighAdminAllBranches'
+                    ELSE N'HighAdminOneBranch'
+                END;
+            END
+            ELSE IF dbo.fn_UserHasEffectiveRole(@UserID, N'Admin') = 1
+            BEGIN
+                SELECT TOP (1)
+                    @EffectiveBranchID = EB.BranchID
+                FROM dbo.Users AS U
+                INNER JOIN dbo.EMPB AS EB
+                    ON EB.EmployeeID = U.EmployeeID
+                WHERE U.UserID = @UserID
+                  AND EB.WorkingStatus = N'Working'
+                  AND EB.EndDate IS NULL
+                ORDER BY EB.StartDate DESC, EB.EMPBID DESC;
+
+                IF @EffectiveBranchID IS NULL
+                BEGIN
+                    RAISERROR('The branch manager does not have an active branch assignment.', 16, 1);
+                    RETURN;
+                END;
+
+                IF @BranchID IS NOT NULL AND @BranchID <> @EffectiveBranchID
+                BEGIN
+                    RAISERROR('A branch manager can process overdue installments only for the current branch.', 16, 1);
+                    RETURN;
+                END;
+
+                SET @AccessMode = N'AdminCurrentBranch';
+            END
+            ELSE
+            BEGIN
+                RAISERROR('Only an effective branch manager/Admin or HighAdmin can process overdue installments manually.', 16, 1);
+                RETURN;
+            END;
+        END;
+
+        BEGIN TRANSACTION;
+
         IF OBJECT_ID('tempdb..#ToDefault') IS NOT NULL DROP TABLE #ToDefault;
 
         SELECT
-            i.InstallmentID,
-            i.LoanID,
-            i.DueDate,
-            i.Amount
+            I.InstallmentID,
+            I.LoanID,
+            L.BranchID,
+            I.DueDate,
+            I.Amount
         INTO #ToDefault
-        FROM dbo.Installment i
-        LEFT JOIN dbo.Transactions tr ON tr.TransactionID = i.PaymentTransactionID
-        WHERE i.InstallmentStatus NOT IN ('Paid', 'Defaulted')
-          AND i.DueDate < DATEADD(DAY, -90, CAST(GETDATE() AS DATE))
-          AND (tr.TransactionID IS NULL OR tr.TransactionStatus <> 'Pending');
+        FROM dbo.Installment AS I
+        INNER JOIN dbo.Loan AS L
+            ON L.LoanID = I.LoanID
+        LEFT JOIN dbo.Transactions AS T
+            ON T.TransactionID = I.PaymentTransactionID
+        WHERE I.InstallmentStatus NOT IN (N'Paid', N'Defaulted')
+          AND I.DueDate < DATEADD(DAY, -90, CAST(GETDATE() AS DATE))
+          AND (T.TransactionID IS NULL OR T.TransactionStatus <> N'Pending')
+          AND (@EffectiveBranchID IS NULL OR L.BranchID = @EffectiveBranchID);
 
         IF NOT EXISTS (SELECT 1 FROM #ToDefault)
         BEGIN
+            INSERT INTO dbo.AuditLog
+            (
+                UserID,
+                ActionType,
+                TableName,
+                RecordID,
+                Details
+            )
+            VALUES
+            (
+                @UserID,
+                N'OverdueInstallmentSweep',
+                N'Installment',
+                NULL,
+                CONCAT(
+                    N'No eligible overdue installments found. AccessMode=', @AccessMode,
+                    N'; BranchID=', ISNULL(CONVERT(NVARCHAR(20), @EffectiveBranchID), N'ALL')
+                )
+            );
+
             COMMIT TRANSACTION;
 
-            -- Empty result set, same shape as the normal path below.
             SELECT
-                CAST(NULL AS INT)          AS InstallmentID,
-                CAST(NULL AS INT)          AS LoanID,
+                CAST(NULL AS INT) AS InstallmentID,
+                CAST(NULL AS INT) AS LoanID,
+                CAST(NULL AS INT) AS BranchID,
                 CAST(NULL AS NVARCHAR(20)) AS Outcome
             WHERE 1 = 0;
 
             RETURN;
         END;
 
-        ----------------------------------------------------
-        -- Default the installments.
-        ----------------------------------------------------
-        UPDATE i
-        SET i.InstallmentStatus = 'Defaulted'
-        FROM dbo.Installment i
-        INNER JOIN #ToDefault d ON i.InstallmentID = d.InstallmentID;
+        UPDATE I
+        SET I.InstallmentStatus = N'Defaulted'
+        FROM dbo.Installment AS I
+        INNER JOIN #ToDefault AS D
+            ON D.InstallmentID = I.InstallmentID;
 
-        ----------------------------------------------------
-        -- Default every loan that has at least one defaulted
-        -- installment from this sweep (only loans still Active --
-        -- an already-Defaulted loan doesn't need rewriting).
-        ----------------------------------------------------
         IF OBJECT_ID('tempdb..#LoansToDefault') IS NOT NULL DROP TABLE #LoansToDefault;
 
-        SELECT DISTINCT d.LoanID
+        SELECT DISTINCT
+            D.LoanID,
+            D.BranchID
         INTO #LoansToDefault
-        FROM #ToDefault d
-        INNER JOIN dbo.Loan l ON l.LoanID = d.LoanID
-        WHERE l.LoanStatus = 'Active';
+        FROM #ToDefault AS D
+        INNER JOIN dbo.Loan AS L
+            ON L.LoanID = D.LoanID
+        WHERE L.LoanStatus = N'Active';
 
-        UPDATE l
-        SET l.LoanStatus = 'Defaulted'
-        FROM dbo.Loan l
-        INNER JOIN #LoansToDefault ld ON l.LoanID = ld.LoanID;
+        UPDATE L
+        SET L.LoanStatus = N'Defaulted'
+        FROM dbo.Loan AS L
+        INNER JOIN #LoansToDefault AS D
+            ON D.LoanID = L.LoanID;
 
-        ----------------------------------------------------
-        -- Audit: one row per defaulted installment, one row per
-        -- defaulted loan.
-        ----------------------------------------------------
-        INSERT INTO dbo.AuditLog (UserID, ActionType, TableName, RecordID, Details)
+        INSERT INTO dbo.AuditLog
+        (
+            UserID,
+            ActionType,
+            TableName,
+            RecordID,
+            Details
+        )
         SELECT
-            NULL,
-            'InstallmentDefaulted',
-            'Installment',
-            d.InstallmentID,
-            CONCAT('Installment for LoanID ', d.LoanID, ' (Amount ', d.Amount,
-                   ') defaulted: due ', CONVERT(VARCHAR(10), d.DueDate, 120),
-                   ', more than 90 days overdue with no successful payment.')
-        FROM #ToDefault d;
+            @UserID,
+            N'InstallmentDefaulted',
+            N'Installment',
+            D.InstallmentID,
+            CONCAT(
+                N'LoanID=', D.LoanID,
+                N'; BranchID=', D.BranchID,
+                N'; Amount=', D.Amount,
+                N'; DueDate=', CONVERT(NVARCHAR(10), D.DueDate, 120),
+                N'; AccessMode=', @AccessMode
+            )
+        FROM #ToDefault AS D;
 
-        INSERT INTO dbo.AuditLog (UserID, ActionType, TableName, RecordID, Details)
+        INSERT INTO dbo.AuditLog
+        (
+            UserID,
+            ActionType,
+            TableName,
+            RecordID,
+            Details
+        )
         SELECT
-            NULL,
-            'LoanDefaulted',
-            'Loan',
-            ld.LoanID,
-            'Loan marked Defaulted due to at least one installment more than 90 days overdue.'
-        FROM #LoansToDefault ld;
+            @UserID,
+            N'LoanDefaulted',
+            N'Loan',
+            D.LoanID,
+            CONCAT(
+                N'Loan marked Defaulted because at least one installment was more than 90 days overdue. ',
+                N'BranchID=', D.BranchID,
+                N'; AccessMode=', @AccessMode
+            )
+        FROM #LoansToDefault AS D;
 
         COMMIT TRANSACTION;
 
-        ----------------------------------------------------
-        -- Report what happened.
-        ----------------------------------------------------
         SELECT
-            d.InstallmentID,
-            d.LoanID,
-            'Defaulted' AS Outcome
-        FROM #ToDefault d
-        ORDER BY d.LoanID, d.InstallmentID;
+            D.InstallmentID,
+            D.LoanID,
+            D.BranchID,
+            N'Defaulted' AS Outcome
+        FROM #ToDefault AS D
+        ORDER BY D.BranchID, D.LoanID, D.InstallmentID;
     END TRY
     BEGIN CATCH
         IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
