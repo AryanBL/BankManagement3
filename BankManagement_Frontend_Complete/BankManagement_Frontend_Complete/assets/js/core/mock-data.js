@@ -2,15 +2,18 @@
   const now = new Date();
   const iso = (days = 0) => new Date(now.getTime() + days * 86400000).toISOString();
   const users = {
-    Customer: { UserID: 604, CustomerID: 497, EmployeeID: null, Username: 'customer_demo', FirstName: 'Noah', LastName: 'Bennett', EffectiveRoles: 'Customer' },
-    Employee: { UserID: 88, CustomerID: 461, EmployeeID: 204, Username: 'merry.accounts', FirstName: 'Meriadoc', LastName: 'Brandybuck', EffectiveRoles: 'Customer,Employee' },
-    Admin: { UserID: 31, CustomerID: 444, EmployeeID: 121, Username: 'frodo.manager', FirstName: 'Frodo', LastName: 'Baggins', EffectiveRoles: 'Customer,Employee,Admin' },
-    HighAdmin: { UserID: 1, CustomerID: 436, EmployeeID: null, Username: 'highadmin', FirstName: 'Gandalf', LastName: 'Stormcrow', EffectiveRoles: 'Customer,Employee,Admin,HighAdmin' }
+    Customer: { UserID: 604, CustomerID: 497, EmployeeID: null, CurrentBranchID: null, CurrentBranchName: null, Username: 'customer_demo', FirstName: 'Noah', LastName: 'Bennett', EffectiveRoles: 'Customer' },
+    Employee: { UserID: 88, CustomerID: 461, EmployeeID: 204, CurrentBranchID: 2, CurrentBranchName: 'North Branch', Username: 'merry.accounts', FirstName: 'Meriadoc', LastName: 'Brandybuck', EffectiveRoles: 'Customer,Employee' },
+    Admin: { UserID: 31, CustomerID: 444, EmployeeID: 121, CurrentBranchID: 1, CurrentBranchName: 'Central Branch', Username: 'frodo.manager', FirstName: 'Frodo', LastName: 'Baggins', EffectiveRoles: 'Customer,Employee,Admin' },
+    HighAdmin: { UserID: 1, CustomerID: 436, EmployeeID: null, CurrentBranchID: null, CurrentBranchName: null, Username: 'highadmin', FirstName: 'Gandalf', LastName: 'Stormcrow', EffectiveRoles: 'Customer,HighAdmin' }
   };
   const accounts = [
-    { AccountID: 10041, AccountNumber: '120026070041', CustomerID: 497, CustomerNationalID: '4000000004', AccountTypeID: 1, AccountTypeName: 'Savings Basic', BranchID: 1, BranchCode: 'BR-001', Balance: 24500000, AccountStatus: 'Active', BranchName: 'Central Branch', OpeningDate: iso(-210) },
-    { AccountID: 10088, AccountNumber: '120026070088', CustomerID: 497, CustomerNationalID: '4000000004', AccountTypeID: 3, AccountTypeName: 'Current Account', BranchID: 2, BranchCode: 'BR-002', Balance: 8750000, AccountStatus: 'Active', BranchName: 'North Branch', OpeningDate: iso(-84) },
-    { AccountID: 10102, AccountNumber: '120026070102', CustomerID: 499, CustomerNationalID: '4000000001', AccountTypeID: 2, AccountTypeName: 'Savings Premium', BranchID: 1, BranchCode: 'BR-001', Balance: 64000000, AccountStatus: 'Frozen', BranchName: 'Central Branch', OpeningDate: iso(-365) }
+    { AccountID: 10041, AccountNumber: '120026070041', CustomerID: 497, CustomerFirstName: 'Noah', CustomerLastName: 'Bennett', CustomerNationalID: '4000000004', AccountTypeID: 1, AccountTypeName: 'Savings Basic', BranchID: 1, BranchCode: 'BR-001', Balance: 24500000, AccountStatus: 'Active', BranchName: 'Central Branch', OpeningDate: iso(-210) },
+    { AccountID: 10088, AccountNumber: '120026070088', CustomerID: 497, CustomerFirstName: 'Noah', CustomerLastName: 'Bennett', CustomerNationalID: '4000000004', AccountTypeID: 3, AccountTypeName: 'Current Account', BranchID: 2, BranchCode: 'BR-002', Balance: 8750000, AccountStatus: 'Active', BranchName: 'North Branch', OpeningDate: iso(-84) },
+    { AccountID: 10102, AccountNumber: '120026070102', CustomerID: 499, CustomerFirstName: 'Olivia', CustomerLastName: 'Harper', CustomerNationalID: '4000000001', AccountTypeID: 2, AccountTypeName: 'Savings Premium', BranchID: 1, BranchCode: 'BR-001', Balance: 64000000, AccountStatus: 'Frozen', BranchName: 'Central Branch', OpeningDate: iso(-365) },
+    { AccountID: 10120, AccountNumber: '120026070120', CustomerID: 461, CustomerFirstName: 'Meriadoc', CustomerLastName: 'Brandybuck', CustomerNationalID: '3200000020', AccountTypeID: 1, AccountTypeName: 'Savings Basic', BranchID: 3, BranchCode: 'BR-003', Balance: 5100000, AccountStatus: 'Active', BranchName: 'West Branch', OpeningDate: iso(-120) },
+    { AccountID: 10121, AccountNumber: '120026070121', CustomerID: 444, CustomerFirstName: 'Frodo', CustomerLastName: 'Baggins', CustomerNationalID: '3100000001', AccountTypeID: 3, AccountTypeName: 'Current Account', BranchID: 2, BranchCode: 'BR-002', Balance: 9900000, AccountStatus: 'Active', BranchName: 'North Branch', OpeningDate: iso(-250) },
+    { AccountID: 10122, AccountNumber: '120026070122', CustomerID: 436, CustomerFirstName: 'Gandalf', CustomerLastName: 'Stormcrow', CustomerNationalID: '3000000001', AccountTypeID: 2, AccountTypeName: 'Savings Premium', BranchID: 1, BranchCode: 'BR-001', Balance: 15000000, AccountStatus: 'Active', BranchName: 'Central Branch', OpeningDate: iso(-480) }
   ];
   const customers = [
     { CustomerID: 478, FirstName: 'Ella', LastName: 'Adams', NationalID: '4000000027', Phone: '0913000027', Email: 'ella.adams@example.com', IsActive: true },
@@ -41,9 +44,12 @@
     { TransactionID: 90072, TransactionType: 'Deposit', SourceAccount: null, DestinationAccount: '120026070102', Amount: 300000, TransactionStatus: 'Pending', ReadyToCompleteAt: iso(0) }
   ];
   const loans = [
-    { LoanID: 7101, CustomerName: 'Noah Bennett', LoanAmount: 120000000, InterestRate: 12, NumberOfInstallments: 24, PaidInstallments: 9, RemainingBalance: 79500000, LoanStatus: 'Active' },
-    { LoanID: 7114, CustomerName: 'Ella Adams', LoanAmount: 85000000, InterestRate: 10, NumberOfInstallments: 18, PaidInstallments: 18, RemainingBalance: 0, LoanStatus: 'Completed' },
-    { LoanID: 7123, CustomerName: 'Olivia Harper', LoanAmount: 200000000, InterestRate: 14, NumberOfInstallments: 36, PaidInstallments: 4, RemainingBalance: 183000000, LoanStatus: 'Overdue' }
+    { LoanID: 7101, CustomerID: 497, CustomerName: 'Noah Bennett', BranchID: 1, BranchName: 'Central Branch', BranchCode: 'BR-001', LoanAmount: 120000000, InterestRate: 12, InstallmentCount: 24, PaidInstallmentCount: 9, RemainingInstallmentAmount: 79500000, LoanStatus: 'Active' },
+    { LoanID: 7114, CustomerID: 478, CustomerName: 'Ella Adams', BranchID: 2, BranchName: 'North Branch', BranchCode: 'BR-002', LoanAmount: 85000000, InterestRate: 10, InstallmentCount: 18, PaidInstallmentCount: 18, RemainingInstallmentAmount: 0, LoanStatus: 'Completed' },
+    { LoanID: 7123, CustomerID: 499, CustomerName: 'Olivia Harper', BranchID: 1, BranchName: 'Central Branch', BranchCode: 'BR-001', LoanAmount: 200000000, InterestRate: 14, InstallmentCount: 36, PaidInstallmentCount: 4, RemainingInstallmentAmount: 183000000, LoanStatus: 'Overdue' },
+    { LoanID: 7130, CustomerID: 461, CustomerName: 'Meriadoc Brandybuck', BranchID: 3, BranchName: 'West Branch', BranchCode: 'BR-003', LoanAmount: 25000000, InterestRate: 8, InstallmentCount: 12, PaidInstallmentCount: 2, RemainingInstallmentAmount: 22500000, LoanStatus: 'Active' },
+    { LoanID: 7131, CustomerID: 444, CustomerName: 'Frodo Baggins', BranchID: 2, BranchName: 'North Branch', BranchCode: 'BR-002', LoanAmount: 40000000, InterestRate: 9, InstallmentCount: 12, PaidInstallmentCount: 5, RemainingInstallmentAmount: 24400000, LoanStatus: 'Active' },
+    { LoanID: 7132, CustomerID: 436, CustomerName: 'Gandalf Stormcrow', BranchID: 1, BranchName: 'Central Branch', BranchCode: 'BR-001', LoanAmount: 60000000, InterestRate: 7, InstallmentCount: 18, PaidInstallmentCount: 6, RemainingInstallmentAmount: 42800000, LoanStatus: 'Active' }
   ];
 
   function role() { return sessionStorage.getItem(window.BankConfig.PREVIEW_ROLE) || 'HighAdmin'; }
@@ -83,27 +89,84 @@
     return customers;
   }
 
+  function scopedAccounts(query) {
+    const previewUser = users[role()];
+    const requestedScope = String(query.get('scope') || '').toLowerCase();
+    if (requestedScope === 'mine') {
+      return accounts.filter((account) => Number(account.CustomerID) === Number(previewUser.CustomerID));
+    }
+    if (role() === 'HighAdmin') return accounts;
+    if (role() === 'Employee' || role() === 'Admin') {
+      return accounts.filter((account) => Number(account.BranchID) === Number(previewUser.CurrentBranchID));
+    }
+    return accounts.filter((account) => Number(account.CustomerID) === Number(previewUser.CustomerID));
+  }
+
+  function scopedLoans(query) {
+    const previewUser = users[role()];
+    const requestedScope = String(query.get('scope') || '').toLowerCase();
+    if (requestedScope === 'mine') {
+      return loans.filter((loan) => Number(loan.CustomerID) === Number(previewUser.CustomerID));
+    }
+    if (role() === 'HighAdmin') return loans;
+    if (role() === 'Employee' || role() === 'Admin') {
+      return loans.filter((loan) => Number(loan.BranchID) === Number(previewUser.CurrentBranchID));
+    }
+    return loans.filter((loan) => Number(loan.CustomerID) === Number(previewUser.CustomerID));
+  }
+
   async function respond(path, options = {}) {
     await new Promise((r) => setTimeout(r, 220));
     const method = (options.method || 'GET').toUpperCase();
-    if (path === '/api/health') return { success: true, message: 'Preview backend is available.', data: { databaseName: 'BankManagement', sqlLogin: 'BankAppLogin', databaseUser: 'BankAppRuntimeUser' } };
-    if (path === '/api/auth/me') return { success: true, data: users[role()] };
-    if (path === '/api/auth/login') return { success: true, data: { ...users.HighAdmin, sessionToken: 'preview-session-token', effectiveRoles: users.HighAdmin.EffectiveRoles } };
-    if (path === '/api/auth/logout') return { success: true, message: 'Logged out.' };
-    if (path.startsWith('/api/customers')) return { success: true, data: method === 'GET' ? customers : { CustomerID: 999, message: 'Preview operation completed.' } };
-    if (/^\/api\/accounts\/\d+\/history/.test(path)) return { success: true, data: history };
-    if (/^\/api\/accounts\/\d+/.test(path)) return { success: true, data: accounts[0] };
-    if (path.startsWith('/api/accounts')) return { success: true, data: method === 'GET' ? accounts : { AccountID: 10199, AccountNumber: '120026070199', message: 'Preview operation completed.' } };
-    if (path.startsWith('/api/transactions')) return { success: true, data: { TransactionID: 90125, ReadyToCompleteAt: iso(0), message: 'Preview transaction accepted.' } };
-    if (/^\/api\/loans\/\d+\/status/.test(path)) return { success: true, data: [[loans[0]], [{ InstallmentID: 8101, InstallmentNumber: 1, DueDate: iso(10), Amount: 5500000, InstallmentStatus: 'Pending' }, { InstallmentID: 8102, InstallmentNumber: 2, DueDate: iso(40), Amount: 5500000, InstallmentStatus: 'Pending' }]] };
-    if (path.startsWith('/api/loans')) return { success: true, data: { LoanID: 7199, message: 'Preview loan operation completed.' } };
-    if (path.startsWith('/api/employees')) return { success: true, data: method === 'GET' ? employees : { EmployeeID: 299, message: 'Preview employee operation completed.' } };
-    if (path.startsWith('/api/employee-transfers')) return { success: true, data: { TransferRequestID: 84, status: 'Pending', message: 'Preview transfer request submitted.' } };
-    if (path.startsWith('/api/branches')) return { success: true, data: /^\/api\/branches\/\d+/.test(path) ? branches[0] : branches };
-    if (path.startsWith('/api/highadmin')) return { success: true, data: { message: 'Preview HighAdmin operation completed.' } };
-    if (path === '/api/reports') return { success: true, data: listReports() };
-    if (path.startsWith('/api/reports/')) {
-      const key = path.split('/')[3].split('?')[0];
+    const requestUrl = new URL(path, 'http://preview.local');
+    const pathname = requestUrl.pathname;
+    const query = requestUrl.searchParams;
+
+    if (pathname === '/api/health') return { success: true, message: 'Preview backend is available.', data: { databaseName: 'BankManagement', sqlLogin: 'BankAppLogin', databaseUser: 'BankAppRuntimeUser' } };
+    if (pathname === '/api/auth/me') return { success: true, data: users[role()] };
+    if (pathname === '/api/auth/login') return { success: true, data: { ...users.HighAdmin, sessionToken: 'preview-session-token', effectiveRoles: users.HighAdmin.EffectiveRoles } };
+    if (pathname === '/api/auth/logout') return { success: true, message: 'Logged out.' };
+
+    if (pathname.startsWith('/api/customers')) return { success: true, data: method === 'GET' ? customers : { CustomerID: 999, message: 'Preview operation completed.' } };
+
+    if (pathname === '/api/accounts/mine') {
+      const mineQuery = new URLSearchParams(query);
+      mineQuery.set('scope', 'mine');
+      return { success: true, data: scopedAccounts(mineQuery), meta: { accessScope: 'mine' } };
+    }
+    if (/^\/api\/accounts\/\d+\/history$/.test(pathname)) return { success: true, data: history };
+    if (/^\/api\/accounts\/\d+$/.test(pathname)) {
+      const accountID = Number(pathname.split('/')[3]);
+      return { success: true, data: accounts.find((account) => Number(account.AccountID) === accountID) || null };
+    }
+    if (pathname === '/api/accounts') {
+      return method === 'GET'
+        ? { success: true, data: scopedAccounts(query), meta: { accessScope: role() === 'HighAdmin' ? 'all' : (role() === 'Customer' ? 'mine' : 'branch'), branchID: users[role()].CurrentBranchID || null } }
+        : { success: true, data: { AccountID: 10199, AccountNumber: '120026070199', message: 'Preview operation completed.' } };
+    }
+    if (pathname.startsWith('/api/accounts/')) return { success: true, data: { message: 'Preview account operation completed.' } };
+
+    if (pathname.startsWith('/api/transactions')) return { success: true, data: { TransactionID: 90125, ReadyToCompleteAt: iso(0), message: 'Preview transaction accepted for an owned account.' } };
+
+    if (/^\/api\/loans\/\d+\/status$/.test(pathname)) {
+      const loanID = Number(pathname.split('/')[3]);
+      const loan = loans.find((row) => Number(row.LoanID) === loanID) || loans[0];
+      return { success: true, data: [[loan], [{ InstallmentID: loan.LoanID * 10 + 1, InstallmentNumber: 1, DueDate: iso(10), Amount: 5500000, InstallmentStatus: 'Pending' }, { InstallmentID: loan.LoanID * 10 + 2, InstallmentNumber: 2, DueDate: iso(40), Amount: 5500000, InstallmentStatus: 'Pending' }]] };
+    }
+    if (pathname === '/api/loans') {
+      return method === 'GET'
+        ? { success: true, data: scopedLoans(query), meta: { accessScope: query.get('scope') === 'mine' || role() === 'Customer' ? 'mine' : (role() === 'HighAdmin' ? 'all' : 'branch'), branchID: role() === 'Employee' || role() === 'Admin' ? users[role()].CurrentBranchID : null } }
+        : { success: true, data: { LoanID: 7199, message: 'Preview loan operation completed.' } };
+    }
+    if (pathname.startsWith('/api/loans/')) return { success: true, data: { message: 'Preview loan operation completed.' } };
+
+    if (pathname.startsWith('/api/employees')) return { success: true, data: method === 'GET' ? employees : { EmployeeID: 299, message: 'Preview employee operation completed.' } };
+    if (pathname.startsWith('/api/employee-transfers')) return { success: true, data: { TransferRequestID: 84, status: 'Pending', message: 'Preview transfer request submitted.' } };
+    if (pathname.startsWith('/api/branches')) return { success: true, data: /^\/api\/branches\/\d+$/.test(pathname) ? branches[0] : branches };
+    if (pathname.startsWith('/api/highadmin')) return { success: true, data: { message: 'Preview HighAdmin operation completed.' } };
+    if (pathname === '/api/reports') return { success: true, data: listReports() };
+    if (pathname.startsWith('/api/reports/')) {
+      const key = pathname.split('/')[3];
       return { success: true, data: reportRows(key), meta: { page: 1, pageSize: 50, view: `vw_${key}` } };
     }
     return { success: true, data: [] };

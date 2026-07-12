@@ -1,21 +1,37 @@
 (function () {
   const F = window.BankFeatures;
   window.BankWorkspace.init({
-    role: 'Admin', roleIcon: 'shield', roleSummary: 'Branch administration, workforce management and scheduled maintenance.', defaultSection: 'overview',
+    role: 'Admin', roleIcon: 'shield', roleSummary: 'Current-branch administration plus separate personal banking access.', defaultSection: 'overview',
     nav: [
-      { id:'overview', label:'Admin overview', shortLabel:'Home', icon:'dashboard', group:'Workspace', title:'Administrative command centre', description:'Track banking operations, staffing, branch activity and pending workload.' },
-      { id:'customers', label:'Customers', shortLabel:'Customers', icon:'users', group:'Banking operations', title:'Customer management', description:'Search, register, update and deactivate customer records.' },
-      { id:'accounts', label:'Accounts', shortLabel:'Accounts', icon:'card', group:'Banking operations', title:'Account administration', description:'Manage account lifecycle, restrictions, types and history.' },
-      { id:'transactions', label:'Transactions', shortLabel:'Transactions', icon:'transfer', group:'Banking operations', title:'Transaction administration', description:'Create and supervise transactions, pending batches and reversals.' },
-      { id:'loans', label:'Loans', shortLabel:'Loans', icon:'loan', group:'Banking operations', title:'Loan administration', description:'Create loans, collect installments and monitor overdue exposure.' },
+      { id:'overview', label:'Admin overview', shortLabel:'Home', icon:'dashboard', group:'Workspace', title:'Administrative command centre', description:'Track branch operations, staffing, account visibility and loan exposure.' },
+      { id:'customers', label:'Customers', shortLabel:'Customers', icon:'users', group:'Branch operations', title:'Customer management', description:'Search, register, update and deactivate customer records.' },
+      { id:'accounts', label:'Branch accounts', shortLabel:'Branch', icon:'card', group:'Branch operations', title:'Current branch accounts', description:'Read account details and histories only for your current branch.' },
+      { id:'loans', label:'Branch loans', shortLabel:'Loans', icon:'loan', group:'Branch operations', title:'Current branch loans', description:'Create and inspect loans and installment schedules for your current branch. Manually process overdue installments for this branch.' },
+      { id:'my-accounts', label:'My accounts', shortLabel:'My accounts', icon:'wallet', group:'Personal banking', title:'My personal accounts', description:'Accounts owned by the CustomerID linked to your manager login.' },
+      { id:'transactions', label:'My transactions', shortLabel:'Transfer', icon:'transfer', group:'Personal banking', title:'My transactions', description:'Create financial transactions only from your own accounts.' },
+      { id:'my-loans', label:'My loans', shortLabel:'My loans', icon:'loan', group:'Personal banking', title:'My personal loans', description:'Review and pay only your own loan installments.' },
       { id:'employees', label:'Employees', icon:'briefcase', group:'People & branches', title:'Employee administration', description:'Hire employees, create logins, change job titles, suspend or terminate.' },
       { id:'transfers', label:'Employee transfers', icon:'transfer', group:'People & branches', title:'Employee transfer workflow', description:'Submit manager requests and record current/destination manager decisions.' },
       { id:'branches', label:'Branches', icon:'branch', group:'People & branches', title:'Branch directory', description:'Review branch records and operational details.' },
-      { id:'reports', label:'Admin reports', icon:'reports', group:'Insights & controls', title:'Administrative reports', description:'Read operational and administrative SQL Server reporting views.' },
-      { id:'maintenance', label:'Maintenance', icon:'settings', group:'Insights & controls', title:'Scheduled maintenance controls', description:'Run pending transaction, overdue installment, dormant account and interest tasks.' },
+      { id:'reports', label:'Admin reports', icon:'reports', group:'Insights & controls', title:'Administrative reports', description:'Read authorized reporting views. Branch-aware reports are scoped to your current branch.' },
+      { id:'maintenance', label:'Maintenance', icon:'settings', group:'Insights & controls', title:'Scheduled maintenance controls', description:'Run pending transaction tasks and manually process overdue installments for your current branch.' },
       { id:'profile', label:'Profile & security', icon:'shield', group:'Account', title:'Profile and security', description:'Review your effective roles and active session.' }
     ],
-    sections: { overview:F.sections.staffOverview, customers:F.sections.customers, accounts:F.sections.staffAccounts, transactions:F.sections.staffTransactions, loans:F.sections.staffLoans, employees:F.sections.employees, transfers:F.sections.transfers, branches:F.sections.branches, reports:F.sections.reports, maintenance:F.sections.maintenance, profile:F.sections.profile },
+    sections: {
+      overview:F.sections.staffOverview,
+      customers:F.sections.customers,
+      accounts:F.sections.staffAccounts,
+      loans:F.sections.staffLoans,
+      'my-accounts':F.sections.staffOwnAccounts,
+      transactions:F.sections.staffTransactions,
+      'my-loans':F.sections.staffOwnLoans,
+      employees:F.sections.employees,
+      transfers:F.sections.transfers,
+      branches:F.sections.branches,
+      reports:F.sections.reports,
+      maintenance:F.sections.maintenance,
+      profile:F.sections.profile
+    },
     actions: F.actions
   });
 })();

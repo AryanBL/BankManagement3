@@ -101,7 +101,16 @@
   }
 
   async function getAccounts(state, includeClosed = true) {
-    return cached(state, `accounts.${includeClosed}`, async () => rows(await API().get('/api/accounts', includeClosed ? { includeClosed: true } : undefined)));
+    return cached(state, `accounts.viewable.${includeClosed}`, async () => rows(await API().get('/api/accounts', includeClosed ? { includeClosed: true } : undefined)));
+  }
+
+  async function getOwnAccounts(state, includeClosed = true) {
+    return cached(state, `accounts.mine.${includeClosed}`, async () => rows(await API().get('/api/accounts/mine', includeClosed ? { includeClosed: true } : undefined)));
+  }
+
+  async function getLoans(state, scope = 'viewable') {
+    const path = scope === 'mine' ? '/api/loans?scope=mine' : '/api/loans';
+    return cached(state, `loans.${scope}`, async () => rows(await API().get(path)));
   }
 
   async function getBranches(state) {
@@ -117,7 +126,7 @@
   }
 
   async function accountOptions(state, includeClosed = false) {
-    const accounts = await getAccounts(state, includeClosed);
+    const accounts = await getOwnAccounts(state, includeClosed);
     return uniqueOptions(accounts, 'AccountID', (account) => {
       const number = account.AccountNumber || `Account ${account.AccountID}`;
       const owner = [account.CustomerFirstName, account.CustomerLastName].filter(Boolean).join(' ')
@@ -204,10 +213,10 @@
     customerOverview: {
       actions: () => `${actionButton('open-account', 'Open new account', 'plus')} ${actionButton('refresh-section', 'Refresh', 'refresh', 'btn-secondary')}`,
       load: async (state) => {
-        const accounts = rows(await API().get('/api/accounts'));
+        const accounts = rows(await API().get('/api/accounts/mine'));
         const history = [];
         for (const account of accounts.slice(0, 4)) {
-          const payload = await safeGet(`/api/accounts/${account.AccountID}/history`);
+          const payload = await safeGet(`/api/accounts/${account.AccountID}/history`, { scope: 'mine' });
           rows(payload).forEach((transaction) => history.push({ ...transaction, AccountNumber: account.AccountNumber }));
         }
         history.sort((a, b) => new Date(b.TransactionDate || b.CreatedAt || 0) - new Date(a.TransactionDate || a.CreatedAt || 0));
@@ -217,7 +226,7 @@
         const totalBalance = accounts.reduce((sum, account) => sum + Number(account.Balance || 0), 0);
         const pending = history.filter((transaction) => /pending/i.test(transaction.TransactionStatus || '')).length;
         const accountCards = accounts.length
-          ? `<div class="content-grid">${accounts.slice(0, 4).map((account) => `<div class="span-6"><div class="account-card card"><div class="account-label">${UI().escapeHtml(account.AccountTypeName || 'Bank account')}</div><div class="account-balance">${UI().formatMoney(account.Balance || 0)}</div><div class="account-number">${UI().escapeHtml(account.AccountNumber || '')}</div><div class="account-meta"><span>${UI().escapeHtml(account.BranchName || account.BranchCode || '')}</span><span>${UI().statusBadge(account.AccountStatus || 'Active')}</span></div><div class="form-actions" style="justify-content:flex-start"><button class="btn btn-sm btn-secondary" data-action="view-account" data-id="${account.AccountID}">${icon('eye', 14)} Details</button><button class="btn btn-sm btn-secondary" data-action="account-history" data-id="${account.AccountID}">${icon('reports', 14)} History</button></div></div></div>`).join('')}</div>`
+          ? `<div class="content-grid">${accounts.slice(0, 4).map((account) => `<div class="span-6"><div class="account-card card"><div class="account-label">${UI().escapeHtml(account.AccountTypeName || 'Bank account')}</div><div class="account-balance">${UI().formatMoney(account.Balance || 0)}</div><div class="account-number">${UI().escapeHtml(account.AccountNumber || '')}</div><div class="account-meta"><span>${UI().escapeHtml(account.BranchName || account.BranchCode || '')}</span><span>${UI().statusBadge(account.AccountStatus || 'Active')}</span></div><div class="form-actions" style="justify-content:flex-start"><button class="btn btn-sm btn-secondary" data-action="view-account" data-id="${account.AccountID}" data-scope="mine">${icon('eye', 14)} Details</button><button class="btn btn-sm btn-secondary" data-action="account-history" data-id="${account.AccountID}" data-scope="mine">${icon('reports', 14)} History</button></div></div></div>`).join('')}</div>`
           : UI().emptyState('No account yet', 'Open your first account to begin using personal banking services.');
         return `<div class="stat-grid">
           ${UI().statCard('Total balance', UI().formatMoney(totalBalance), `${accounts.length} linked account${accounts.length === 1 ? '' : 's'}`, 'wallet')}
@@ -235,7 +244,7 @@
 
     customerAccounts: {
       actions: () => `${actionButton('open-account', 'Open account', 'plus')} ${actionButton('refresh-section', 'Refresh', 'refresh', 'btn-secondary')}`,
-      load: async () => rows(await API().get('/api/accounts')),
+      load: async () => rows(await API().get('/api/accounts/mine')),
       render: (accounts) => card('Account portfolio', UI().renderTable(accounts, {
         hide: ['CustomerID'],
         actions: (account) => `${smallAction('view-account', 'Details', 'eye', `data-id="${account.AccountID}"`)}${smallAction('account-history', 'History', 'reports', `data-id="${account.AccountID}"`)}`
@@ -245,10 +254,10 @@
     customerTransactions: {
       actions: () => `${actionButton('transfer', 'New transfer', 'transfer')} ${actionButton('withdraw', 'Withdraw', 'money', 'btn-secondary')} ${actionButton('refresh-section', 'Refresh', 'refresh', 'btn-secondary')}`,
       load: async () => {
-        const accounts = rows(await API().get('/api/accounts'));
+        const accounts = rows(await API().get('/api/accounts/mine'));
         const history = [];
         for (const account of accounts) {
-          const payload = await safeGet(`/api/accounts/${account.AccountID}/history`);
+          const payload = await safeGet(`/api/accounts/${account.AccountID}/history`, { scope: 'mine' });
           rows(payload).forEach((transaction) => history.push({ ...transaction, AccountNumber: account.AccountNumber }));
         }
         history.sort((a, b) => new Date(b.TransactionDate || b.CreatedAt || 0) - new Date(a.TransactionDate || a.CreatedAt || 0));
@@ -258,9 +267,13 @@
     },
 
     customerLoans: {
-      actions: () => `${actionButton('lookup-loan', 'Check loan status', 'search')} ${actionButton('pay-installment', 'Pay installment', 'money', 'btn-secondary')}`,
-      load: async () => null,
-      render: () => `<div class="content-grid"><div class="span-7">${card('Loan status centre', `<div class="empty-state"><div class="empty-icon">${icon('loan', 26)}</div><strong>Find a loan by ID</strong><div>The backend applies customer ownership rules before returning the loan and its installment schedule.</div><div class="form-actions" style="justify-content:center">${actionButton('lookup-loan', 'Find loan', 'search')}</div></div>`)}</div><div class="span-5">${card('Installment payment', `<div class="alert alert-info">Provide an installment ID and one of your source account IDs. The payment creates a transaction that can remain pending until its ready time.</div><div class="form-actions">${actionButton('pay-installment', 'Pay installment', 'money')}</div>`)}</div></div>`
+      actions: () => `${actionButton('pay-installment', 'Pay installment', 'money')} ${actionButton('refresh-section', 'Refresh', 'refresh', 'btn-secondary')}`,
+      load: async () => ({ loans: rows(await API().get('/api/loans', { scope: 'mine', pageSize: 200 })) }),
+      render: ({ loans }) => `<div class="content-grid"><div class="span-8">${card('My loans', UI().renderTable(loans, {
+        hide: ['CustomerID'],
+        maxColumns: 12,
+        actions: (loan) => smallAction('lookup-loan', 'Status & installments', 'eye', `data-id="${loan.LoanID}" data-scope="mine"`)
+      }))}</div><div class="span-4">${card('Installment payment', `<div class="alert alert-info"><strong>Borrower-only payment:</strong> the backend and SQL Server verify that both the installment and source account belong to your customer profile.</div><div class="form-actions">${actionButton('pay-installment', 'Pay installment', 'money')}</div>`)}</div></div>`
     },
 
     profile: {
@@ -288,7 +301,7 @@
           safeGet('/api/branches'),
           safeGet('/api/employees'),
           safeGet('/api/reports/pending-transactions', { page: 1, pageSize: 8 }),
-          safeGet('/api/reports/loan-operational-summary', { page: 1, pageSize: 8 })
+          safeGet('/api/loans', { page: 1, pageSize: 8 })
         ]);
         return {
           role: state.config.role,
@@ -308,7 +321,7 @@
       </div>
       <div class="dashboard-grid">
         ${card('Pending transaction queue', UI().renderTable(data.pending.slice(0, 8), { hide: ['Description'], maxColumns: 8 }), `<button class="btn btn-sm btn-secondary" data-action="view-report" data-report="pending-transactions">Open report ${icon('arrow', 14)}</button>`)}
-        ${card('Operations shortcuts', `<div class="quick-actions"><button class="quick-action" data-action="create-customer">${icon('userPlus', 21)}<strong>New customer</strong><span>Register a customer profile</span></button><button class="quick-action" data-action="deposit">${icon('money', 21)}<strong>Deposit</strong><span>Create a deposit transaction</span></button><button class="quick-action" data-action="create-loan">${icon('loan', 21)}<strong>New loan</strong><span>Create an installment schedule</span></button><button class="quick-action" data-section-target="reports">${icon('reports', 21)}<strong>Reports</strong><span>Open protected SQL views</span></button></div>`)}
+        ${card('Operations shortcuts', `<div class="quick-actions"><button class="quick-action" data-action="create-customer">${icon('userPlus', 21)}<strong>New customer</strong><span>Register a customer profile</span></button><button class="quick-action" data-action="deposit">${icon('money', 21)}<strong>Personal deposit</strong><span>Deposit into one of your own accounts</span></button><button class="quick-action" data-action="create-loan">${icon('loan', 21)}<strong>New loan</strong><span>Create an installment schedule</span></button><button class="quick-action" data-section-target="reports">${icon('reports', 21)}<strong>Reports</strong><span>Open protected SQL views</span></button></div>`)}
       </div>
       <div class="section-spacer">${card('Branch network', UI().renderTable(data.branches, { hide: ['Address'], maxColumns: 8 }))}</div>`
     },
@@ -325,36 +338,66 @@
       }))}`
     },
 
+    staffOwnAccounts: {
+      actions: () => `${actionButton('open-account', 'Open personal account', 'plus')} ${actionButton('refresh-section', 'Refresh', 'refresh', 'btn-secondary')}`,
+      load: async () => rows(await API().get('/api/accounts/mine', { includeClosed: true })),
+      render: (accounts) => `<div class="content-grid"><div class="span-8">${card('My personal accounts', UI().renderTable(accounts, {
+        hide: ['CustomerID'],
+        maxColumns: 11,
+        actions: (account) => `${smallAction('view-account', 'Details', 'eye', `data-id="${account.AccountID}" data-scope="mine"`)}${smallAction('account-history', 'History', 'reports', `data-id="${account.AccountID}" data-scope="mine"`)}`
+      }))}</div><div class="span-4">${card('Ownership rule', '<div class="alert alert-info"><strong>Personal portfolio:</strong> these accounts belong to the CustomerID linked to your login. Transactions are available only from this portfolio.</div>')}</div></div>`
+    },
+
     staffAccounts: {
       actions: (state) => filterTools('account-filters', 'clear-account-filters', Boolean(Object.keys(state.filters.accounts || {}).length)),
       load: async (state) => {
         const filters = { includeClosed: true, ...cleanObject(state.filters.accounts || {}) };
-        return { filters, accounts: rows(await API().get('/api/accounts', filters)) };
+        const response = await API().get('/api/accounts', filters);
+        return { filters, accounts: rows(response), meta: response.meta || {} };
       },
-      render: ({ filters, accounts }, state) => `${UI().filterSummary(filters)}${card('Account operations', UI().renderTable(accounts, {
+      render: ({ filters, accounts, meta }) => `${UI().filterSummary(filters)}${card(meta?.accessScope === 'all' ? 'All bank accounts' : 'Current branch accounts', `<div class="alert alert-info"><strong>Read-only operational view.</strong> Employees and branch managers see only their current branch. HighAdmin sees all accounts. Financial transactions must be initiated from the separate personal-account section.</div>${UI().renderTable(accounts, {
         hide: ['OpeningDate', 'CustomerID'],
         maxColumns: 11,
-        actions: (account) => `${smallAction('view-account', 'View', 'eye', `data-id="${account.AccountID}"`)}${smallAction('account-history', 'History', 'reports', `data-id="${account.AccountID}"`)}${smallAction('account-more', 'Manage', 'settings', `data-row="${encodeRow(account)}" data-role="${state.config.role}"`)}`
-      }))}`
+        actions: (account) => `${smallAction('view-account', 'View', 'eye', `data-id="${account.AccountID}" data-scope="viewable"`)}${smallAction('account-history', 'History', 'reports', `data-id="${account.AccountID}" data-scope="viewable"`)}`
+      })}`)}`
     },
 
     staffTransactions: {
-      actions: (state) => `${actionButton('deposit', 'Deposit', 'plus')} ${actionButton('withdraw', 'Withdraw', 'money', 'btn-secondary')} ${actionButton('transfer', 'Transfer', 'transfer', 'btn-secondary')} ${roleAtLeast(state, 'Admin') ? actionButton('process-pending', 'Process ready batch', 'refresh', 'btn-secondary') : ''}`,
-      load: async () => ({ pending: rows(await safeGet('/api/reports/pending-transactions', { page: 1, pageSize: 100 })) }),
-      render: ({ pending }, state) => `<div class="content-grid"><div class="span-8">${card('Pending transactions', UI().renderTable(pending, {
-        maxColumns: 10,
-        actions: (transaction) => `${smallAction('finalize-transaction', 'Finalize', 'check', `data-id="${transaction.TransactionID}"`)}${smallAction('reverse-transaction', 'Reverse', 'refresh', `data-id="${transaction.TransactionID}"`, 'btn-danger')}`
-      }))}</div><div class="span-4">${card('Transaction controls', `<div class="alert alert-info">The database sets <strong>ReadyToCompleteAt</strong> based on transaction amount. Finalization changes balances only after the transaction is eligible.</div>${roleAtLeast(state, 'Admin') ? `<div class="form-actions">${actionButton('process-pending', 'Process ready batch', 'refresh')}</div>` : '<div class="alert alert-warning section-spacer">Only Admin and HighAdmin can run the batch processor.</div>'}`)}</div></div>`
+      actions: () => `${actionButton('deposit', 'Deposit to my account', 'plus')} ${actionButton('withdraw', 'Withdraw from my account', 'money', 'btn-secondary')} ${actionButton('transfer', 'Transfer from my account', 'transfer', 'btn-secondary')} ${actionButton('refresh-section', 'Refresh', 'refresh', 'btn-secondary')}`,
+      load: async () => {
+        const accounts = rows(await API().get('/api/accounts/mine'));
+        const history = [];
+        for (const account of accounts) {
+          const payload = await safeGet(`/api/accounts/${account.AccountID}/history`, { scope: 'mine' });
+          rows(payload).forEach((transaction) => history.push({ ...transaction, AccountNumber: account.AccountNumber }));
+        }
+        history.sort((a, b) => new Date(b.TransactionDate || 0) - new Date(a.TransactionDate || 0));
+        return { accounts, history };
+      },
+      render: ({ accounts, history }) => `<div class="content-grid"><div class="span-8">${card('My transaction history', UI().renderTable(history, { hide: ['Description'], maxColumns: 11 }))}</div><div class="span-4">${card('Owner-only controls', `<div class="alert alert-info">Your Employee, Admin, or HighAdmin role does not authorize transactions on another customer account. Deposit, withdrawal, transfer, finalization, reversal, and installment-payment ownership are enforced by the API and SQL procedures.</div>${accounts.map((account) => `<div class="account-mini"><strong>${UI().escapeHtml(account.AccountNumber || '')}</strong><span>${UI().formatMoney(account.Balance || 0)}</span>${UI().statusBadge(account.AccountStatus || 'Active')}</div>`).join('') || UI().emptyState('No personal accounts', 'Open a personal account before creating a transaction.')}`)}</div></div>`
+    },
+
+    staffOwnLoans: {
+      actions: () => `${actionButton('pay-installment', 'Pay my installment', 'money')} ${actionButton('refresh-section', 'Refresh', 'refresh', 'btn-secondary')}`,
+      load: async () => ({ loans: rows(await API().get('/api/loans', { scope: 'mine', pageSize: 200 })) }),
+      render: ({ loans }) => `<div class="content-grid"><div class="span-8">${card('My personal loans', UI().renderTable(loans, {
+        hide: ['CustomerID'],
+        maxColumns: 12,
+        actions: (loan) => smallAction('lookup-loan', 'Status & installments', 'eye', `data-id="${loan.LoanID}" data-scope="mine"`)
+      }))}</div><div class="span-4">${card('Borrower-only payment', `<div class="alert alert-info">Only the borrower may pay an installment, even when the same login also has Employee, Admin, or HighAdmin privileges.</div><div class="form-actions">${actionButton('pay-installment', 'Pay my installment', 'money')}</div>`)}</div></div>`
     },
 
     staffLoans: {
-      actions: (state) => `${actionButton('create-loan', 'Create loan', 'plus')} ${actionButton('lookup-loan', 'Find loan', 'search', 'btn-secondary')} ${actionButton('pay-installment', 'Pay installment', 'money', 'btn-secondary')} ${roleAtLeast(state, 'Admin') ? actionButton('process-overdue', 'Process overdue', 'clock', 'btn-secondary') : ''}`,
-      load: async () => ({ loans: rows(await safeGet('/api/reports/loan-operational-summary', { page: 1, pageSize: 100 })) }),
-      render: ({ loans }) => card('Loan operations', UI().renderTable(loans, {
+      actions: (state) => `${actionButton('create-loan', 'Create loan', 'plus')} ${actionButton('refresh-section', 'Refresh', 'refresh', 'btn-secondary')} ${roleAtLeast(state, 'Admin') ? actionButton('process-overdue', state.config.role === 'HighAdmin' ? 'Process overdue' : 'Process branch overdue', 'clock', 'btn-secondary') : ''}`,
+      load: async () => {
+        const response = await API().get('/api/loans', { pageSize: 200 });
+        return { loans: rows(response), meta: response.meta || {} };
+      },
+      render: ({ loans, meta }) => card(meta?.accessScope === 'all' ? 'All bank loans' : 'Current branch loans', `<div class="alert alert-info"><strong>Read-only loan servicing view.</strong> Employees and branch managers can inspect only loans and installment schedules from their current branch. HighAdmin can inspect every branch. Payments are available only in My loans.</div>${UI().renderTable(loans, {
         hide: ['StartDate'],
         maxColumns: 12,
-        actions: (loan) => smallAction('lookup-loan', 'Status', 'eye', `data-id="${loan.LoanID}"`)
-      }))
+        actions: (loan) => smallAction('lookup-loan', 'Status & installments', 'eye', `data-id="${loan.LoanID}" data-scope="viewable"`)
+      })}`)
     },
 
     branches: {
@@ -398,7 +441,7 @@
     maintenance: {
       actions: () => actionButton('refresh-section', 'Refresh', 'refresh', 'btn-secondary'),
       load: async () => null,
-      render: () => `<div class="content-grid"><div class="span-4">${card('Transaction maintenance', `<p class="muted">Finalize all pending transactions whose ready time has been reached.</p>${actionButton('process-pending', 'Process pending batch', 'refresh')}`)}</div><div class="span-4">${card('Loan maintenance', `<p class="muted">Update overdue installments and associated loan states.</p>${actionButton('process-overdue', 'Process overdue installments', 'clock')}`)}</div><div class="span-4">${card('Account maintenance', `<p class="muted">Apply monthly interest or mark long-inactive accounts dormant.</p><div class="maintenance-buttons">${actionButton('apply-interest', 'Apply monthly interest', 'money')}${actionButton('dormant-sweep', 'Dormant sweep', 'clock', 'btn-secondary')}</div>`)}</div></div><div class="section-spacer">${card('Safety notice', '<div class="alert alert-warning"><strong>These are broad database operations.</strong><br>Run them only when the corresponding scheduled process is intended. Results are recorded by the backend and can affect many records.</div>')}</div>`
+      render: (_, state) => `<div class="content-grid"><div class="span-4">${card('Transaction maintenance', `<p class="muted">Finalize pending transactions whose ready time has been reached. This does not authorize staff to initiate customer transactions.</p>${actionButton('process-pending', 'Process pending batch', 'refresh')}`)}</div><div class="span-4">${card('Loan maintenance', `<p class="muted">${state.config.role === 'HighAdmin' ? 'Process all branches or select one branch.' : 'Manually process only overdue installments from your current branch.'}</p>${actionButton('process-overdue', state.config.role === 'HighAdmin' ? 'Process overdue installments' : 'Process my branch overdue', 'clock')}`)}</div><div class="span-4">${card('Account maintenance', `<p class="muted">Apply monthly interest or mark long-inactive accounts dormant.</p><div class="maintenance-buttons">${actionButton('apply-interest', 'Apply monthly interest', 'money')}${actionButton('dormant-sweep', 'Dormant sweep', 'clock', 'btn-secondary')}</div>`)}</div></div><div class="section-spacer">${card('Safety notice', `<div class="alert alert-warning"><strong>These are maintenance operations.</strong><br>${state.config.role === 'HighAdmin' ? 'HighAdmin may operate across all branches.' : 'The overdue-loan action is restricted by the backend and stored procedure to your active branch.'}</div>`)}</div>`
     },
 
     executiveOverview: {
@@ -456,7 +499,7 @@
     let branches = [];
     let accountTypes = [];
     try {
-      const ownAccounts = await getAccounts(state, true);
+      const ownAccounts = await getOwnAccounts(state, true);
       branches = uniqueOptions(ownAccounts, 'BranchID', (account) => `${account.BranchID} · ${account.BranchCode || account.BranchName || 'Branch'}`);
       accountTypes = uniqueOptions(ownAccounts, 'AccountTypeID', (account) => `${account.AccountTypeID} · ${account.AccountTypeName || 'Account type'}`);
     } catch (_) {
@@ -481,20 +524,20 @@
     });
   }
 
-  async function showAccountHistory(accountID, fromDate, toDate) {
-    const params = cleanObject({ fromDate, toDate });
+  async function showAccountHistory(accountID, fromDate, toDate, scope = 'viewable') {
+    const params = cleanObject({ fromDate, toDate, scope: scope === 'mine' ? 'mine' : undefined });
     const response = await API().get(`/api/accounts/${accountID}/history`, params);
     UI().openModal({
       title: `Account ${accountID} history`,
       size: 'lg',
-      content: `${UI().renderTable(rows(response), { maxColumns: 12 })}<div class="form-actions"><button class="btn btn-secondary" data-action="account-history-filter" data-id="${accountID}">${icon('filter', 16)} Filter dates</button><button class="btn btn-secondary" data-action="export-account-history" data-id="${accountID}">${icon('download', 16)} Export CSV</button></div>`
+      content: `${UI().renderTable(rows(response), { maxColumns: 12 })}<div class="form-actions"><button class="btn btn-secondary" data-action="account-history-filter" data-id="${accountID}" data-scope="${scope}">${icon('filter', 16)} Filter dates</button><button class="btn btn-secondary" data-action="export-account-history" data-id="${accountID}">${icon('download', 16)} Export CSV</button></div>`
     });
     const state = window.BankWorkspace.getState();
-    state.activeAccountHistory = { accountID, rows: rows(response), fromDate, toDate };
+    state.activeAccountHistory = { accountID, rows: rows(response), fromDate, toDate, scope };
   }
 
-  async function lookupLoan(loanID) {
-    const response = await API().get(`/api/loans/${loanID}/status`);
+  async function lookupLoan(loanID, scope = 'viewable') {
+    const response = await API().get(`/api/loans/${loanID}/status`, scope === 'mine' ? { scope: 'mine' } : undefined);
     showPayload(`Loan ${loanID} status`, response, ['Loan summary', 'Installment schedule']);
   }
 
@@ -516,11 +559,12 @@
     'open-account': async ({ state, refresh }) => openAccountForm(state, refresh),
 
     'view-account': async ({ element }) => {
-      const response = await API().get(`/api/accounts/${element.dataset.id}`);
+      const scope = element.dataset.scope === 'mine' ? 'mine' : 'viewable';
+      const response = await API().get(`/api/accounts/${element.dataset.id}`, scope === 'mine' ? { scope: 'mine' } : undefined);
       UI().openModal({ title: `Account ${element.dataset.id}`, size: 'lg', content: UI().keyValue(response.data) });
     },
 
-    'account-history': async ({ element }) => showAccountHistory(element.dataset.id),
+    'account-history': async ({ element }) => showAccountHistory(element.dataset.id, undefined, undefined, element.dataset.scope === 'mine' ? 'mine' : 'viewable'),
 
     'account-history-filter': async ({ element }) => {
       const current = window.BankWorkspace.getState().activeAccountHistory || {};
@@ -531,7 +575,7 @@
           { name: 'fromDate', label: 'From date', type: 'date', value: current.fromDate || '' },
           { name: 'toDate', label: 'To date', type: 'date', value: current.toDate || '' }
         ],
-        onSubmit: async (data) => showAccountHistory(element.dataset.id, data.fromDate, data.toDate)
+        onSubmit: async (data) => showAccountHistory(element.dataset.id, data.fromDate, data.toDate, element.dataset.scope || current.scope || 'viewable')
       });
     },
 
@@ -708,10 +752,10 @@
       UI().openForm({
         title: 'Create deposit',
         submitText: 'Create deposit',
+        intro: '<div class="alert alert-info">Only accounts in your personal portfolio are available. Staff roles do not permit deposits into another customer account.</div>',
         fields: [
-          selectOrNumber('accountID', 'Destination account', accounts, true),
+          selectOrNumber('accountID', 'My destination account', accounts, true),
           moneyField('amount', 'Amount'),
-          numberField('employeeID', 'Employee ID override', false, '', 'Leave empty to use the logged-in employee identity.'),
           { name: 'description', label: 'Description', type: 'textarea', full: true }
         ],
         onSubmit: async (data) => {
@@ -726,10 +770,10 @@
       UI().openForm({
         title: 'Create withdrawal',
         submitText: 'Create withdrawal',
+        intro: '<div class="alert alert-info">Only accounts owned by the CustomerID linked to your login are available.</div>',
         fields: [
-          selectOrNumber('accountID', 'Source account', accounts, true),
+          selectOrNumber('accountID', 'My source account', accounts, true),
           moneyField('amount', 'Amount'),
-          roleAtLeast(state, 'Employee') ? numberField('employeeID', 'Employee ID override', false, '', 'Leave empty to use the logged-in employee identity.') : { name: 'employeeID', type: 'hidden', value: '' },
           { name: 'description', label: 'Description', type: 'textarea', full: true }
         ],
         onSubmit: async (data) => {
@@ -744,13 +788,11 @@
       UI().openForm({
         title: 'Create transfer',
         submitText: 'Create transfer',
+        intro: '<div class="alert alert-info">The source must be one of your personal accounts. Enter the receiving AccountID manually; the receiving account may belong to another customer.</div>',
         fields: [
-          selectOrNumber('fromAccountID', 'From account', accounts, true),
-          state.config.role === 'Customer'
-            ? numberField('toAccountID', 'Destination Account ID', true, '', 'Enter the receiving account ID. Customer account search intentionally lists only your own accounts.')
-            : selectOrNumber('toAccountID', 'To account', accounts, true),
+          selectOrNumber('fromAccountID', 'My source account', accounts, true),
+          numberField('toAccountID', 'Destination Account ID', true, '', 'Enter the receiving account ID.'),
           moneyField('amount', 'Amount'),
-          roleAtLeast(state, 'Employee') ? numberField('employeeID', 'Employee ID override', false) : { name: 'employeeID', type: 'hidden', value: '' },
           { name: 'description', label: 'Description', type: 'textarea', full: true }
         ],
         onSubmit: async (data) => {
@@ -772,7 +814,6 @@
       submitText: 'Reverse transaction',
       intro: '<div class="alert alert-danger">Reversal is a financial correction. Use a clear reason and only reverse eligible test or operational transactions.</div>',
       fields: [
-        numberField('employeeID', 'Employee ID override', false),
         { name: 'reasonDescription', label: 'Reason', type: 'textarea', required: true, full: true }
       ],
       onSubmit: async (data) => {
@@ -793,24 +834,32 @@
     }),
 
     'lookup-loan': async ({ element }) => {
-      if (element.dataset.id) return lookupLoan(element.dataset.id);
+      const scope = element.dataset.scope === 'mine' ? 'mine' : 'viewable';
+      if (element.dataset.id) return lookupLoan(element.dataset.id, scope);
       UI().openForm({
         title: 'Find loan',
         submitText: 'View status',
         fields: [numberField('loanID', 'Loan ID')],
-        onSubmit: async (data) => lookupLoan(data.loanID)
+        onSubmit: async (data) => lookupLoan(data.loanID, scope)
       });
     },
 
     'create-loan': async ({ state, refresh }) => {
-      const [customers, branches] = await Promise.all([customerOptions(state), branchOptions(state)]);
+      const customers = await customerOptions(state);
+      const isHighAdmin = state.config.role === 'HighAdmin';
+      const branches = isHighAdmin ? await branchOptions(state) : [];
       UI().openForm({
         title: 'Create loan',
         submitText: 'Create loan',
         size: 'lg',
+        intro: isHighAdmin
+          ? '<div class="alert alert-info">HighAdmin may create a loan for any branch.</div>'
+          : `<div class="alert alert-info">This loan will be created for your current branch: <strong>${UI().escapeHtml(state.user?.CurrentBranchName || state.user?.CurrentBranchID || 'Unassigned')}</strong>.</div>`,
         fields: [
           selectOrNumber('customerID', 'Customer', customers, true),
-          selectOrNumber('branchID', 'Branch', branches, true),
+          isHighAdmin
+            ? selectOrNumber('branchID', 'Branch', branches, true)
+            : { name: 'branchID', type: 'hidden', value: state.user?.CurrentBranchID || '' },
           moneyField('loanAmount', 'Loan amount'),
           { name: 'interestRate', label: 'Interest rate (%)', type: 'number', min: 0, step: '0.01', required: true },
           numberField('numberOfInstallments', 'Number of installments'),
@@ -818,7 +867,7 @@
         ],
         onSubmit: async (data) => {
           const response = await API().post('/api/loans', data);
-          await success(state, refresh, `Loan ${response.data?.LoanID || ''} was created.`, 'Loan created', { loanID: response.data?.LoanID, customerID: data.customerID, amount: data.loanAmount });
+          await success(state, refresh, `Loan ${response.data?.LoanID || ''} was created.`, 'Loan created', { loanID: response.data?.LoanID, customerID: data.customerID, amount: data.loanAmount, branchID: data.branchID });
         }
       });
     },
@@ -828,10 +877,10 @@
       UI().openForm({
         title: 'Pay loan installment',
         submitText: 'Create payment',
+        intro: '<div class="alert alert-info">Only the borrower may pay an installment, and the source account must belong to the same borrower.</div>',
         fields: [
           numberField('installmentID', 'Installment ID'),
-          selectOrNumber('fromAccountID', 'Source account', accounts, true),
-          roleAtLeast(state, 'Employee') ? numberField('employeeID', 'Employee ID override', false) : { name: 'employeeID', type: 'hidden', value: '' }
+          selectOrNumber('fromAccountID', 'My source account', accounts, true)
         ],
         onSubmit: async (data) => {
           const installmentID = data.installmentID;
@@ -842,16 +891,33 @@
       });
     },
 
-    'process-overdue': async ({ state, refresh }) => UI().confirmAction({
-      title: 'Process overdue installments',
-      message: 'Run the overdue-installment process now? This can update installment penalties and loan states across the database.',
-      confirmText: 'Process overdue',
-      onConfirm: async () => {
-        const response = await API().post('/api/loans/maintenance/process-overdue-installments');
-        showPayload('Overdue processing result', response);
-        await success(state, refresh, 'Overdue installments were processed.', 'Overdue installments processed');
+    'process-overdue': async ({ state, refresh }) => {
+      if (state.config.role === 'HighAdmin') {
+        const branches = await branchOptions(state);
+        return UI().openForm({
+          title: 'Process overdue installments',
+          submitText: 'Process overdue',
+          intro: '<div class="alert alert-warning">Leave Branch empty to process all branches, or select one branch for a targeted manual run.</div>',
+          fields: [selectOrNumber('branchID', 'Branch (optional)', branches, false)],
+          onSubmit: async (data) => {
+            const response = await API().post('/api/loans/maintenance/process-overdue-installments', cleanObject(data));
+            showPayload('Overdue processing result', response);
+            await success(state, refresh, 'Overdue installments were processed.', 'Overdue installments processed', { branchID: data.branchID || 'ALL' });
+          }
+        });
       }
-    }),
+
+      return UI().confirmAction({
+        title: 'Process current branch overdue installments',
+        message: `Run overdue processing for ${state.user?.CurrentBranchName || `Branch ${state.user?.CurrentBranchID || ''}`}? The backend and stored procedure reject access to other branches.`,
+        confirmText: 'Process my branch',
+        onConfirm: async () => {
+          const response = await API().post('/api/loans/maintenance/process-overdue-installments');
+          showPayload('Branch overdue processing result', response);
+          await success(state, refresh, 'Current-branch overdue installments were processed.', 'Branch overdue installments processed', { branchID: state.user?.CurrentBranchID });
+        }
+      });
+    },
 
     'view-branch': async ({ element }) => {
       const response = await API().get(`/api/branches/${element.dataset.id}`);

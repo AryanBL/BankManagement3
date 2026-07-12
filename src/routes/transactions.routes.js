@@ -3,11 +3,14 @@ const { TYPES, executeProcedure } = require('../utils/procedure');
 const { asyncHandler, ok, created } = require('../utils/http');
 const { authenticate, authorize } = require('../middleware/auth');
 const { requireBodyFields } = require('../middleware/validation');
+const { assertAccountOwner } = require('../utils/access-scope');
 
 const router = express.Router();
 router.use(authenticate());
 
-router.post('/deposit', authorize('Employee', 'Admin', 'HighAdmin'), requireBodyFields(['accountID', 'amount']), asyncHandler(async (req, res) => {
+/* Only the owner of the destination account may initiate a deposit. */
+router.post('/deposit', requireBodyFields(['accountID', 'amount']), asyncHandler(async (req, res) => {
+  await assertAccountOwner(req, req.body.accountID);
   const result = await executeProcedure('dbo.sp_Transaction_Deposit', {
     inputs: {
       AccountID: [TYPES.int, 'accountID'],
@@ -20,12 +23,18 @@ router.post('/deposit', authorize('Employee', 'Admin', 'HighAdmin'), requireBody
       TransactionID: TYPES.int,
       ReadyToCompleteAt: TYPES.datetime
     },
-    values: { ...req.body, EmployeeID: req.body.employeeID || req.user.EmployeeID, UserID: req.user.UserID }
+    values: {
+      ...req.body,
+      EmployeeID: req.user.EmployeeID || null,
+      UserID: req.user.UserID
+    }
   });
   created(res, { data: result.recordset[0] || result.output, output: result.output });
 }));
 
+/* Only the owner of the source account may initiate a withdrawal. */
 router.post('/withdraw', requireBodyFields(['accountID', 'amount']), asyncHandler(async (req, res) => {
+  await assertAccountOwner(req, req.body.accountID);
   const result = await executeProcedure('dbo.sp_Transaction_Withdrawal', {
     inputs: {
       AccountID: [TYPES.int, 'accountID'],
@@ -38,12 +47,18 @@ router.post('/withdraw', requireBodyFields(['accountID', 'amount']), asyncHandle
       TransactionID: TYPES.int,
       ReadyToCompleteAt: TYPES.datetime
     },
-    values: { ...req.body, EmployeeID: req.body.employeeID || req.user.EmployeeID, UserID: req.user.UserID }
+    values: {
+      ...req.body,
+      EmployeeID: req.user.EmployeeID || null,
+      UserID: req.user.UserID
+    }
   });
   created(res, { data: result.recordset[0] || result.output, output: result.output });
 }));
 
+/* Only the owner of the source account may initiate a transfer. */
 router.post('/transfer', requireBodyFields(['fromAccountID', 'toAccountID', 'amount']), asyncHandler(async (req, res) => {
+  await assertAccountOwner(req, req.body.fromAccountID);
   const result = await executeProcedure('dbo.sp_Transaction_Transfer', {
     inputs: {
       FromAccountID: [TYPES.int, 'fromAccountID'],
@@ -57,26 +72,36 @@ router.post('/transfer', requireBodyFields(['fromAccountID', 'toAccountID', 'amo
       TransactionID: TYPES.int,
       ReadyToCompleteAt: TYPES.datetime
     },
-    values: { ...req.body, EmployeeID: req.body.employeeID || req.user.EmployeeID, UserID: req.user.UserID }
+    values: {
+      ...req.body,
+      EmployeeID: req.user.EmployeeID || null,
+      UserID: req.user.UserID
+    }
   });
   created(res, { data: result.recordset[0] || result.output, output: result.output });
 }));
 
-router.post('/:transactionID/finalize', authorize('Employee', 'Admin', 'HighAdmin'), asyncHandler(async (req, res) => {
+/* Owners may manually ask the finalizer to advance one of their transactions. */
+router.post('/:transactionID/finalize', asyncHandler(async (req, res) => {
   const result = await executeProcedure('dbo.sp_Transaction_Finalize', {
     inputs: {
-      TransactionID: TYPES.int
+      TransactionID: TYPES.int,
+      UserID: TYPES.int
     },
     outputs: {
       ResultStatus: TYPES.string20,
       ResultMessage: TYPES.string4000
     },
-    values: { TransactionID: req.params.transactionID }
+    values: {
+      TransactionID: req.params.transactionID,
+      UserID: req.user.UserID
+    }
   });
   ok(res, { data: result.recordset[0] || result.output, output: result.output });
 }));
 
-router.post('/:transactionID/reverse', authorize('Employee', 'Admin', 'HighAdmin'), asyncHandler(async (req, res) => {
+/* Owners may cancel/reverse only transactions initiated from their own portfolio. */
+router.post('/:transactionID/reverse', asyncHandler(async (req, res) => {
   const result = await executeProcedure('dbo.sp_Transaction_Reverse', {
     inputs: {
       TransactionID: TYPES.int,
@@ -84,11 +109,17 @@ router.post('/:transactionID/reverse', authorize('Employee', 'Admin', 'HighAdmin
       ReasonDescription: [TYPES.string200, 'reasonDescription'],
       UserID: TYPES.int
     },
-    values: { ...req.body, TransactionID: req.params.transactionID, EmployeeID: req.body.employeeID || req.user.EmployeeID, UserID: req.user.UserID }
+    values: {
+      ...req.body,
+      TransactionID: req.params.transactionID,
+      EmployeeID: req.user.EmployeeID || null,
+      UserID: req.user.UserID
+    }
   });
   ok(res, { data: result.recordset, output: result.output });
 }));
 
+/* Batch finalization remains a maintenance operation, not a customer transaction initiation. */
 router.post('/maintenance/process-pending-batch', authorize('Admin', 'HighAdmin'), asyncHandler(async (req, res) => {
   const result = await executeProcedure('dbo.sp_Transaction_ProcessPendingBatch');
   ok(res, { data: result.recordset, output: result.output });

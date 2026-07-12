@@ -3,35 +3,44 @@ const { TYPES, executeProcedure } = require('../utils/procedure');
 const { asyncHandler, ok, created } = require('../utils/http');
 const { authenticate, authorize } = require('../middleware/auth');
 const { requireBodyFields } = require('../middleware/validation');
+const {
+  searchAccounts,
+  assertAccountVisible
+} = require('../utils/access-scope');
 
 const router = express.Router();
 router.use(authenticate());
 
+/* Personal portfolio for every authenticated user, including staff and HighAdmin. */
+router.get('/mine', asyncHandler(async (req, res) => {
+  const result = await searchAccounts(req, {
+    ...req.query,
+    includeClosed: req.query.includeClosed ?? true
+  }, 'mine');
+  ok(res, { data: result.rows, meta: { accessScope: result.scope.mode } });
+}));
+
+/*
+ * Viewable portfolio:
+ * - Customer: own accounts
+ * - Employee/Admin: current branch accounts
+ * - HighAdmin: all accounts
+ */
 router.get('/', asyncHandler(async (req, res) => {
-  const result = await executeProcedure('dbo.sp_Account_Search', {
-    inputs: {
-      UserID: TYPES.int,
-      AccountID: [TYPES.int, 'accountID'],
-      AccountNumber: [TYPES.string30, 'accountNumber'],
-      AccountNumberSearch: [TYPES.string30, 'accountNumberSearch'],
-      CustomerID: [TYPES.int, 'customerID'],
-      CustomerNationalID: [TYPES.string20, 'customerNationalID'],
-      CustomerNameSearch: [TYPES.string100, 'customerNameSearch'],
-      BranchID: [TYPES.int, 'branchID'],
-      BranchCode: [TYPES.string20, 'branchCode'],
-      AccountTypeID: [TYPES.int, 'accountTypeID'],
-      AccountTypeName: [TYPES.string50, 'accountTypeName'],
-      AccountStatus: [TYPES.string20, 'accountStatus'],
-      MinBalance: [TYPES.money, 'minBalance'],
-      MaxBalance: [TYPES.money, 'maxBalance'],
-      IncludeClosed: [TYPES.bit, 'includeClosed']
-    },
-    values: { ...req.query, UserID: req.user.UserID }
+  const result = await searchAccounts(req, req.query, 'viewable');
+  ok(res, {
+    data: result.rows,
+    meta: {
+      accessScope: result.scope.mode,
+      branchID: result.scope.branchID || null
+    }
   });
-  ok(res, { data: result.recordset });
 }));
 
 router.get('/:accountID', asyncHandler(async (req, res) => {
+  const requestedScope = String(req.query.scope || '').toLowerCase() === 'mine' ? 'mine' : 'viewable';
+  await assertAccountVisible(req, req.params.accountID, requestedScope);
+
   const result = await executeProcedure('dbo.sp_Account_GetInfo', {
     inputs: {
       UserID: TYPES.int,
@@ -39,12 +48,15 @@ router.get('/:accountID', asyncHandler(async (req, res) => {
       AccountNumber: [TYPES.string30, 'accountNumber'],
       CustomerID: [TYPES.int, 'customerID']
     },
-    values: { ...req.query, UserID: req.user.UserID, AccountID: req.params.accountID }
+    values: { UserID: req.user.UserID, AccountID: req.params.accountID }
   });
-  ok(res, { data: result.recordset });
+  ok(res, { data: result.recordset, meta: { accessScope: requestedScope } });
 }));
 
 router.get('/:accountID/history', asyncHandler(async (req, res) => {
+  const requestedScope = String(req.query.scope || '').toLowerCase() === 'mine' ? 'mine' : 'viewable';
+  await assertAccountVisible(req, req.params.accountID, requestedScope);
+
   const result = await executeProcedure('dbo.sp_Transaction_GetAccountHistory', {
     inputs: {
       UserID: TYPES.int,
@@ -54,7 +66,7 @@ router.get('/:accountID/history', asyncHandler(async (req, res) => {
     },
     values: { ...req.query, UserID: req.user.UserID, AccountID: req.params.accountID }
   });
-  ok(res, { data: result.recordset });
+  ok(res, { data: result.recordset, meta: { accessScope: requestedScope } });
 }));
 
 router.post('/', requireBodyFields(['branchID', 'accountTypeID']), asyncHandler(async (req, res) => {
@@ -77,6 +89,7 @@ router.post('/', requireBodyFields(['branchID', 'accountTypeID']), asyncHandler(
 }));
 
 router.post('/:accountID/close', authorize('Employee', 'Admin', 'HighAdmin'), asyncHandler(async (req, res) => {
+  await assertAccountVisible(req, req.params.accountID, 'viewable');
   const result = await executeProcedure('dbo.sp_Account_Close', {
     inputs: {
       AccountID: TYPES.int,
@@ -89,6 +102,7 @@ router.post('/:accountID/close', authorize('Employee', 'Admin', 'HighAdmin'), as
 }));
 
 router.post('/:accountID/freeze', authorize('Employee', 'Admin', 'HighAdmin'), asyncHandler(async (req, res) => {
+  await assertAccountVisible(req, req.params.accountID, 'viewable');
   const result = await executeProcedure('dbo.sp_Account_Freeze', {
     inputs: {
       AccountID: TYPES.int,
@@ -101,6 +115,7 @@ router.post('/:accountID/freeze', authorize('Employee', 'Admin', 'HighAdmin'), a
 }));
 
 router.post('/:accountID/unfreeze', authorize('Admin', 'HighAdmin'), asyncHandler(async (req, res) => {
+  await assertAccountVisible(req, req.params.accountID, 'viewable');
   const result = await executeProcedure('dbo.sp_Account_Unfreeze', {
     inputs: {
       AccountID: TYPES.int,
@@ -113,6 +128,7 @@ router.post('/:accountID/unfreeze', authorize('Admin', 'HighAdmin'), asyncHandle
 }));
 
 router.post('/:accountID/change-type', authorize('Employee', 'Admin', 'HighAdmin'), requireBodyFields(['newAccountTypeID']), asyncHandler(async (req, res) => {
+  await assertAccountVisible(req, req.params.accountID, 'viewable');
   const result = await executeProcedure('dbo.sp_Account_ChangeType', {
     inputs: {
       AccountID: TYPES.int,
