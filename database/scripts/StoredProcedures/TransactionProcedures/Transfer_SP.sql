@@ -3,10 +3,11 @@
    sp_Transaction_Transfer
    ---------------------------------------------------------
    FINAL AUTHORIZATION:
-   - Customer can transfer only from own source account.
-   - Effective Employee/Admin/HighAdmin can transfer from any account.
-   - @UserID is required. @EmployeeID is metadata only and must
-     match the authenticated employee when supplied.
+   - Every authenticated user can transfer only from a source
+     account owned by the same CustomerID linked to the login.
+   - Employee/Admin/HighAdmin privileges do not bypass ownership.
+   - @EmployeeID is metadata only and must match the authenticated
+     employee when supplied.
    ========================================================= */
 
 IF OBJECT_ID('dbo.sp_Transaction_Transfer', 'P') IS NOT NULL
@@ -60,11 +61,8 @@ BEGIN
         IF @FromCustomerID IS NULL
         BEGIN RAISERROR('Source account does not exist.', 16, 1); RETURN; END;
 
-        IF dbo.fn_UserHasEffectiveRole(@UserID, N'Employee') = 0
-           AND dbo.fn_UserHasEffectiveRole(@UserID, N'Admin') = 0
-           AND dbo.fn_UserHasEffectiveRole(@UserID, N'HighAdmin') = 0
-           AND @FromCustomerID <> @CallerCustomerID
-        BEGIN RAISERROR('Customer users can transfer only from their own source accounts.', 16, 1); RETURN; END;
+        IF @FromCustomerID <> @CallerCustomerID
+        BEGIN RAISERROR('Only the source-account owner can initiate this transfer.', 16, 1); RETURN; END;
 
         BEGIN TRANSACTION;
 

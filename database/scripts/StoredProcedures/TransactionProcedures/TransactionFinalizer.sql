@@ -40,7 +40,8 @@ CREATE OR ALTER PROCEDURE dbo.sp_Transaction_Finalize
 (
     @TransactionID  INT,
     @ResultStatus   NVARCHAR(20) OUTPUT,   -- 'Completed', 'StillPending', or 'Failed'
-    @ResultMessage  NVARCHAR(400) OUTPUT
+    @ResultMessage  NVARCHAR(400) OUTPUT,
+    @UserID         INT = NULL             -- NULL is reserved for the SQL Agent/batch processor
 )
 AS
 BEGIN
@@ -75,6 +76,48 @@ BEGIN
             SET @ResultMessage = 'Transaction does not exist.';
             ROLLBACK TRANSACTION;
             RETURN;
+        END;
+
+        ----------------------------------------------------
+        -- API calls must be made by the owner of the account
+        -- that initiated the transaction. A NULL @UserID is
+        -- allowed only for the trusted SQL Agent/batch path.
+        ----------------------------------------------------
+        IF @UserID IS NOT NULL
+        BEGIN
+            DECLARE
+                @CallerCustomerID INT,
+                @TransactionOwnerCustomerID INT,
+                @OwnerAccountID INT;
+
+            SELECT @CallerCustomerID = U.CustomerID
+            FROM dbo.Users AS U
+            INNER JOIN dbo.Customer AS C
+                ON C.CustomerID = U.CustomerID
+            WHERE U.UserID = @UserID
+              AND U.IsActive = 1
+              AND C.IsActive = 1;
+
+            IF @CallerCustomerID IS NULL
+            BEGIN
+                RAISERROR('A valid authenticated account owner is required to finalize a transaction.', 16, 1);
+                ROLLBACK TRANSACTION;
+                RETURN;
+            END;
+
+            SET @OwnerAccountID = COALESCE(@FromAccountID, @ToAccountID);
+
+            SELECT @TransactionOwnerCustomerID = A.CustomerID
+            FROM dbo.Account AS A
+            WHERE A.AccountID = @OwnerAccountID;
+
+            IF @TransactionOwnerCustomerID IS NULL
+               OR @TransactionOwnerCustomerID <> @CallerCustomerID
+            BEGIN
+                RAISERROR('Only the transaction account owner can finalize this transaction.', 16, 1);
+                ROLLBACK TRANSACTION;
+                RETURN;
+            END;
         END;
 
         IF @TransactionStatus <> 'Pending'
@@ -154,7 +197,7 @@ BEGIN
                 SET @ResultMessage = 'Source account is no longer Active; transaction marked Failed.';
 
                 INSERT INTO dbo.AuditLog (UserID, ActionType, TableName, RecordID, Details)
-                VALUES (NULL, 'TransactionFinalizeFailed', 'Transactions', @TransactionID, @ResultMessage);
+                VALUES (@UserID, 'TransactionFinalizeFailed', 'Transactions', @TransactionID, @ResultMessage);
 
                 COMMIT TRANSACTION;
                 RETURN;
@@ -174,7 +217,7 @@ BEGIN
                 SET @ResultMessage = 'Source account no longer has sufficient available balance; transaction marked Failed.';
 
                 INSERT INTO dbo.AuditLog (UserID, ActionType, TableName, RecordID, Details)
-                VALUES (NULL, 'TransactionFinalizeFailed', 'Transactions', @TransactionID, @ResultMessage);
+                VALUES (@UserID, 'TransactionFinalizeFailed', 'Transactions', @TransactionID, @ResultMessage);
 
                 COMMIT TRANSACTION;
                 RETURN;
@@ -202,7 +245,7 @@ BEGIN
                 SET @ResultMessage = 'Destination account can no longer receive funds; transaction marked Failed.';
 
                 INSERT INTO dbo.AuditLog (UserID, ActionType, TableName, RecordID, Details)
-                VALUES (NULL, 'TransactionFinalizeFailed', 'Transactions', @TransactionID, @ResultMessage);
+                VALUES (@UserID, 'TransactionFinalizeFailed', 'Transactions', @TransactionID, @ResultMessage);
 
                 COMMIT TRANSACTION;
                 RETURN;
@@ -242,7 +285,7 @@ BEGIN
 
         INSERT INTO dbo.AuditLog (UserID, ActionType, TableName, RecordID, Details)
         VALUES (
-            NULL,
+            @UserID,
             'TransactionFinalized',
             'Transactions',
             @TransactionID,
@@ -255,7 +298,7 @@ BEGIN
         BEGIN
             INSERT INTO dbo.AuditLog (UserID, ActionType, TableName, RecordID, Details)
             VALUES (
-                NULL,
+                @UserID,
                 'AccountReactivated',
                 'Account',
                 @ToAccountID,

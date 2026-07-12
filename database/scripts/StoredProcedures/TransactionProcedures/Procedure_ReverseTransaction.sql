@@ -7,9 +7,9 @@
    Fixes:
      1. Avoids CREATE OR ALTER compatibility/object-resolution issues
         by using DROP + CREATE in separate batches.
-     2. Supports final authorization by @UserID using
-        dbo.fn_UserHasEffectiveRole.
-     3. Keeps @EmployeeID as a backward-compatible optional parameter.
+     2. Allows cancellation/reversal only by the customer who owns
+        the account that initiated the transaction.
+     3. Keeps @EmployeeID as a backward-compatible metadata parameter.
      4. Writes AuditLog.UserID instead of NULL when a login user is known.
      5. Locks the transaction row before changing its status.
 
@@ -73,11 +73,19 @@ BEGIN
             RETURN;
         END;
 
-        IF dbo.fn_UserHasEffectiveRole(@UserID, N'Employee') = 0
-           AND dbo.fn_UserHasEffectiveRole(@UserID, N'Admin') = 0
-           AND dbo.fn_UserHasEffectiveRole(@UserID, N'HighAdmin') = 0
+        DECLARE @CallerCustomerID INT;
+
+        SELECT @CallerCustomerID = U.CustomerID
+        FROM dbo.Users AS U
+        INNER JOIN dbo.Customer AS C
+            ON C.CustomerID = U.CustomerID
+        WHERE U.UserID = @UserID
+          AND U.IsActive = 1
+          AND C.IsActive = 1;
+
+        IF @CallerCustomerID IS NULL
         BEGIN
-            RAISERROR('Only an effective Employee, Admin, or HighAdmin can cancel/reverse transactions.', 16, 1);
+            RAISERROR('A valid authenticated account owner is required to reverse a transaction.', 16, 1);
             RETURN;
         END;
 
@@ -104,6 +112,24 @@ BEGIN
         IF @TypeName IS NULL
         BEGIN
             RAISERROR('Transaction does not exist.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END;
+
+        DECLARE
+            @OwnerAccountID INT,
+            @TransactionOwnerCustomerID INT;
+
+        SET @OwnerAccountID = COALESCE(@FromAccountID, @ToAccountID);
+
+        SELECT @TransactionOwnerCustomerID = A.CustomerID
+        FROM dbo.Account AS A
+        WHERE A.AccountID = @OwnerAccountID;
+
+        IF @TransactionOwnerCustomerID IS NULL
+           OR @TransactionOwnerCustomerID <> @CallerCustomerID
+        BEGIN
+            RAISERROR('Only the transaction account owner can cancel or reverse this transaction.', 16, 1);
             ROLLBACK TRANSACTION;
             RETURN;
         END;

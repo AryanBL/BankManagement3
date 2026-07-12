@@ -3,10 +3,11 @@
    sp_Transaction_Deposit
    ---------------------------------------------------------
    FINAL AUTHORIZATION:
-   - Customer can deposit only into own account.
-   - Effective Employee/Admin/HighAdmin can deposit into any account.
-   - @UserID is required. @EmployeeID is metadata only and must
-     match the authenticated employee when supplied.
+   - Every authenticated user can deposit only into an account
+     owned by the same CustomerID linked to the login.
+   - Employee/Admin/HighAdmin privileges do not bypass ownership.
+   - @EmployeeID is metadata only and must match the authenticated
+     employee when supplied.
    ========================================================= */
 
 IF OBJECT_ID('dbo.sp_Transaction_Deposit', 'P') IS NOT NULL
@@ -57,11 +58,8 @@ BEGIN
         IF @AccountCustomerID IS NULL
         BEGIN RAISERROR('Account does not exist.', 16, 1); RETURN; END;
 
-        IF dbo.fn_UserHasEffectiveRole(@UserID, N'Employee') = 0
-           AND dbo.fn_UserHasEffectiveRole(@UserID, N'Admin') = 0
-           AND dbo.fn_UserHasEffectiveRole(@UserID, N'HighAdmin') = 0
-           AND @AccountCustomerID <> @CallerCustomerID
-        BEGIN RAISERROR('Customer users can deposit only into their own accounts.', 16, 1); RETURN; END;
+        IF @AccountCustomerID <> @CallerCustomerID
+        BEGIN RAISERROR('Only the account owner can deposit into this account.', 16, 1); RETURN; END;
 
         BEGIN TRANSACTION;
 
