@@ -19,6 +19,18 @@
     element.textContent = '';
   }
 
+  function setTextIfPresent(selector, text) {
+    const element = document.querySelector(selector);
+    if (element) element.textContent = text;
+  }
+
+  function setConnectionClass(className) {
+    const element = document.querySelector('#auth-api-url');
+    if (!element) return;
+    element.classList.remove('connection-ok', 'connection-error');
+    element.classList.add(className);
+  }
+
   function showTab(name) {
     document.querySelectorAll('[data-auth-tab]').forEach((button) => {
       button.classList.toggle('active', button.dataset.authTab === name);
@@ -137,8 +149,10 @@
       onSubmit: async (data) => {
         window.BankConfig.setApiBaseUrl(data.apiBaseUrl);
         await API.health();
-        document.querySelector('#api-address').textContent = window.BankConfig.getApiBaseUrl();
-        document.querySelector('#auth-api-url').textContent = window.BankConfig.getApiBaseUrl();
+        const apiUrl = window.BankConfig.getApiBaseUrl();
+        setTextIfPresent('#api-address', apiUrl);
+        setTextIfPresent('#auth-api-url', apiUrl);
+        setConnectionClass('connection-ok');
         UI.toast('Backend connection verified.', 'success');
       }
     });
@@ -146,13 +160,13 @@
 
   async function checkConnection() {
     const apiUrl = window.BankConfig.getApiBaseUrl();
-    document.querySelector('#api-address').textContent = apiUrl;
-    document.querySelector('#auth-api-url').textContent = apiUrl;
+    setTextIfPresent('#api-address', apiUrl);
+    setTextIfPresent('#auth-api-url', apiUrl);
     try {
       await API.health();
-      document.querySelector('#auth-api-url').classList.add('connection-ok');
+      setConnectionClass('connection-ok');
     } catch (_) {
-      document.querySelector('#auth-api-url').classList.add('connection-error');
+      setConnectionClass('connection-error');
     }
   }
 
