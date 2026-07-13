@@ -11,13 +11,34 @@ const {
 const router = express.Router();
 router.use(authenticate());
 
+
+const ACCOUNT_DATE_FIELDS = { OpenDate: 'date', CloseDate: 'date' };
+const ACCOUNT_HISTORY_DATE_FIELDS = {
+  TransactionDate: 'datetime',
+  ReadyToCompleteAt: 'datetime',
+  CompletedAt: 'datetime'
+};
+
 /* Personal portfolio for every authenticated user, including staff and HighAdmin. */
 router.get('/mine', asyncHandler(async (req, res) => {
   const result = await searchAccounts(req, {
     ...req.query,
     includeClosed: req.query.includeClosed ?? true
   }, 'mine');
-  ok(res, { data: result.rows, meta: { accessScope: result.scope.mode } });
+  ok(res, { data: result.rows, meta: { accessScope: result.scope.mode, dateFields: ACCOUNT_DATE_FIELDS } });
+}));
+
+/* Safe account-product catalogue for account opening and type-change drop-downs. */
+router.get('/options/account-types', asyncHandler(async (req, res) => {
+  const result = await executeProcedure('dbo.sp_AccountType_ListOptions', {
+    inputs: {
+      UserID: TYPES.int
+    },
+    values: {
+      UserID: req.user.UserID
+    }
+  });
+  ok(res, { data: result.recordset });
 }));
 
 /*
@@ -32,7 +53,8 @@ router.get('/', asyncHandler(async (req, res) => {
     data: result.rows,
     meta: {
       accessScope: result.scope.mode,
-      branchID: result.scope.branchID || null
+      branchID: result.scope.branchID || null,
+      dateFields: ACCOUNT_DATE_FIELDS
     }
   });
 }));
@@ -50,7 +72,7 @@ router.get('/:accountID', asyncHandler(async (req, res) => {
     },
     values: { UserID: req.user.UserID, AccountID: req.params.accountID }
   });
-  ok(res, { data: result.recordset, meta: { accessScope: requestedScope } });
+  ok(res, { data: result.recordset, meta: { accessScope: requestedScope, dateFields: ACCOUNT_DATE_FIELDS } });
 }));
 
 router.get('/:accountID/history', asyncHandler(async (req, res) => {
@@ -66,7 +88,7 @@ router.get('/:accountID/history', asyncHandler(async (req, res) => {
     },
     values: { ...req.query, UserID: req.user.UserID, AccountID: req.params.accountID }
   });
-  ok(res, { data: result.recordset, meta: { accessScope: requestedScope } });
+  ok(res, { data: result.recordset, meta: { accessScope: requestedScope, dateFields: ACCOUNT_HISTORY_DATE_FIELDS } });
 }));
 
 router.post('/', requireBodyFields(['branchID', 'accountTypeID']), asyncHandler(async (req, res) => {
@@ -85,7 +107,11 @@ router.post('/', requireBodyFields(['branchID', 'accountTypeID']), asyncHandler(
     },
     values: { ...req.body, UserID: req.user.UserID }
   });
-  created(res, { data: result.recordset[0] || result.output, output: result.output });
+  created(res, {
+    data: result.recordset[0] || result.output,
+    output: result.output,
+    meta: { dateFields: { InitialDepositReadyToCompleteAt: 'datetime' } }
+  });
 }));
 
 router.post('/:accountID/close', authorize('Employee', 'Admin', 'HighAdmin'), asyncHandler(async (req, res) => {

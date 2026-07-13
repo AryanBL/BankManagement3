@@ -29,9 +29,17 @@
     { EmployeeID: 236, FirstName: 'Elrond', LastName: 'Halfelven', JobTitle: 'Compliance Officer', BranchID: 1, CurrentBranchID: 1, BranchName: 'Central Branch', CurrentBranchName: 'Central Branch', Salary: 64000000, EmpStatus: 'OnLeave', CanAccessAdmin: false }
   ];
   const branches = [
-    { BranchID: 1, BranchCode: 'BR-001', BranchName: 'Central Branch', City: 'Tehran', ManagerName: 'Frodo Baggins', EmployeeCount: 18 },
-    { BranchID: 2, BranchCode: 'BR-002', BranchName: 'North Branch', City: 'Tehran', ManagerName: 'Galadriel Lothlorien', EmployeeCount: 13 },
-    { BranchID: 3, BranchCode: 'BR-003', BranchName: 'West Branch', City: 'Karaj', ManagerName: 'Aragorn Elessar', EmployeeCount: 9 }
+    { BranchID: 1, BranchCode: 'BR-001', BranchName: 'Central Branch', City: 'Tehran', Address: 'Central Avenue 10', Phone: '021-10000001', Balance: 985000000, CurrentEmployeeCount: 18, TotalHistoricalAssignments: 27, ActiveAccountCount: 42, TotalAccountCount: 47, CurrentBranchManagerEmployeeID: 121, CurrentBranchManagerFirstName: 'Frodo', CurrentBranchManagerLastName: 'Baggins', CurrentViceManagerCount: 1 },
+    { BranchID: 2, BranchCode: 'BR-002', BranchName: 'North Branch', City: 'Tehran', Address: 'North Boulevard 22', Phone: '021-10000002', Balance: 745000000, CurrentEmployeeCount: 13, TotalHistoricalAssignments: 21, ActiveAccountCount: 31, TotalAccountCount: 35, CurrentBranchManagerEmployeeID: 122, CurrentBranchManagerFirstName: 'Galadriel', CurrentBranchManagerLastName: 'Lothlorien', CurrentViceManagerCount: 1 },
+    { BranchID: 3, BranchCode: 'BR-003', BranchName: 'West Branch', City: 'Karaj', Address: 'West Square 7', Phone: '026-10000003', Balance: 510000000, CurrentEmployeeCount: 9, TotalHistoricalAssignments: 15, ActiveAccountCount: 24, TotalAccountCount: 28, CurrentBranchManagerEmployeeID: 123, CurrentBranchManagerFirstName: 'Aragorn', CurrentBranchManagerLastName: 'Elessar', CurrentViceManagerCount: 0 }
+  ];
+
+  const accountTypes = [
+    { AccountTypeID: 1, TypeName: 'Savings Basic', MinBalance: 100000, InterestRate: 4.5, MonthlyFee: 0 },
+    { AccountTypeID: 2, TypeName: 'Savings Premium', MinBalance: 1000000, InterestRate: 7.5, MonthlyFee: 50000 },
+    { AccountTypeID: 3, TypeName: 'Current Account', MinBalance: 500000, InterestRate: 0, MonthlyFee: 25000 },
+    { AccountTypeID: 4, TypeName: 'Student Account', MinBalance: 0, InterestRate: 2, MonthlyFee: 0 },
+    { AccountTypeID: 5, TypeName: 'Business Account', MinBalance: 5000000, InterestRate: 1, MonthlyFee: 150000 }
   ];
   const history = [
     { TransactionID: 90081, TransactionType: 'Deposit', Amount: 2500000, TransactionStatus: 'Completed', TransactionDate: iso(-1), Description: 'Salary deposit' },
@@ -142,6 +150,10 @@
 
     if (pathname.startsWith('/api/customers')) return { success: true, data: method === 'GET' ? customers : { CustomerID: 999, message: 'Preview operation completed.' } };
 
+    if (pathname === '/api/accounts/options/account-types') {
+      return { success: true, data: accountTypes };
+    }
+
     if (pathname === '/api/accounts/mine') {
       const mineQuery = new URLSearchParams(query);
       mineQuery.set('scope', 'mine');
@@ -186,7 +198,14 @@
     if (pathname === '/api/employees' && method === 'GET') return { success: true, data: scopedEmployees() };
     if (pathname.startsWith('/api/employees')) return { success: true, data: { EmployeeID: 299, message: 'Preview employee operation completed.' } };
     if (pathname.startsWith('/api/employee-transfers')) return { success: true, data: { TransferRequestID: 84, status: 'Pending', message: 'Preview transfer request submitted.' } };
-    if (pathname.startsWith('/api/branches')) return { success: true, data: /^\/api\/branches\/\d+$/.test(pathname) ? branches[0] : branches };
+    if (pathname === '/api/branches/options') {
+      return { success: true, data: branches.map(({ BranchID, BranchCode, BranchName, City }) => ({ BranchID, BranchCode, BranchName, City })) };
+    }
+    if (/^\/api\/branches\/\d+$/.test(pathname)) {
+      const branchID = Number(pathname.split('/')[3]);
+      return { success: true, data: branches.find((branch) => Number(branch.BranchID) === branchID) || null };
+    }
+    if (pathname === '/api/branches') return { success: true, data: branches };
     if (pathname.startsWith('/api/highadmin')) return { success: true, data: { message: 'Preview HighAdmin operation completed.' } };
     if (pathname === '/api/reports') return { success: true, data: listReports() };
     if (pathname.startsWith('/api/reports/')) {
@@ -195,5 +214,5 @@
     }
     return { success: true, data: [] };
   }
-  window.BankMock = { respond, users, accounts, customers, employees, branches, history, pending, loans };
+  window.BankMock = { respond, users, accounts, accountTypes, customers, employees, branches, history, pending, loans };
 })();

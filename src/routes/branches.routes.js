@@ -5,6 +5,23 @@ const { authenticate, authorize } = require('../middleware/auth');
 
 const router = express.Router();
 router.use(authenticate());
+
+/*
+ * Safe branch catalogue used by account-opening and transfer forms.
+ * Every authenticated user may see only non-sensitive branch identity fields.
+ */
+router.get('/options', asyncHandler(async (req, res) => {
+  const result = await executeProcedure('dbo.sp_Branch_ListOptions', {
+    inputs: {
+      UserID: TYPES.int
+    },
+    values: {
+      UserID: req.user.UserID
+    }
+  });
+  ok(res, { data: result.recordset });
+}));
+
 router.use(authorize('Employee', 'Admin', 'HighAdmin'));
 
 router.get('/', asyncHandler(async (req, res) => {

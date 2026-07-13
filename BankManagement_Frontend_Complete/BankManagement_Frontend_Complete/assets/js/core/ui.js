@@ -10,9 +10,11 @@
   ]);
 
   const DATE_TIME_KEYS = new Set([
-    'date', 'transactiondate', 'readytocompleteat', 'paymentreadytocompleteat',
-    'actiondate', 'entrydate', 'logintime', 'logouttime', 'createdat',
-    'updatedat', 'processedat', 'completedat'
+    'date', 'transactiondate', 'readytocompleteat', 'initialdepositreadytocompleteat',
+    'paymentreadytocompleteat', 'actiondate', 'entrydate', 'logintime',
+    'logouttime', 'expiresat', 'sessionexpiresat', 'lastactivityat',
+    'createdat', 'updatedat', 'processedat', 'completedat', 'cancelledat',
+    'currentmanagerdecisiondate', 'destinationmanagerdecisiondate'
   ]);
 
   function compactKey(key) {
@@ -27,7 +29,7 @@
     if (DATE_TIME_KEYS.has(compact)) return 'datetime';
     if (DATE_ONLY_KEYS.has(compact)) return 'date';
 
-    if (/(?:timestamp|datetime|time|at)$/.test(compact)) return 'datetime';
+    if (/(?:timestamp|datetime|time|expiresat|createdat|updatedat|processedat|completedat|cancelledat|readytocompleteat)$/.test(compact)) return 'datetime';
     if (/(?:date|day)$/.test(compact)) return 'date';
     return null;
   }
@@ -48,12 +50,22 @@
     const parts = raw.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{1,7}))?)?)?/);
     if (parts) {
       const [, year, month, day, hour = '0', minute = '0', second = '0', fraction = '0'] = parts;
+      const hasZone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(raw);
+
       if (kind === 'date') {
+        // New backend responses send SQL DATE as YYYY-MM-DD. For legacy
+        // zoned values, first convert the instant to the browser's local
+        // calendar date so a local-midnight SQL DATE does not move a day.
+        if (hasZone) {
+          const zoned = new Date(raw);
+          if (!Number.isNaN(zoned.getTime())) {
+            return new Date(zoned.getFullYear(), zoned.getMonth(), zoned.getDate());
+          }
+        }
         const localDate = new Date(Number(year), Number(month) - 1, Number(day));
         return Number.isNaN(localDate.getTime()) ? null : localDate;
       }
 
-      const hasZone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(raw);
       if (!hasZone) {
         const milliseconds = Number((fraction + '000').slice(0, 3));
         const localDateTime = new Date(
@@ -109,6 +121,16 @@
     return new Intl.DateTimeFormat(locale, formatOptions).format(date);
   }
 
+  function formatEmbeddedDates(value) {
+    const text = String(value ?? '');
+    if (!text) return text;
+
+    const dateTimePattern = /\b\d{4}-\d{2}-\d{2}[T\s]\d{2}:\d{2}(?::\d{2}(?:\.\d{1,7})?)?(?:Z|[+-]\d{2}:?\d{2})?\b/g;
+    const withDateTimes = text.replace(dateTimePattern, (match) => formatDate(match, { kind: 'datetime' }));
+    const dateOnlyPattern = /\b\d{4}-\d{2}-\d{2}\b/g;
+    return withDateTimes.replace(dateOnlyPattern, (match) => formatDate(match, { kind: 'date' }));
+  }
+
   function dateSortValue(value, kind = 'datetime') {
     const date = parseDateValue(value, kind);
     return date ? date.getTime() : 0;
@@ -144,7 +166,7 @@
     }
     if (typeof value === 'boolean') return value ? 'Yes' : 'No';
     if (typeof value === 'object') return `<code>${escapeHtml(JSON.stringify(value))}</code>`;
-    return escapeHtml(value);
+    return escapeHtml(formatEmbeddedDates(value));
   }
 
   function unionKeys(rows) {
@@ -191,7 +213,9 @@
       : [Array.isArray(data) ? data : data ? [data] : []];
     return sets.map((set, index) => {
       const title = options.titles?.[index] || (sets.length > 1 ? `Result set ${index + 1}` : 'Details');
-      return `<section class="recordset"><h4>${escapeHtml(title)}</h4>${renderTable(set, options.tableOptions || {})}</section>`;
+      const perSetDateFields = options.dateFieldsBySet?.[index] || options.dateFields || options.tableOptions?.dateFields || {};
+      const tableOptions = { ...(options.tableOptions || {}), dateFields: perSetDateFields };
+      return `<section class="recordset"><h4>${escapeHtml(title)}</h4>${renderTable(set, tableOptions)}</section>`;
     }).join('');
   }
 
@@ -293,7 +317,9 @@
     const data = Object.fromEntries(new FormData(form).entries());
     fields.forEach((field) => {
       if (field.type === 'checkbox') data[field.name] = form.elements[field.name]?.checked || false;
-      if (['number', 'range'].includes(field.type) && data[field.name] !== '') data[field.name] = Number(data[field.name]);
+      if ((['number', 'range'].includes(field.type) || field.valueType === 'number') && data[field.name] !== '') {
+        data[field.name] = Number(data[field.name]);
+      }
       if (field.trim !== false && typeof data[field.name] === 'string') data[field.name] = data[field.name].trim();
       if (data[field.name] === '' && field.omitEmpty !== false) delete data[field.name];
     });
@@ -358,7 +384,7 @@
         return formatDate(value, { kind });
       }
       if (value && typeof value === 'object') return JSON.stringify(value);
-      return String(value ?? '');
+      return formatEmbeddedDates(String(value ?? ''));
     };
     const csvRows = [
       keys.map((key) => `"${humanize(key).replace(/"/g, '""')}"`).join(','),
@@ -390,6 +416,7 @@
     humanize,
     formatMoney,
     formatDate,
+    formatEmbeddedDates,
     parseDateValue,
     dateKindForKey,
     dateSortValue,

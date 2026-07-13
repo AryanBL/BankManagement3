@@ -30,6 +30,8 @@
       user is not linked to EmployeeID.
    9. The returned @Roles value is the EFFECTIVE role list, not the
       raw UserRoles list.
+   10. Every session has an absolute expiration time. The default
+       lifetime is 10 minutes and is not extended by activity.
 
    OUTPUT:
    - @UserID
@@ -37,6 +39,7 @@
    - @EmployeeID
    - @SessionToken
    - @Roles = effective roles, comma-separated
+   - @ExpiresAt = absolute session expiration timestamp
 
    REQUIREMENTS:
    - dbo.Users with IsActive
@@ -61,12 +64,14 @@ CREATE PROCEDURE dbo.sp_User_Login
     @LoginUserID INT = NULL,
     @LoginCustomerID INT = NULL,
     @LoginEmployeeID INT = NULL,
+    @SessionTtlMinutes INT = 10,
 
     @UserID INT OUTPUT,
     @CustomerID INT OUTPUT,
     @EmployeeID INT OUTPUT,
     @SessionToken NVARCHAR(200) OUTPUT,
-    @Roles NVARCHAR(MAX) OUTPUT
+    @Roles NVARCHAR(MAX) OUTPUT,
+    @ExpiresAt DATETIME = NULL OUTPUT
 )
 AS
 BEGIN
@@ -78,6 +83,7 @@ BEGIN
     SET @EmployeeID = NULL;
     SET @SessionToken = NULL;
     SET @Roles = NULL;
+    SET @ExpiresAt = NULL;
 
     BEGIN TRY
         ------------------------------------------------------------
@@ -109,6 +115,15 @@ BEGIN
         IF @Password IS NULL OR LEN(@Password) = 0
         BEGIN
             RAISERROR('Password is required.', 16, 1);
+            RETURN;
+        END;
+
+        IF @SessionTtlMinutes IS NULL
+            SET @SessionTtlMinutes = 10;
+
+        IF @SessionTtlMinutes < 1 OR @SessionTtlMinutes > 1440
+        BEGIN
+            RAISERROR('SessionTtlMinutes must be between 1 and 1440.', 16, 1);
             RETURN;
         END;
 
@@ -294,8 +309,21 @@ BEGIN
         );
 
         ------------------------------------------------------------
-        -- 8. Create a new active session.
+        -- 8. Create a new active session with a fixed absolute
+        --    expiration time. Activity does not extend ExpiresAt.
         ------------------------------------------------------------
+        DECLARE @LoginTime DATETIME;
+        SET @LoginTime = GETDATE();
+        SET @ExpiresAt = DATEADD(MINUTE, @SessionTtlMinutes, @LoginTime);
+
+        -- Opportunistically close previously expired sessions so the
+        -- IsActive flag remains consistent even if they are never used again.
+        UPDATE dbo.Sessions
+        SET IsActive = 0,
+            LogoutTime = COALESCE(LogoutTime, @LoginTime)
+        WHERE IsActive = 1
+          AND ExpiresAt <= @LoginTime;
+
         SET @SessionToken = CONVERT(NVARCHAR(36), NEWID())
                           + N'-'
                           + CONVERT(NVARCHAR(36), NEWID());
@@ -305,6 +333,7 @@ BEGIN
             UserID,
             SessionToken,
             LoginTime,
+            ExpiresAt,
             LogoutTime,
             IsActive
         )
@@ -312,7 +341,8 @@ BEGIN
         (
             @UserID,
             @SessionToken,
-            GETDATE(),
+            @LoginTime,
+            @ExpiresAt,
             NULL,
             1
         );
@@ -344,9 +374,10 @@ BEGIN
             N'UserLogin',
             N'Users',
             @UserID,
-            GETDATE(),
+            @LoginTime,
             CONCAT(N'User logged in. LoginMethod=', @LoginMethod,
-                   N'; EffectiveRoles=', ISNULL(@Roles, N''))
+                   N'; EffectiveRoles=', ISNULL(@Roles, N''),
+                   N'; SessionTTLMinutes=', @SessionTtlMinutes)
         );
 
         ------------------------------------------------------------
@@ -357,7 +388,9 @@ BEGIN
             @CustomerID AS CustomerID,
             @EmployeeID AS EmployeeID,
             @SessionToken AS SessionToken,
-            @Roles AS EffectiveRoles;
+            @Roles AS EffectiveRoles,
+            @LoginTime AS LoginTime,
+            @ExpiresAt AS ExpiresAt;
     END TRY
     BEGIN CATCH
         DECLARE @Msg NVARCHAR(4000) = ERROR_MESSAGE();

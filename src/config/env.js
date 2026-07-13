@@ -21,6 +21,7 @@ function required(name, fallback = undefined) {
 const env = {
   nodeEnv: process.env.NODE_ENV || 'development',
   port: number(process.env.PORT, 4000),
+  sessionTtlMinutes: Math.min(Math.max(number(process.env.SESSION_TTL_MINUTES, 10), 1), 1440),
   corsOrigin: (process.env.CORS_ORIGIN || '')
     .split(',')
     .map((x) => x.trim())

@@ -12,7 +12,8 @@
        HighAdmin
 
    FINAL SECURITY MODEL:
-   1. Session validation is based on an active SessionToken.
+   1. Session validation is based on an active, unexpired SessionToken.
+      ExpiresAt is absolute and is not extended by request activity.
    2. Users.IsActive controls whether the login account itself
       is allowed to use the application.
    3. Every login user must have CustomerID and an active Customer
@@ -90,8 +91,8 @@ BEGIN
         END;
 
         ------------------------------------------------------------
-        -- 2. Resolve active session and active user account.
-        --    Users.IsActive is the whole-login switch.
+        -- 2. Resolve the session and enforce its absolute expiry.
+        --    Expiration is checked before roles or business access.
         ------------------------------------------------------------
         DECLARE
             @SessionID INT,
@@ -99,7 +100,13 @@ BEGIN
             @CustomerID INT,
             @EmployeeID INT,
             @LoginTime DATETIME,
-            @Username NVARCHAR(50);
+            @ExpiresAt DATETIME,
+            @SessionIsActive BIT,
+            @UserIsActive BIT,
+            @Username NVARCHAR(50),
+            @Now DATETIME;
+
+        SET @Now = GETDATE();
 
         SELECT
             @SessionID = S.SessionID,
@@ -107,17 +114,61 @@ BEGIN
             @CustomerID = U.CustomerID,
             @EmployeeID = U.EmployeeID,
             @LoginTime = S.LoginTime,
+            @ExpiresAt = S.ExpiresAt,
+            @SessionIsActive = S.IsActive,
+            @UserIsActive = U.IsActive,
             @Username = U.Username
         FROM dbo.Sessions AS S
         INNER JOIN dbo.Users AS U
             ON U.UserID = S.UserID
-        WHERE S.SessionToken = @CleanSessionToken
-          AND S.IsActive = 1
-          AND U.IsActive = 1;
+        WHERE S.SessionToken = @CleanSessionToken;
 
-        IF @UserID IS NULL
+        IF @SessionID IS NULL
         BEGIN
-            RAISERROR('Invalid session token, inactive session, or inactive user account.', 16, 1);
+            RAISERROR('Invalid session token.', 16, 1);
+            RETURN;
+        END;
+
+        IF @SessionIsActive = 0
+        BEGIN
+            RAISERROR('Session is inactive. Please sign in again.', 16, 1);
+            RETURN;
+        END;
+
+        IF @ExpiresAt IS NULL OR @ExpiresAt <= @Now
+        BEGIN
+            UPDATE dbo.Sessions
+            SET IsActive = 0,
+                LogoutTime = COALESCE(LogoutTime, @Now)
+            WHERE SessionID = @SessionID
+              AND IsActive = 1;
+
+            INSERT INTO dbo.AuditLog
+            (
+                UserID,
+                ActionType,
+                TableName,
+                RecordID,
+                ActionDate,
+                Details
+            )
+            VALUES
+            (
+                @UserID,
+                N'SessionExpired',
+                N'Sessions',
+                @SessionID,
+                @Now,
+                N'Session expired after its fixed lifetime.'
+            );
+
+            RAISERROR('Session expired. Please sign in again.', 16, 1);
+            RETURN;
+        END;
+
+        IF @UserIsActive = 0
+        BEGIN
+            RAISERROR('Invalid session: user account is inactive.', 16, 1);
             RETURN;
         END;
 
@@ -348,6 +399,8 @@ BEGIN
             @JobTitle AS JobTitle,
             @CanAccessAdmin AS CanAccessAdmin,
             @LoginTime AS LoginTime,
+            @ExpiresAt AS ExpiresAt,
+            DATEDIFF(SECOND, @Now, @ExpiresAt) AS SecondsUntilExpiration,
             @EffectiveRoles AS EffectiveRoles,
             CASE WHEN EXISTS (SELECT 1 FROM @RoleList WHERE RoleName = N'Customer') THEN 1 ELSE 0 END AS IsCustomerEffective,
             @EmployeeIsActive AS IsEmployeeEffective,

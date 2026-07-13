@@ -8,6 +8,13 @@ const { hasRole, resolveAccessScope, assertAccountOwner, httpError } = require('
 const router = express.Router();
 router.use(authenticate());
 
+const LOAN_DATE_FIELDS = { StartDate: 'date', EndDate: 'date' };
+const LOAN_STATUS_DATE_FIELDS = [
+  { StartDate: 'date', EndDate: 'date' },
+  { DueDate: 'date', PaidDate: 'date', PaymentReadyToCompleteAt: 'datetime' }
+];
+const LOAN_PAYMENT_DATE_FIELDS = { ReadyToCompleteAt: 'datetime' };
+
 function resolveLoanScope(req, requestedScope = 'viewable') {
   return resolveAccessScope(req, requestedScope);
 }
@@ -88,7 +95,8 @@ router.get('/', asyncHandler(async (req, res) => {
       page: result.page,
       pageSize: result.pageSize,
       accessScope: result.scope.mode,
-      branchID: result.scope.branchID || null
+      branchID: result.scope.branchID || null,
+      dateFields: LOAN_DATE_FIELDS
     }
   });
 }));
@@ -118,7 +126,7 @@ router.post('/', authorize('Employee', 'Admin', 'HighAdmin'), requireBodyFields(
     outputs: { LoanID: TYPES.int },
     values: { ...req.body, branchID, UserID: req.user.UserID }
   });
-  created(res, { data: result.recordset[0] || result.output, output: result.output });
+  created(res, { data: result.recordset[0] || result.output, output: result.output, meta: { dateFields: LOAN_DATE_FIELDS } });
 }));
 
 router.get('/:loanID/status', asyncHandler(async (req, res) => {
@@ -134,7 +142,7 @@ router.get('/:loanID/status', asyncHandler(async (req, res) => {
   });
   ok(res, {
     data: result.recordsets.length > 1 ? result.recordsets : result.recordset,
-    meta: { accessScope: requestedScope }
+    meta: { accessScope: requestedScope, dateFieldsByRecordset: LOAN_STATUS_DATE_FIELDS }
   });
 }));
 
@@ -160,7 +168,7 @@ router.post('/installments/:installmentID/pay', requireBodyFields(['fromAccountI
       UserID: req.user.UserID
     }
   });
-  created(res, { data: result.recordset[0] || result.output, output: result.output });
+  created(res, { data: result.recordset[0] || result.output, output: result.output, meta: { dateFields: LOAN_PAYMENT_DATE_FIELDS } });
 }));
 
 /*

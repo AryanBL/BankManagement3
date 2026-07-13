@@ -116,10 +116,18 @@
   }
 
   function selectOrNumber(name, label, options, required = true, value = '', help = '') {
+    const normalizedOptions = Array.isArray(options) ? options : [];
+    if (normalizedOptions.length) {
+      return {
+        ...selectField(name, label, normalizedOptions, required, value, help),
+        valueType: 'number',
+        emptyLabel: `Select ${String(label || 'item').toLowerCase()}…`
+      };
+    }
     return {
       ...numberField(name, label, required, value, help),
       min: 1,
-      suggestions: Array.isArray(options) ? options : []
+      suggestions: normalizedOptions
     };
   }
 
@@ -155,6 +163,14 @@
     return cached(state, 'branches', async () => rows(await API().get('/api/branches')));
   }
 
+  async function getBranchChoices(state) {
+    return cached(state, 'branch.options', async () => rows(await API().get('/api/branches/options')));
+  }
+
+  async function getAccountTypeChoices(state) {
+    return cached(state, 'account-type.options', async () => rows(await API().get('/api/accounts/options/account-types')));
+  }
+
   async function getCustomers(state) {
     return cached(state, 'customers', async () => rows(await API().get('/api/customers', { includeInactive: true })));
   }
@@ -176,8 +192,13 @@
   }
 
   async function branchOptions(state) {
-    const branches = await getBranches(state);
-    return uniqueOptions(branches, 'BranchID', (branch) => `${branch.BranchCode || branch.BranchID} · ${branch.BranchName || 'Branch'}`);
+    const branches = await getBranchChoices(state);
+    return uniqueOptions(branches, 'BranchID', (branch) => {
+      const code = branch.BranchCode || branch.BranchID;
+      const name = branch.BranchName || 'Branch';
+      const city = branch.City ? ` · ${branch.City}` : '';
+      return `${code} · ${name}${city}`;
+    });
   }
 
   async function customerOptions(state) {
@@ -197,8 +218,14 @@
   }
 
   async function accountTypeOptions(state) {
-    const accounts = await getAccounts(state, true);
-    return uniqueOptions(accounts, 'AccountTypeID', (account) => `${account.AccountTypeID} · ${account.AccountTypeName || 'Account type'}`);
+    const accountTypes = await getAccountTypeChoices(state);
+    return uniqueOptions(accountTypes, 'AccountTypeID', (accountType) => {
+      const name = accountType.TypeName || accountType.AccountTypeName || 'Account type';
+      const minBalance = accountType.MinBalance !== undefined
+        ? ` · Minimum ${UI().formatMoney(accountType.MinBalance)}`
+        : '';
+      return `${accountType.AccountTypeID} · ${name}${minBalance}`;
+    });
   }
 
   function readActivity() {
@@ -236,10 +263,15 @@
 
   function showPayload(title, payload, titles) {
     const sets = recordsets(payload);
+    const meta = payload?.meta || {};
     UI().openModal({
       title,
       size: 'lg',
-      content: UI().renderRecordsets(sets, { titles })
+      content: UI().renderRecordsets(sets, {
+        titles,
+        dateFields: meta.dateFields || {},
+        dateFieldsBySet: meta.dateFieldsByRecordset || []
+      })
     });
   }
 
@@ -325,43 +357,89 @@
           UserID: user.UserID,
           CustomerID: user.CustomerID,
           EmployeeID: user.EmployeeID,
-          EffectiveRoles: roles.join(', ')
-        }))}</div><div class="span-5">${card('Session security', `<div class="alert alert-info"><strong>Database-backed bearer session</strong><br>The browser stores the session token and sends it in the Authorization header. The backend validates the token and effective role before each protected request.</div><div class="connection-summary"><span>Frontend</span><strong>${UI().escapeHtml(location.origin)}</strong><span>Backend</span><strong>${UI().escapeHtml(window.BankConfig.getApiBaseUrl())}</strong></div><div class="form-actions">${actionButton('logout', 'End current session', 'logout', 'btn-danger')}</div>`)}</div></div>`;
+          EffectiveRoles: roles.join(', '),
+          LoginTime: user.LoginTime,
+          ExpiresAt: user.ExpiresAt
+        }))}</div><div class="span-5">${card('Session security', `<div class="alert alert-info"><strong>Database-backed bearer session</strong><br>The token has a fixed 10-minute lifetime. Activity does not extend it. SQL Server rejects the token after <strong>${UI().escapeHtml(UI().formatDate(user.ExpiresAt, { kind: 'datetime' }))}</strong>, and the browser automatically returns to login.</div><div class="connection-summary"><span>Frontend</span><strong>${UI().escapeHtml(location.origin)}</strong><span>Backend</span><strong>${UI().escapeHtml(window.BankConfig.getApiBaseUrl())}</strong></div><div class="form-actions">${actionButton('logout', 'End current session', 'logout', 'btn-danger')}</div>`)}</div></div>`;
       }
     },
 
     staffOverview: {
       actions: () => actionButton('refresh-section', 'Refresh dashboard', 'refresh', 'btn-secondary'),
       load: async (state) => {
-        const [customersPayload, accountsPayload, branchesPayload, employeesPayload, pendingPayload, loansPayload] = await Promise.all([
+        const currentBranchID = Number(state.user?.CurrentBranchID || 0);
+        const branchPromise = currentBranchID
+          ? safeGet(`/api/branches/${currentBranchID}`)
+          : Promise.resolve({ data: null });
+
+        const [customersPayload, branchPayload, employeesPayload, pendingPayload, loansPayload] = await Promise.all([
           safeGet('/api/customers'),
-          safeGet('/api/accounts'),
-          safeGet('/api/branches'),
+          branchPromise,
           safeGet('/api/employees'),
           safeGet('/api/reports/pending-transactions', { page: 1, pageSize: 8 }),
-          safeGet('/api/loans', { page: 1, pageSize: 8 })
+          safeGet('/api/loans', { page: 1, pageSize: 200 })
         ]);
+
+        const branchData = Array.isArray(branchPayload?.data)
+          ? branchPayload.data[0] || null
+          : branchPayload?.data || null;
+
         return {
           role: state.config.role,
           customers: rows(customersPayload),
-          accounts: rows(accountsPayload),
-          branches: rows(branchesPayload),
+          branch: branchData,
           employees: rows(employeesPayload),
           pending: rows(pendingPayload),
           loans: rows(loansPayload)
         };
       },
-      render: (data) => `<div class="stat-grid">
-        ${UI().statCard('Customers', data.customers.length, 'Visible in your database scope', 'users')}
-        ${UI().statCard('Accounts', data.accounts.length, `${countStatus(data.accounts, /active/i)} active`, 'card', 'var(--blue-500)', 'rgba(59,130,246,.12)')}
-        ${UI().statCard('Pending transactions', data.pending.length, 'Awaiting finalization', 'clock', 'var(--amber-500)', 'rgba(245,158,11,.14)')}
-        ${UI().statCard('Loans in report', data.loans.length, `${countStatus(data.loans, /active/i)} active`, 'loan', 'var(--violet-500)', 'rgba(139,92,246,.12)')}
-      </div>
-      <div class="dashboard-grid">
-        ${card('Pending transaction queue', UI().renderTable(data.pending.slice(0, 8), { hide: ['Description'], maxColumns: 8 }), `<button class="btn btn-sm btn-secondary" data-action="view-report" data-report="pending-transactions">Open report ${icon('arrow', 14)}</button>`)}
-        ${card('Operations shortcuts', `<div class="quick-actions"><button class="quick-action" data-action="create-customer">${icon('userPlus', 21)}<strong>New customer</strong><span>Register a customer profile</span></button><button class="quick-action" data-action="deposit">${icon('money', 21)}<strong>Personal deposit</strong><span>Deposit into one of your own accounts</span></button><button class="quick-action" data-action="create-loan">${icon('loan', 21)}<strong>New loan</strong><span>Create an installment schedule</span></button><button class="quick-action" data-section-target="reports">${icon('reports', 21)}<strong>Reports</strong><span>Open protected SQL views</span></button></div>`)}
-      </div>
-      <div class="section-spacer">${card('Branch network', UI().renderTable(data.branches, { hide: ['Address'], maxColumns: 8 }))}</div>`
+      render: (data, state) => {
+        const branch = data.branch || {};
+        const branchName = branch.BranchName || state.user?.CurrentBranchName || 'Current branch';
+        const managerName = [
+          branch.CurrentBranchManagerFirstName,
+          branch.CurrentBranchManagerLastName
+        ].filter(Boolean).join(' ') || 'Not assigned';
+        const totalAccounts = Number(branch.TotalAccountCount || 0);
+        const activeAccounts = Number(branch.ActiveAccountCount || 0);
+        const currentEmployees = Number(branch.CurrentEmployeeCount || data.employees.length || 0);
+        const branchDetails = {
+          BranchName: branchName,
+          BranchCode: branch.BranchCode || '—',
+          BranchID: branch.BranchID || state.user?.CurrentBranchID || '—',
+          City: branch.City || '—',
+          Address: branch.Address || '—',
+          Phone: branch.Phone || '—',
+          Balance: branch.Balance ?? '—',
+          CurrentManager: managerName
+        };
+        const operatingDetails = {
+          VisibleCustomers: data.customers.length,
+          CurrentEmployees: currentEmployees,
+          CurrentViceManagers: Number(branch.CurrentViceManagerCount || 0),
+          ActiveAccounts: activeAccounts,
+          TotalAccounts: totalAccounts,
+          VisibleLoans: data.loans.length,
+          PendingTransactions: data.pending.length
+        };
+
+        return `<div class="stat-grid">
+          ${UI().statCard('Customers', data.customers.length, `Visible in ${branchName}`, 'users')}
+          ${UI().statCard('Accounts', totalAccounts, `${activeAccounts} active`, 'card', 'var(--blue-500)', 'rgba(59,130,246,.12)')}
+          ${UI().statCard('Pending transactions', data.pending.length, 'Awaiting finalization', 'clock', 'var(--amber-500)', 'rgba(245,158,11,.14)')}
+          ${UI().statCard('Loans', data.loans.length, `${countStatus(data.loans, /active/i)} active`, 'loan', 'var(--violet-500)', 'rgba(139,92,246,.12)')}
+        </div>
+        <div class="dashboard-grid">
+          ${card('Pending transaction queue', UI().renderTable(data.pending.slice(0, 8), { hide: ['Description'], maxColumns: 8 }), `<button class="btn btn-sm btn-secondary" data-action="view-report" data-report="pending-transactions">Open report ${icon('arrow', 14)}</button>`)}
+          ${card('Operations shortcuts', `<div class="quick-actions"><button class="quick-action" data-action="create-customer">${icon('userPlus', 21)}<strong>New customer</strong><span>Register a customer profile</span></button><button class="quick-action" data-action="deposit">${icon('money', 21)}<strong>Personal deposit</strong><span>Deposit into one of your own accounts</span></button><button class="quick-action" data-action="create-loan">${icon('loan', 21)}<strong>New loan</strong><span>Create an installment schedule</span></button><button class="quick-action" data-section-target="reports">${icon('reports', 21)}<strong>Reports</strong><span>Open protected SQL views</span></button></div>`)}
+        </div>
+        <div class="section-spacer">
+          <div class="content-grid">
+            <div class="span-7">${card('Current branch overview', UI().keyValue(branchDetails))}</div>
+            <div class="span-5">${card('Current branch operating totals', UI().keyValue(operatingDetails), `<button class="btn btn-sm btn-secondary" data-section-target="branches">Branch details ${icon('arrow', 14)}</button>`)}</div>
+          </div>
+        </div>`;
+      }
     },
 
     customers: {
@@ -488,18 +566,19 @@
     executiveOverview: {
       actions: () => `${actionButton('view-report', 'Branch financial report', 'reports', 'btn-secondary', 'data-report="highadmin-branch-financial-overview"')} ${actionButton('refresh-section', 'Refresh', 'refresh', 'btn-secondary')}`,
       load: async () => {
-        const [branchesPayload, employeesPayload, customersPayload, accountsPayload, financialPayload] = await Promise.all([
+        const [branchesPayload, employeesPayload, customersPayload, financialPayload] = await Promise.all([
           safeGet('/api/branches'),
           safeGet('/api/employees', { includeTerminated: true }),
           safeGet('/api/customers', { includeInactive: true }),
-          safeGet('/api/accounts', { includeClosed: true }),
           safeGet('/api/reports/highadmin-branch-financial-overview', { page: 1, pageSize: 30 })
         ]);
+        const branches = rows(branchesPayload);
         return {
-          branches: rows(branchesPayload),
+          branches,
           employees: rows(employeesPayload),
           customers: rows(customersPayload),
-          accounts: rows(accountsPayload),
+          totalAccounts: branches.reduce((sum, branch) => sum + Number(branch.TotalAccountCount || 0), 0),
+          activeAccounts: branches.reduce((sum, branch) => sum + Number(branch.ActiveAccountCount || 0), 0),
           financial: rows(financialPayload)
         };
       },
@@ -507,7 +586,7 @@
         ${UI().statCard('Branch network', data.branches.length, 'Operating units', 'building')}
         ${UI().statCard('Workforce', data.employees.length, `${countStatus(data.employees, /active|working/i)} active`, 'users', 'var(--blue-500)', 'rgba(59,130,246,.12)')}
         ${UI().statCard('Customer base', data.customers.length, 'Registered customers', 'userPlus', 'var(--violet-500)', 'rgba(139,92,246,.12)')}
-        ${UI().statCard('Managed accounts', data.accounts.length, `${countStatus(data.accounts, /active/i)} active`, 'wallet', 'var(--gold-500)', 'rgba(215,168,79,.15)')}
+        ${UI().statCard('Managed accounts', data.totalAccounts, `${data.activeAccounts} active`, 'wallet', 'var(--gold-500)', 'rgba(215,168,79,.15)')}
       </div><div class="dashboard-grid">${card('Branch financial overview', UI().renderTable(data.financial, { maxColumns: 10 }))}${card('Governance shortcuts', `<div class="quick-actions"><button class="quick-action" data-action="hire-manager">${icon('userPlus', 21)}<strong>Hire manager</strong><span>Create manager, customer, and user records</span></button><button class="quick-action" data-action="replace-manager">${icon('transfer', 21)}<strong>Replace manager</strong><span>Change branch leadership</span></button><button class="quick-action" data-action="view-report" data-report="highadmin-user-access-overview">${icon('shield', 21)}<strong>Access overview</strong><span>Review users and effective roles</span></button><button class="quick-action" data-action="view-report" data-report="audit-trail">${icon('reports', 21)}<strong>Audit trail</strong><span>Review security-sensitive activity</span></button></div>`)}</div>`
     },
 
@@ -537,23 +616,18 @@
   };
 
   async function openAccountForm(state, refresh) {
-    let branches = [];
-    let accountTypes = [];
-    try {
-      const ownAccounts = await getOwnAccounts(state, true);
-      branches = uniqueOptions(ownAccounts, 'BranchID', (account) => `${account.BranchID} · ${account.BranchCode || account.BranchName || 'Branch'}`);
-      accountTypes = uniqueOptions(ownAccounts, 'AccountTypeID', (account) => `${account.AccountTypeID} · ${account.AccountTypeName || 'Account type'}`);
-    } catch (_) {
-      // Customer users cannot use the branch catalogue endpoint. Existing account data is used when available.
-    }
+    const [branches, accountTypes] = await Promise.all([
+      branchOptions(state),
+      accountTypeOptions(state)
+    ]);
 
     UI().openForm({
       title: 'Open bank account',
       submitText: 'Open account',
-      intro: '<div class="alert alert-info">The current backend requires numeric Branch ID and Account Type ID. Existing values are offered when they can be discovered from your accessible account records.</div>',
+      intro: '<div class="alert alert-info">Choose a branch and account type from the available catalogues. The numeric IDs are submitted automatically.</div>',
       fields: [
-        selectOrNumber('branchID', 'Branch', branches, true, '', 'Use a valid BranchID from the database.'),
-        selectOrNumber('accountTypeID', 'Account type', accountTypes, true, '', 'Use a valid AccountTypeID from the database.'),
+        selectOrNumber('branchID', 'Branch', branches, true, '', 'Select the branch where the account will be opened.'),
+        selectOrNumber('accountTypeID', 'Account type', accountTypes, true, '', 'Select the required account product.'),
         moneyField('initialDeposit', 'Initial deposit', false, 0)
       ],
       onSubmit: async (data) => {
@@ -571,10 +645,10 @@
     UI().openModal({
       title: `Account ${accountID} history`,
       size: 'lg',
-      content: `<div class="alert alert-info"><strong>Local time display:</strong> Transaction Date is when the transaction was created. Ready To Complete At is the scheduled processing time and may be later. Existing sample records keep their seeded historical dates.</div>${UI().renderTable(rows(response), { maxColumns: 12 })}<div class="form-actions"><button class="btn btn-secondary" data-action="account-history-filter" data-id="${accountID}" data-scope="${scope}">${icon('filter', 16)} Filter dates</button><button class="btn btn-secondary" data-action="export-account-history" data-id="${accountID}">${icon('download', 16)} Export CSV</button></div>`
+      content: `<div class="alert alert-info"><strong>Local time display:</strong> Transaction Date is when the transaction was created. Ready To Complete At is the scheduled processing time and may be later. Existing sample records keep their seeded historical dates.</div>${UI().renderTable(rows(response), { maxColumns: 12, dateFields: response.meta?.dateFields || {} })}<div class="form-actions"><button class="btn btn-secondary" data-action="account-history-filter" data-id="${accountID}" data-scope="${scope}">${icon('filter', 16)} Filter dates</button><button class="btn btn-secondary" data-action="export-account-history" data-id="${accountID}">${icon('download', 16)} Export CSV</button></div>`
     });
     const state = window.BankWorkspace.getState();
-    state.activeAccountHistory = { accountID, rows: rows(response), fromDate, toDate, scope };
+    state.activeAccountHistory = { accountID, rows: rows(response), fromDate, toDate, scope, dateFields: response.meta?.dateFields || {} };
   }
 
   async function lookupLoan(loanID, scope = 'viewable') {
@@ -623,7 +697,7 @@
 
     'export-account-history': async () => {
       const current = window.BankWorkspace.getState().activeAccountHistory;
-      UI().downloadCSV(current?.rows || [], `account-${current?.accountID || 'history'}-history.csv`);
+      UI().downloadCSV(current?.rows || [], `account-${current?.accountID || 'history'}-history.csv`, { dateFields: current?.dateFields || {} });
     },
 
     'customer-filters': async ({ state, refresh }) => {

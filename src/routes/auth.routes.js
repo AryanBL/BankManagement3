@@ -1,5 +1,6 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
+const env = require('../config/env');
 const { TYPES, executeProcedure } = require('../utils/procedure');
 const { asyncHandler, ok, created } = require('../utils/http');
 const { authenticate } = require('../middleware/auth');
@@ -48,16 +49,21 @@ router.post('/login', loginLimiter, requireBodyFields(['password']), asyncHandle
       Password: [TYPES.string4000, 'password'],
       LoginUserID: [TYPES.int, 'loginUserID'],
       LoginCustomerID: [TYPES.int, 'loginCustomerID'],
-      LoginEmployeeID: [TYPES.int, 'loginEmployeeID']
+      LoginEmployeeID: [TYPES.int, 'loginEmployeeID'],
+      SessionTtlMinutes: TYPES.int
     },
     outputs: {
       UserID: TYPES.int,
       CustomerID: TYPES.int,
       EmployeeID: TYPES.int,
       SessionToken: TYPES.token,
-      Roles: TYPES.stringMax
+      Roles: TYPES.stringMax,
+      ExpiresAt: TYPES.datetime
     },
-    values: req.body
+    values: {
+      ...req.body,
+      SessionTtlMinutes: env.sessionTtlMinutes
+    }
   });
 
   ok(res, {
@@ -66,9 +72,14 @@ router.post('/login', loginLimiter, requireBodyFields(['password']), asyncHandle
       customerID: result.output.CustomerID,
       employeeID: result.output.EmployeeID,
       sessionToken: result.output.SessionToken,
-      effectiveRoles: result.output.Roles
+      effectiveRoles: result.output.Roles,
+      expiresAt: result.output.ExpiresAt
     },
-    output: result.output
+    output: result.output,
+    meta: {
+      sessionTtlMinutes: env.sessionTtlMinutes,
+      dateFields: { LoginTime: 'datetime', ExpiresAt: 'datetime' }
+    }
   });
 }));
 
@@ -86,7 +97,13 @@ router.post('/logout', authenticate(), asyncHandler(async (req, res) => {
 }));
 
 router.get('/me', authenticate(), asyncHandler(async (req, res) => {
-  ok(res, { data: req.user });
+  ok(res, {
+    data: req.user,
+    meta: {
+      sessionTtlMinutes: env.sessionTtlMinutes,
+      dateFields: { LoginTime: 'datetime', ExpiresAt: 'datetime' }
+    }
+  });
 }));
 
 module.exports = router;
