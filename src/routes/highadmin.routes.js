@@ -4,11 +4,35 @@ const { asyncHandler, ok, created } = require('../utils/http');
 const { authenticate, authorize } = require('../middleware/auth');
 const { requireBodyFields } = require('../middleware/validation');
 
+
+function validateManagerHireBody(req, res, next) {
+  const branchID = Number(req.body.branchID);
+  const jobTitle = String(req.body.jobTitle || '').trim();
+
+  if (!Number.isInteger(branchID) || branchID <= 0) {
+    return res.status(400).json({
+      success: false,
+      error: { message: 'A valid positive branchID is required when hiring a Branch Manager or Vice Manager.' }
+    });
+  }
+
+  if (!['Branch Manager', 'Vice Manager'].includes(jobTitle)) {
+    return res.status(400).json({
+      success: false,
+      error: { message: 'jobTitle must be either Branch Manager or Vice Manager.' }
+    });
+  }
+
+  req.body.branchID = branchID;
+  req.body.jobTitle = jobTitle;
+  return next();
+}
+
 const router = express.Router();
 router.use(authenticate());
 router.use(authorize('HighAdmin'));
 
-router.post('/managers', requireBodyFields(['branchID', 'username', 'password', 'nationalID', 'firstName', 'lastName', 'birthDate', 'jobTitle', 'salary', 'phone', 'email']), asyncHandler(async (req, res) => {
+router.post('/managers', requireBodyFields(['branchID', 'username', 'password', 'nationalID', 'firstName', 'lastName', 'birthDate', 'jobTitle', 'salary', 'phone', 'email']), validateManagerHireBody, asyncHandler(async (req, res) => {
   const result = await executeProcedure('dbo.sp_HighAdmin_HireManager', {
     inputs: {
       HighAdminUserID: TYPES.int,

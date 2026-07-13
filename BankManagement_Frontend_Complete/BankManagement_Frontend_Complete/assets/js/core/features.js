@@ -527,9 +527,23 @@
     },
 
     employees: {
-      actions: (state) => state.config.role === 'Employee'
-        ? actionButton('refresh-section', 'Refresh', 'refresh', 'btn-secondary')
-        : `${actionButton('hire-employee', 'Hire employee', 'userPlus')} ${filterTools('employee-filters', 'clear-employee-filters', Boolean(Object.keys(state.filters.employees || {}).length))}`,
+      actions: (state) => {
+        if (state.config.role === 'Employee') {
+          return actionButton('refresh-section', 'Refresh', 'refresh', 'btn-secondary');
+        }
+
+        const filters = filterTools(
+          'employee-filters',
+          'clear-employee-filters',
+          Boolean(Object.keys(state.filters.employees || {}).length)
+        );
+
+        if (state.config.role === 'HighAdmin') {
+          return filters;
+        }
+
+        return `${actionButton('hire-employee', 'Hire employee', 'userPlus')} ${filters}`;
+      },
       load: async (state) => {
         const filters = { includeTerminated: true, ...cleanObject(state.filters.employees || {}) };
         return { filters, employees: rows(await API().get('/api/employees', filters)) };
@@ -1288,11 +1302,12 @@
     'hire-manager': async ({ state, refresh }) => {
       const branches = await branchOptions(state);
       UI().openForm({
-        title: 'Hire branch manager',
+        title: 'Hire branch manager or vice manager',
         submitText: 'Hire manager',
         size: 'lg',
+        intro: '<div class="alert alert-warning"><strong>Branch assignment is mandatory.</strong> The manager cannot be created without selecting a valid branch.</div><div class="alert alert-info">Manager hiring creates or reuses the person\'s customer identity and assigns Customer, Employee, and Admin roles. This is required by the current authentication model and enables the staff member\'s personal accounts and loans.</div>',
         fields: [
-          selectOrNumber('branchID', 'Branch', branches, true),
+          selectOrNumber('branchID', 'Branch', branches, true, '', 'Required. The new manager will be assigned to this branch immediately.'),
           { name: 'username', label: 'Username', required: true, autocomplete: 'off' },
           { name: 'password', label: 'Temporary password', type: 'password', required: true, autocomplete: 'new-password' },
           { name: 'nationalID', label: 'National ID', required: true },
@@ -1300,7 +1315,10 @@
           { name: 'lastName', label: 'Last name', required: true },
           { name: 'birthDate', label: 'Birth date', type: 'date', required: true },
           { name: 'hireDate', label: 'Hire date', type: 'date' },
-          { name: 'jobTitle', label: 'Job title', required: true, value: 'Branch Manager' },
+          selectField('jobTitle', 'Job title', [
+            option('Branch Manager', 'Branch Manager'),
+            option('Vice Manager', 'Vice Manager')
+          ], true, 'Branch Manager', 'Only manager-level job titles are allowed here.'),
           moneyField('salary', 'Salary'),
           { name: 'phone', label: 'Phone', required: true },
           { name: 'email', label: 'Email', type: 'email', required: true },

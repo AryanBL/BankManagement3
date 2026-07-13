@@ -117,7 +117,7 @@ router.get('/:employeeID', authorize('Employee', 'Admin', 'HighAdmin'), asyncHan
   ok(res, { data: result.recordsets.length > 1 ? result.recordsets : result.recordset });
 }));
 
-router.post('/', authorize('Admin', 'HighAdmin'), requireBodyFields(['nationalID', 'firstName', 'lastName', 'jobTitle', 'salary']), asyncHandler(async (req, res) => {
+router.post('/', authorize('Admin'), requireBodyFields(['nationalID', 'firstName', 'lastName', 'jobTitle', 'salary']), asyncHandler(async (req, res) => {
   const result = await executeProcedure('dbo.sp_Employee_Hire', {
     inputs: {
       ManagerUserID: TYPES.int,
