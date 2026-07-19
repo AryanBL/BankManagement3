@@ -113,6 +113,18 @@ router.post('/managers/:employeeID/suspend', asyncHandler(async (req, res) => {
   ok(res, { data: result.recordset, output: result.output });
 }));
 
+router.post('/managers/:employeeID/unsuspend', asyncHandler(async (req, res) => {
+  const result = await executeProcedure('dbo.sp_HighAdmin_UnsuspendManager', {
+    inputs: {
+      HighAdminUserID: TYPES.int,
+      ManagerEmployeeID: TYPES.int,
+      Reason: [TYPES.string500, 'reason']
+    },
+    values: { ...req.body, HighAdminUserID: req.user.UserID, ManagerEmployeeID: req.params.employeeID }
+  });
+  ok(res, { data: result.recordset, output: result.output });
+}));
+
 router.post('/branches/:branchID/replace-manager', requireBodyFields(['newManagerEmployeeID']), asyncHandler(async (req, res) => {
   const result = await executeProcedure('dbo.sp_HighAdmin_ReplaceBranchManager', {
     inputs: {

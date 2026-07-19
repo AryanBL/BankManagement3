@@ -202,6 +202,19 @@ router.post('/:employeeID/suspend', authorize('Admin', 'HighAdmin'), asyncHandle
   ok(res, { data: result.recordset, output: result.output });
 }));
 
+router.post('/:employeeID/unsuspend', authorize('Admin', 'HighAdmin'), asyncHandler(async (req, res) => {
+  await assertEmployeeTargetVisible(req, req.params.employeeID);
+  const result = await executeProcedure('dbo.sp_Employee_Unsuspend', {
+    inputs: {
+      ManagerUserID: TYPES.int,
+      EmployeeID: TYPES.int,
+      Reason: [TYPES.string500, 'reason']
+    },
+    values: { ...req.body, ManagerUserID: req.user.UserID, EmployeeID: req.params.employeeID }
+  });
+  ok(res, { data: result.recordset, output: result.output });
+}));
+
 router.get('/:employeeID/branch-history', authorize('Employee', 'Admin', 'HighAdmin'), asyncHandler(async (req, res) => {
   await assertEmployeeTargetVisible(req, req.params.employeeID);
   const result = await executeProcedure('dbo.sp_EMPBranchHistory_Get', {

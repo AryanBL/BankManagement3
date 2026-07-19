@@ -43,7 +43,7 @@
 | `POST /api/transactions/withdraw` | Withdrawal form |
 | `POST /api/transactions/transfer` | Transfer form |
 | `POST /api/transactions/:transactionID/finalize` | Pending transaction table |
-| `POST /api/transactions/:transactionID/reverse` | Reversal form |
+| `POST /api/transactions/:transactionID/reverse` | Backend/API only; no current frontend workflow |
 | `POST /api/transactions/maintenance/process-pending-batch` | Admin maintenance and transaction desk |
 
 ## Loans
@@ -53,7 +53,7 @@
 | `POST /api/loans` | Staff loan-creation form |
 | `GET /api/loans/:loanID/status` | Loan summary/installment modal |
 | `POST /api/loans/installments/:installmentID/pay` | Installment payment form |
-| `POST /api/loans/maintenance/process-overdue-installments` | Admin maintenance |
+| `POST /api/loans/maintenance/process-overdue-installments` | Manual daily-status maintenance; SQL Server Agent also runs it every day |
 
 ## Employees and transfers
 
@@ -66,6 +66,7 @@
 | `POST /api/employees/:employeeID/change-job-title` | Job-title form |
 | `POST /api/employees/:employeeID/fire` | Termination form |
 | `POST /api/employees/:employeeID/suspend` | Suspension form |
+| `POST /api/employees/:employeeID/unsuspend` | Reactivation form; latest suspension actor only |
 | `GET /api/employees/:employeeID/branch-history` | Branch-history modal |
 | `POST /api/employee-transfers/request-by-employee` | Self-transfer request |
 | `POST /api/employee-transfers/request-by-manager` | Manager transfer request |
@@ -88,6 +89,7 @@
 | `POST /api/highadmin/managers/:employeeID/downgrade` | Downgrade manager form |
 | `POST /api/highadmin/managers/:employeeID/fire` | Terminate manager form |
 | `POST /api/highadmin/managers/:employeeID/suspend` | Suspend manager form |
+| `POST /api/highadmin/managers/:employeeID/unsuspend` | Reactivate manager form; latest suspending HighAdmin only |
 | `POST /api/highadmin/branches/:branchID/replace-manager` | Replace manager form |
 
 ## Reports

@@ -1,18 +1,13 @@
-
 /* =========================================================
    Procedure_HighAdmin_SuspendManager.sql
    sp_HighAdmin_SuspendManager
    ---------------------------------------------------------
-   HighAdmin suspends a manager-level employee by setting
-   EmpStatus = OnLeave. The linked user account remains active
-   for Customer login.
+   HighAdmin suspends an active Branch Manager or Vice Manager
+   by setting EmpStatus=OnLeave. The current EMPB assignment and
+   customer login remain in place.
    ========================================================= */
 
-IF OBJECT_ID('dbo.sp_HighAdmin_SuspendManager', 'P') IS NOT NULL
-    DROP PROCEDURE dbo.sp_HighAdmin_SuspendManager;
-GO
-
-CREATE PROCEDURE dbo.sp_HighAdmin_SuspendManager
+CREATE OR ALTER PROCEDURE dbo.sp_HighAdmin_SuspendManager
 (
     @HighAdminUserID INT,
     @ManagerEmployeeID INT,
@@ -26,53 +21,78 @@ BEGIN
     BEGIN TRY
         BEGIN TRANSACTION;
 
-        DECLARE @TargetUserID INT, @JobTitle NVARCHAR(100);
+        DECLARE
+            @JobTitle NVARCHAR(100) = NULL,
+            @BranchID INT = NULL;
 
-        IF NOT EXISTS
-        (
-            SELECT 1
-            FROM dbo.Users AS U
-            INNER JOIN dbo.UserRoles AS UR ON UR.UserID = U.UserID
-            INNER JOIN dbo.Roles AS R ON R.RoleID = UR.RoleID
-            WHERE U.UserID = @HighAdminUserID
-              AND U.IsActive = 1
-              AND R.RoleName = 'HighAdmin'
-        )
+        IF dbo.fn_UserHasEffectiveRole(@HighAdminUserID, N'HighAdmin') = 0
         BEGIN
-            RAISERROR('Only HighAdmin can suspend managers.', 16, 1);
+            RAISERROR('Only an effective HighAdmin can suspend managers.', 16, 1);
             ROLLBACK TRANSACTION;
             RETURN;
         END;
 
-        SELECT @JobTitle = JobTitle
-        FROM dbo.Employee
-        WHERE EmployeeID = @ManagerEmployeeID
-          AND EmpStatus = 'Active';
+        SELECT
+            @JobTitle = E.JobTitle
+        FROM dbo.Employee AS E WITH (UPDLOCK, HOLDLOCK)
+        WHERE E.EmployeeID = @ManagerEmployeeID
+          AND E.EmpStatus = N'Active';
 
-        IF @JobTitle NOT IN ('Branch Manager', 'Vice Manager')
+        IF @JobTitle NOT IN (N'Branch Manager', N'Vice Manager')
         BEGIN
             RAISERROR('Target employee is not an active manager-level employee.', 16, 1);
             ROLLBACK TRANSACTION;
             RETURN;
         END;
 
-        SELECT @TargetUserID = UserID FROM dbo.Users WHERE EmployeeID = @ManagerEmployeeID;
+        SELECT TOP (1)
+            @BranchID = EB.BranchID
+        FROM dbo.EMPB AS EB WITH (UPDLOCK, HOLDLOCK)
+        WHERE EB.EmployeeID = @ManagerEmployeeID
+          AND EB.WorkingStatus = N'Working'
+          AND EB.EndDate IS NULL
+        ORDER BY EB.StartDate DESC, EB.EMPBID DESC;
+
+        IF @BranchID IS NULL
+        BEGIN
+            RAISERROR('The target manager has no current branch assignment.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END;
 
         UPDATE dbo.Employee
-        SET EmpStatus = 'OnLeave'
+        SET EmpStatus = N'OnLeave'
         WHERE EmployeeID = @ManagerEmployeeID;
 
-        -- IMPORTANT: Users.IsActive is NOT changed here.
-        -- The suspended manager loses employee/admin privileges through Employee.EmpStatus,
-        -- but can still log in as a Customer.
-
-        INSERT INTO dbo.AuditLog(UserID, ActionType, TableName, RecordID, Details)
-        VALUES(@HighAdminUserID, 'ManagerSuspended', 'Employee', @ManagerEmployeeID,
-               CONCAT('JobTitle=', @JobTitle, '; Reason=', ISNULL(@Reason, 'not provided')));
+        INSERT INTO dbo.AuditLog
+        (
+            UserID,
+            ActionType,
+            TableName,
+            RecordID,
+            Details
+        )
+        VALUES
+        (
+            @HighAdminUserID,
+            N'ManagerSuspended',
+            N'Employee',
+            @ManagerEmployeeID,
+            CONCAT(
+                N'JobTitle=', @JobTitle,
+                N'; BranchID=', @BranchID,
+                N'; Reason=', ISNULL(NULLIF(LTRIM(RTRIM(@Reason)), N''), N'not provided')
+            )
+        );
 
         COMMIT TRANSACTION;
 
-        SELECT @ManagerEmployeeID AS EmployeeID, 'OnLeave' AS NewStatus;
+        SELECT
+            @ManagerEmployeeID AS EmployeeID,
+            @BranchID AS BranchID,
+            @JobTitle AS JobTitle,
+            N'OnLeave' AS NewStatus,
+            @HighAdminUserID AS SuspendedByUserID;
     END TRY
     BEGIN CATCH
         IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
@@ -81,6 +101,6 @@ BEGIN
         DECLARE @State INT = ERROR_STATE();
         RAISERROR(@Msg, @Severity, @State);
         RETURN;
-    END CATCH
+    END CATCH;
 END;
 GO

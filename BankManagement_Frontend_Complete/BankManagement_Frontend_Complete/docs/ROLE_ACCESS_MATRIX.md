@@ -13,13 +13,14 @@ The frontend routes users to their highest effective role. Backend middleware an
 | Account search/details/history | Own records | ✓ | ✓ | ✓ |
 | Freeze/close/change account type | — | ✓ | ✓ | ✓ |
 | Unfreeze account | — | — | ✓ | ✓ through inherited Admin role |
-| Finalize/reverse transaction | — | ✓ | ✓ | ✓ |
+| Finalize transaction | — | ✓ | ✓ | ✓ |
+| Reverse transaction in current frontend | — | — | — | — |
 | Process pending batch | — | — | ✓ | ✓ |
 | Create loan | — | ✓ | ✓ | ✓ |
 | View/pay own loan installment | ✓ | ✓ | ✓ | ✓ |
-| Process overdue installments | — | — | ✓ | ✓ |
+| Run daily loan/installment status maintenance manually | — | — | ✓ | ✓ |
 | Employee directory/history | — | Read-only | ✓ | ✓ |
-| Hire/create login/change title/suspend/fire employee | — | — | ✓ | ✓ |
+| Hire/create login/change title/suspend/reactivate/fire employee | — | — | ✓ | ✓ |
 | Employee transfer request | — | Self | Self/manager | Manager workflow through inherited Admin role |
 | Transfer approval decisions | — | — | ✓ | ✓ through inherited Admin role |
 | Branch directory | — | ✓ | ✓ | ✓ |

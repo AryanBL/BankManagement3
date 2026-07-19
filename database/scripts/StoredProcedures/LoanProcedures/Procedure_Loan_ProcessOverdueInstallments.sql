@@ -1,25 +1,35 @@
 /* =========================================================
    Procedure_Loan_ProcessOverdueInstallments.sql
    sp_Loan_ProcessOverdueInstallments
+   ---------------------------------------------------------
+   Performs daily loan/installment status maintenance.
 
-   Manual/API scope:
-   - Effective Admin (branch manager / vice manager): current
-     branch only.
-   - Effective HighAdmin: all branches, or one optional BranchID.
+   Installment rules:
+   - Paid and Defaulted are terminal.
+   - Unpaid installments past DueDate become Late when no
+     payment transaction is currently Pending.
+   - Unpaid installments more than 90 days overdue become
+     Defaulted when no payment transaction is currently Pending.
+   - A Late installment whose DueDate is moved to today/future
+     is restored to Pending.
 
-   Scheduled scope:
-   - SQL Server Agent may call the procedure without @UserID;
-     that trusted system call processes all branches.
+   Loan rules:
+   - An Active loan with any Defaulted installment becomes
+     Defaulted.
+   - An Active loan whose installments are all Paid becomes Paid.
+   - When a loan becomes Defaulted, every Active or Dormant
+     account owned by that borrower becomes Frozen. The previous
+     status is stored in FrozenPreviousStatus.
 
-   Default rule:
-   - Installment is not Paid or Defaulted.
-   - DueDate is more than 90 days in the past.
-   - No payment transaction is currently Pending.
+   Scope:
+   - Effective Admin: caller's current branch only.
+   - Effective HighAdmin: all branches or optional BranchID.
+   - SQL Server Agent: NULL UserID, all branches.
    ========================================================= */
 
 CREATE OR ALTER PROCEDURE dbo.sp_Loan_ProcessOverdueInstallments
 (
-    @UserID   INT = NULL,
+    @UserID INT = NULL,
     @BranchID INT = NULL
 )
 AS
@@ -29,20 +39,20 @@ BEGIN
 
     BEGIN TRY
         DECLARE
+            @Today DATE = CAST(GETDATE() AS DATE),
+            @DefaultCutoff DATE,
             @EffectiveBranchID INT = NULL,
             @AccessMode NVARCHAR(30) = N'SystemAllBranches';
 
-        ----------------------------------------------------
-        -- Resolve API caller scope. NULL @UserID is reserved
-        -- for SQL Agent / trusted scheduled execution.
-        ----------------------------------------------------
+        SET @DefaultCutoff = DATEADD(DAY, -90, @Today);
+
         IF @UserID IS NOT NULL
         BEGIN
             IF dbo.fn_UserHasEffectiveRole(@UserID, N'HighAdmin') = 1
             BEGIN
                 SET @EffectiveBranchID = @BranchID;
-                SET @AccessMode = CASE WHEN @BranchID IS NULL
-                    THEN N'HighAdminAllBranches'
+                SET @AccessMode = CASE
+                    WHEN @BranchID IS NULL THEN N'HighAdminAllBranches'
                     ELSE N'HighAdminOneBranch'
                 END;
             END
@@ -66,7 +76,7 @@ BEGIN
 
                 IF @BranchID IS NOT NULL AND @BranchID <> @EffectiveBranchID
                 BEGIN
-                    RAISERROR('A branch manager can process overdue installments only for the current branch.', 16, 1);
+                    RAISERROR('A branch manager can update loan statuses only for the current branch.', 16, 1);
                     RETURN;
                 END;
 
@@ -74,7 +84,7 @@ BEGIN
             END
             ELSE
             BEGIN
-                RAISERROR('Only an effective branch manager/Admin or HighAdmin can process overdue installments manually.', 16, 1);
+                RAISERROR('Only an effective branch manager/Admin or HighAdmin can run loan status maintenance manually.', 16, 1);
                 RETURN;
             END;
         END;
@@ -82,57 +92,69 @@ BEGIN
         BEGIN TRANSACTION;
 
         IF OBJECT_ID('tempdb..#ToDefault') IS NOT NULL DROP TABLE #ToDefault;
+        IF OBJECT_ID('tempdb..#ToLate') IS NOT NULL DROP TABLE #ToLate;
+        IF OBJECT_ID('tempdb..#ToPending') IS NOT NULL DROP TABLE #ToPending;
+        IF OBJECT_ID('tempdb..#LoansToDefault') IS NOT NULL DROP TABLE #LoansToDefault;
+        IF OBJECT_ID('tempdb..#LoansToPaid') IS NOT NULL DROP TABLE #LoansToPaid;
+        IF OBJECT_ID('tempdb..#AccountsToFreeze') IS NOT NULL DROP TABLE #AccountsToFreeze;
 
         SELECT
             I.InstallmentID,
             I.LoanID,
+            L.CustomerID,
             L.BranchID,
             I.DueDate,
-            I.Amount
+            I.Amount,
+            I.InstallmentStatus AS OldStatus
         INTO #ToDefault
-        FROM dbo.Installment AS I
-        INNER JOIN dbo.Loan AS L
+        FROM dbo.Installment AS I WITH (UPDLOCK, HOLDLOCK)
+        INNER JOIN dbo.Loan AS L WITH (UPDLOCK, HOLDLOCK)
             ON L.LoanID = I.LoanID
         LEFT JOIN dbo.Transactions AS T
             ON T.TransactionID = I.PaymentTransactionID
         WHERE I.InstallmentStatus NOT IN (N'Paid', N'Defaulted')
-          AND I.DueDate < DATEADD(DAY, -90, CAST(GETDATE() AS DATE))
+          AND I.DueDate < @DefaultCutoff
           AND (T.TransactionID IS NULL OR T.TransactionStatus <> N'Pending')
           AND (@EffectiveBranchID IS NULL OR L.BranchID = @EffectiveBranchID);
 
-        IF NOT EXISTS (SELECT 1 FROM #ToDefault)
-        BEGIN
-            INSERT INTO dbo.AuditLog
-            (
-                UserID,
-                ActionType,
-                TableName,
-                RecordID,
-                Details
-            )
-            VALUES
-            (
-                @UserID,
-                N'OverdueInstallmentSweep',
-                N'Installment',
-                NULL,
-                CONCAT(
-                    N'No eligible overdue installments found. AccessMode=', @AccessMode,
-                    N'; BranchID=', ISNULL(CONVERT(NVARCHAR(20), @EffectiveBranchID), N'ALL')
-                )
-            );
+        SELECT
+            I.InstallmentID,
+            I.LoanID,
+            L.CustomerID,
+            L.BranchID,
+            I.DueDate,
+            I.Amount,
+            I.InstallmentStatus AS OldStatus
+        INTO #ToLate
+        FROM dbo.Installment AS I WITH (UPDLOCK, HOLDLOCK)
+        INNER JOIN dbo.Loan AS L WITH (UPDLOCK, HOLDLOCK)
+            ON L.LoanID = I.LoanID
+        LEFT JOIN dbo.Transactions AS T
+            ON T.TransactionID = I.PaymentTransactionID
+        WHERE I.InstallmentStatus = N'Pending'
+          AND I.DueDate < @Today
+          AND I.DueDate >= @DefaultCutoff
+          AND (T.TransactionID IS NULL OR T.TransactionStatus <> N'Pending')
+          AND (@EffectiveBranchID IS NULL OR L.BranchID = @EffectiveBranchID);
 
-            COMMIT TRANSACTION;
-
-            SELECT
-                CAST(NULL AS INT) AS InstallmentID,
-                CAST(NULL AS INT) AS LoanID,
-                CAST(NULL AS INT) AS BranchID,
-                CAST(NULL AS NVARCHAR(20)) AS Outcome
-            WHERE 1 = 0;
-
-            RETURN;
-        END;
+        SELECT
+            I.InstallmentID,
+            I.LoanID,
+            L.CustomerID,
+            L.BranchID,
+            I.DueDate,
+            I.Amount,
+            I.InstallmentStatus AS OldStatus
+        INTO #ToPending
+        FROM dbo.Installment AS I WITH (UPDLOCK, HOLDLOCK)
+        INNER JOIN dbo.Loan AS L WITH (UPDLOCK, HOLDLOCK)
+            ON L.LoanID = I.LoanID
+        LEFT JOIN dbo.Transactions AS T
+            ON T.TransactionID = I.PaymentTransactionID
+        WHERE I.InstallmentStatus = N'Late'
+          AND I.DueDate >= @Today
+          AND (T.TransactionID IS NULL OR T.TransactionStatus <> N'Pending')
+          AND (@EffectiveBranchID IS NULL OR L.BranchID = @EffectiveBranchID);
 
         UPDATE I
         SET I.InstallmentStatus = N'Defaulted'
@@ -140,22 +162,94 @@ BEGIN
         INNER JOIN #ToDefault AS D
             ON D.InstallmentID = I.InstallmentID;
 
-        IF OBJECT_ID('tempdb..#LoansToDefault') IS NOT NULL DROP TABLE #LoansToDefault;
+        UPDATE I
+        SET I.InstallmentStatus = N'Late'
+        FROM dbo.Installment AS I
+        INNER JOIN #ToLate AS D
+            ON D.InstallmentID = I.InstallmentID;
+
+        UPDATE I
+        SET I.InstallmentStatus = N'Pending'
+        FROM dbo.Installment AS I
+        INNER JOIN #ToPending AS D
+            ON D.InstallmentID = I.InstallmentID;
 
         SELECT DISTINCT
-            D.LoanID,
-            D.BranchID
+            L.LoanID,
+            L.CustomerID,
+            L.BranchID,
+            L.LoanStatus AS OldStatus
         INTO #LoansToDefault
-        FROM #ToDefault AS D
-        INNER JOIN dbo.Loan AS L
-            ON L.LoanID = D.LoanID
-        WHERE L.LoanStatus = N'Active';
+        FROM dbo.Loan AS L WITH (UPDLOCK, HOLDLOCK)
+        WHERE L.LoanStatus = N'Active'
+          AND (@EffectiveBranchID IS NULL OR L.BranchID = @EffectiveBranchID)
+          AND EXISTS
+          (
+              SELECT 1
+              FROM dbo.Installment AS I
+              WHERE I.LoanID = L.LoanID
+                AND I.InstallmentStatus = N'Defaulted'
+          );
 
         UPDATE L
         SET L.LoanStatus = N'Defaulted'
         FROM dbo.Loan AS L
         INNER JOIN #LoansToDefault AS D
             ON D.LoanID = L.LoanID;
+
+        SELECT
+            L.LoanID,
+            L.CustomerID,
+            L.BranchID,
+            L.LoanStatus AS OldStatus
+        INTO #LoansToPaid
+        FROM dbo.Loan AS L WITH (UPDLOCK, HOLDLOCK)
+        WHERE L.LoanStatus = N'Active'
+          AND (@EffectiveBranchID IS NULL OR L.BranchID = @EffectiveBranchID)
+          AND EXISTS
+          (
+              SELECT 1
+              FROM dbo.Installment AS I
+              WHERE I.LoanID = L.LoanID
+          )
+          AND NOT EXISTS
+          (
+              SELECT 1
+              FROM dbo.Installment AS I
+              WHERE I.LoanID = L.LoanID
+                AND I.InstallmentStatus <> N'Paid'
+          );
+
+        UPDATE L
+        SET L.LoanStatus = N'Paid'
+        FROM dbo.Loan AS L
+        INNER JOIN #LoansToPaid AS P
+            ON P.LoanID = L.LoanID;
+
+        SELECT
+            A.AccountID,
+            A.CustomerID,
+            A.BranchID,
+            A.AccountStatus AS OldStatus,
+            MIN(D.LoanID) AS LoanID
+        INTO #AccountsToFreeze
+        FROM dbo.Account AS A WITH (UPDLOCK, HOLDLOCK)
+        INNER JOIN #LoansToDefault AS D
+            ON D.CustomerID = A.CustomerID
+        WHERE A.AccountStatus IN (N'Active', N'Dormant')
+        GROUP BY
+            A.AccountID,
+            A.CustomerID,
+            A.BranchID,
+            A.AccountStatus;
+
+        UPDATE A
+        SET
+            A.FrozenPreviousStatus = A.AccountStatus,
+            A.AccountStatus = N'Frozen'
+        FROM dbo.Account AS A
+        INNER JOIN #AccountsToFreeze AS F
+            ON F.AccountID = A.AccountID;
 
         INSERT INTO dbo.AuditLog
         (
@@ -167,17 +261,25 @@ BEGIN
         )
         SELECT
             @UserID,
-            N'InstallmentDefaulted',
+            N'InstallmentStatusChanged',
             N'Installment',
-            D.InstallmentID,
+            X.InstallmentID,
             CONCAT(
-                N'LoanID=', D.LoanID,
-                N'; BranchID=', D.BranchID,
-                N'; Amount=', D.Amount,
-                N'; DueDate=', CONVERT(NVARCHAR(10), D.DueDate, 120),
+                N'LoanID=', X.LoanID,
+                N'; BranchID=', X.BranchID,
+                N'; OldStatus=', X.OldStatus,
+                N'; NewStatus=', X.NewStatus,
+                N'; DueDate=', CONVERT(NVARCHAR(10), X.DueDate, 120),
                 N'; AccessMode=', @AccessMode
             )
-        FROM #ToDefault AS D;
+        FROM
+        (
+            SELECT InstallmentID, LoanID, BranchID, DueDate, OldStatus, N'Defaulted' AS NewStatus FROM #ToDefault
+            UNION ALL
+            SELECT InstallmentID, LoanID, BranchID, DueDate, OldStatus, N'Late' AS NewStatus FROM #ToLate
+            UNION ALL
+            SELECT InstallmentID, LoanID, BranchID, DueDate, OldStatus, N'Pending' AS NewStatus FROM #ToPending
+        ) AS X;
 
         INSERT INTO dbo.AuditLog
         (
@@ -193,25 +295,141 @@ BEGIN
             N'Loan',
             D.LoanID,
             CONCAT(
-                N'Loan marked Defaulted because at least one installment was more than 90 days overdue. ',
-                N'BranchID=', D.BranchID,
+                N'CustomerID=', D.CustomerID,
+                N'; BranchID=', D.BranchID,
+                N'; Reason=one or more installments are Defaulted',
                 N'; AccessMode=', @AccessMode
             )
         FROM #LoansToDefault AS D;
 
+        INSERT INTO dbo.AuditLog
+        (
+            UserID,
+            ActionType,
+            TableName,
+            RecordID,
+            Details
+        )
+        SELECT
+            @UserID,
+            N'LoanPaid',
+            N'Loan',
+            P.LoanID,
+            CONCAT(
+                N'CustomerID=', P.CustomerID,
+                N'; BranchID=', P.BranchID,
+                N'; Reason=all installments are Paid',
+                N'; AccessMode=', @AccessMode
+            )
+        FROM #LoansToPaid AS P;
+
+        INSERT INTO dbo.AuditLog
+        (
+            UserID,
+            ActionType,
+            TableName,
+            RecordID,
+            Details
+        )
+        SELECT
+            @UserID,
+            N'AccountFrozenDueToLoanDefault',
+            N'Account',
+            F.AccountID,
+            CONCAT(
+                N'CustomerID=', F.CustomerID,
+                N'; TriggeringLoanID=', F.LoanID,
+                N'; AccountBranchID=', F.BranchID,
+                N'; PreviousStatus=', F.OldStatus,
+                N'; AccessMode=', @AccessMode
+            )
+        FROM #AccountsToFreeze AS F;
+
+        INSERT INTO dbo.AuditLog
+        (
+            UserID,
+            ActionType,
+            TableName,
+            RecordID,
+            Details
+        )
+        VALUES
+        (
+            @UserID,
+            N'DailyLoanStatusSweep',
+            N'Loan',
+            NULL,
+            CONCAT(
+                N'Late=', (SELECT COUNT(*) FROM #ToLate),
+                N'; DefaultedInstallments=', (SELECT COUNT(*) FROM #ToDefault),
+                N'; RestoredPending=', (SELECT COUNT(*) FROM #ToPending),
+                N'; DefaultedLoans=', (SELECT COUNT(*) FROM #LoansToDefault),
+                N'; PaidLoans=', (SELECT COUNT(*) FROM #LoansToPaid),
+                N'; FrozenAccounts=', (SELECT COUNT(*) FROM #AccountsToFreeze),
+                N'; BranchID=', ISNULL(CONVERT(NVARCHAR(20), @EffectiveBranchID), N'ALL'),
+                N'; AccessMode=', @AccessMode
+            )
+        );
+
         COMMIT TRANSACTION;
 
         SELECT
-            D.InstallmentID,
+            N'Installment' AS EntityType,
+            X.InstallmentID AS EntityID,
+            X.LoanID,
+            X.BranchID,
+            X.OldStatus,
+            X.NewStatus
+        FROM
+        (
+            SELECT InstallmentID, LoanID, BranchID, OldStatus, N'Defaulted' AS NewStatus FROM #ToDefault
+            UNION ALL
+            SELECT InstallmentID, LoanID, BranchID, OldStatus, N'Late' AS NewStatus FROM #ToLate
+            UNION ALL
+            SELECT InstallmentID, LoanID, BranchID, OldStatus, N'Pending' AS NewStatus FROM #ToPending
+        ) AS X
+
+        UNION ALL
+
+        SELECT
+            N'Loan',
+            D.LoanID,
             D.LoanID,
             D.BranchID,
-            N'Defaulted' AS Outcome
-        FROM #ToDefault AS D
-        ORDER BY D.BranchID, D.LoanID, D.InstallmentID;
+            D.OldStatus,
+            N'Defaulted'
+        FROM #LoansToDefault AS D
+
+        UNION ALL
+
+        SELECT
+            N'Loan',
+            P.LoanID,
+            P.LoanID,
+            P.BranchID,
+            P.OldStatus,
+            N'Paid'
+        FROM #LoansToPaid AS P
+
+        UNION ALL
+
+        SELECT
+            N'Account',
+            F.AccountID,
+            F.LoanID,
+            F.BranchID,
+            F.OldStatus,
+            N'Frozen'
+        FROM #AccountsToFreeze AS F
+        ORDER BY EntityType, BranchID, LoanID, EntityID;
     END TRY
     BEGIN CATCH
         IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
-        THROW;
-    END CATCH
+        DECLARE @Msg NVARCHAR(4000) = ERROR_MESSAGE();
+        DECLARE @Severity INT = ERROR_SEVERITY();
+        DECLARE @State INT = ERROR_STATE();
+        RAISERROR(@Msg, @Severity, @State);
+        RETURN;
+    END CATCH;
 END;
 GO

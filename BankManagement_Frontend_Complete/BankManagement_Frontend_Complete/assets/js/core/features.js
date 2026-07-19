@@ -1177,9 +1177,15 @@
 
     'employee-more': async ({ element }) => {
       const employee = decodeRow(element.dataset.row);
+      const status = String(employee.EmpStatus || employee.EmploymentStatus || '').toLowerCase();
+      const suspensionAction = status === 'onleave'
+        ? `<button class="quick-action" data-action="unsuspend-employee" data-id="${employee.EmployeeID}">${icon('check', 21)}<strong>Reactivate</strong><span>Reverse the latest suspension</span></button>`
+        : status === 'terminated'
+          ? ''
+          : `<button class="quick-action" data-action="suspend-employee" data-id="${employee.EmployeeID}">${icon('alert', 21)}<strong>Suspend</strong><span>Set employee to OnLeave</span></button>`;
       UI().openModal({
         title: `Manage ${`${employee.FirstName || ''} ${employee.LastName || ''}`.trim() || `employee ${employee.EmployeeID}`}`,
-        content: `<div class="quick-actions"><button class="quick-action" data-action="create-employee-user" data-id="${employee.EmployeeID}">${icon('userPlus', 21)}<strong>Create login</strong><span>Link application access</span></button><button class="quick-action" data-action="change-job" data-id="${employee.EmployeeID}">${icon('briefcase', 21)}<strong>Change title</strong><span>Update job assignment</span></button><button class="quick-action" data-action="suspend-employee" data-id="${employee.EmployeeID}">${icon('alert', 21)}<strong>Suspend</strong><span>Set employee to OnLeave</span></button><button class="quick-action" data-action="fire-employee" data-id="${employee.EmployeeID}">${icon('trash', 21)}<strong>Terminate</strong><span>End employment record</span></button></div>`
+        content: `<div class="quick-actions"><button class="quick-action" data-action="create-employee-user" data-id="${employee.EmployeeID}">${icon('userPlus', 21)}<strong>Create login</strong><span>Link application access</span></button><button class="quick-action" data-action="change-job" data-id="${employee.EmployeeID}">${icon('briefcase', 21)}<strong>Change title</strong><span>Update job assignment</span></button>${suspensionAction}<button class="quick-action" data-action="fire-employee" data-id="${employee.EmployeeID}">${icon('trash', 21)}<strong>Terminate</strong><span>End employment record</span></button></div>`
       });
     },
 
@@ -1190,6 +1196,17 @@
       onSubmit: async (data) => {
         await API().post(`/api/employees/${element.dataset.id}/suspend`, data);
         await success(state, refresh, 'Employee was suspended.', 'Employee suspended', { employeeID: element.dataset.id });
+      }
+    }),
+
+    'unsuspend-employee': async ({ element, state, refresh }) => UI().openForm({
+      title: 'Reactivate employee',
+      submitText: 'Reactivate',
+      intro: '<div class="alert alert-info">Only the same manager or HighAdmin user who performed the latest suspension can reverse it.</div>',
+      fields: [{ name: 'reason', label: 'Reason for reactivation', type: 'textarea', required: true, full: true }],
+      onSubmit: async (data) => {
+        await API().post(`/api/employees/${element.dataset.id}/unsuspend`, data);
+        await success(state, refresh, 'Employee was restored to Active.', 'Employee reactivated', { employeeID: element.dataset.id });
       }
     }),
 
@@ -1386,9 +1403,15 @@
 
     'manager-more': async ({ element }) => {
       const manager = decodeRow(element.dataset.row);
+      const status = String(manager.EmpStatus || manager.EmploymentStatus || '').toLowerCase();
+      const suspensionAction = status === 'onleave'
+        ? `<button class="quick-action" data-action="unsuspend-manager" data-id="${manager.EmployeeID}">${icon('check', 21)}<strong>Reactivate</strong><span>Reverse the latest suspension</span></button>`
+        : status === 'terminated'
+          ? ''
+          : `<button class="quick-action" data-action="suspend-manager" data-id="${manager.EmployeeID}">${icon('alert', 21)}<strong>Suspend</strong><span>Set manager to OnLeave</span></button>`;
       UI().openModal({
         title: `Manager actions · ${`${manager.FirstName || ''} ${manager.LastName || ''}`.trim() || manager.EmployeeID}`,
-        content: `<div class="quick-actions"><button class="quick-action" data-action="employee-details" data-id="${manager.EmployeeID}">${icon('eye', 21)}<strong>View details</strong><span>Employee and branch records</span></button><button class="quick-action" data-action="downgrade-manager" data-id="${manager.EmployeeID}">${icon('briefcase', 21)}<strong>Downgrade</strong><span>Remove manager role and change title</span></button><button class="quick-action" data-action="suspend-manager" data-id="${manager.EmployeeID}">${icon('alert', 21)}<strong>Suspend</strong><span>Temporarily suspend manager</span></button><button class="quick-action" data-action="fire-manager" data-id="${manager.EmployeeID}">${icon('trash', 21)}<strong>Terminate</strong><span>End manager employment</span></button></div>`
+        content: `<div class="quick-actions"><button class="quick-action" data-action="employee-details" data-id="${manager.EmployeeID}">${icon('eye', 21)}<strong>View details</strong><span>Employee and branch records</span></button><button class="quick-action" data-action="downgrade-manager" data-id="${manager.EmployeeID}">${icon('briefcase', 21)}<strong>Downgrade</strong><span>Remove manager role and change title</span></button>${suspensionAction}<button class="quick-action" data-action="fire-manager" data-id="${manager.EmployeeID}">${icon('trash', 21)}<strong>Terminate</strong><span>End manager employment</span></button></div>`
       });
     },
 
@@ -1399,6 +1422,17 @@
       onSubmit: async (data) => {
         await API().post(`/api/highadmin/managers/${element.dataset.id}/suspend`, data);
         await success(state, refresh, 'Manager was suspended.', 'Manager suspended', { employeeID: element.dataset.id });
+      }
+    }),
+
+    'unsuspend-manager': async ({ element, state, refresh }) => UI().openForm({
+      title: 'Reactivate manager',
+      submitText: 'Reactivate',
+      intro: '<div class="alert alert-info">Only the same HighAdmin user who performed the latest suspension can reverse it. The Admin role is restored automatically.</div>',
+      fields: [{ name: 'reason', label: 'Reason for reactivation', type: 'textarea', required: true, full: true }],
+      onSubmit: async (data) => {
+        await API().post(`/api/highadmin/managers/${element.dataset.id}/unsuspend`, data);
+        await success(state, refresh, 'Manager was restored to Active.', 'Manager reactivated', { employeeID: element.dataset.id });
       }
     }),
 
