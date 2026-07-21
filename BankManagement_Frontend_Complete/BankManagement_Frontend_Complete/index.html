@@ -13,19 +13,10 @@
 </head>
 <body>
   <main class="auth-page">
-    <section class="auth-visual" aria-label="BankManagement introduction">
-      <a class="brand" href="index.html">
-        <span class="brand-mark" id="hero-brand-icon"></span>
-        <span class="brand-copy"><strong>BankManagement</strong><small>Secure banking suite</small></span>
-      </a>
-    </section>
+    <section class="auth-visual" aria-label="BankManagement introduction"></section>
 
     <section class="auth-panel">
       <div class="auth-card">
-        <a class="brand auth-mobile-brand" href="index.html">
-          <span class="brand-mark" id="mobile-brand-icon"></span>
-          <span class="brand-copy"><strong>BankManagement</strong><small>Secure banking suite</small></span>
-        </a>
         <h2 id="auth-title">Welcome back</h2>
         <p id="auth-copy">Sign in to the workspace assigned to your effective role.</p>
 
@@ -77,8 +68,6 @@
   <script src="assets/js/core/ui.js"></script>
   <script src="assets/js/pages/auth-page.js"></script>
   <script>
-    document.getElementById('hero-brand-icon').innerHTML = BankIcons.icon('bank',24);
-    document.getElementById('mobile-brand-icon').innerHTML = BankIcons.icon('bank',24);
     document.querySelectorAll('[data-password-toggle]').forEach(b => { if (!b.innerHTML) b.innerHTML = BankIcons.icon('eye',18); });
   </script>
 </body>
