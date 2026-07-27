@@ -1,0 +1,17 @@
+/*
+  Installs all SQL Server Agent jobs required by BankManagement.
+
+  Run only after 02_install_bankmanagement_database.sqlcmd and with SQL Server
+  Agent enabled. The Docker/WSL compose service enables Agent through
+  MSSQL_AGENT_ENABLED=true.
+*/
+:On Error exit
+:setvar DbName "BankManagement"
+
+:r "database/scripts/Agent Jobs/AgentJob_ProcessPendingTransactions.sql"
+:r "database/scripts/Agent Jobs/AgentJob_ApplyMonthlyInterest.sql"
+:r "database/scripts/Agent Jobs/AgentJob_ProcessOverdueInstallments.sql"
+:r "database/scripts/Agent Jobs/AgentJob_Account_DormantSweep.sql"
+
+PRINT 'All BankManagement SQL Server Agent jobs installed.';
+GO

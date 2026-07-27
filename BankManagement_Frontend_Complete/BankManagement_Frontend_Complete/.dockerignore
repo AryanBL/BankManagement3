@@ -1,0 +1,11 @@
+.git
+.gitignore
+.vscode
+.idea
+Dockerfile*
+README*.md
+SOURCE_TREE.txt
+docs
+start-frontend.cmd
+start-frontend.ps1
+start-frontend.sh

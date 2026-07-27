@@ -1,14 +1,26 @@
 /*
-  Optional. Run only after the full database installation if you want demo data.
-  The resilient scenario is useful for testing both successful and error-handling flows.
+  Optional sample-data installer. Run only after the full database installation.
+
+  Run SQLCMD from the project root.
+
+  WARNING: Use only in a disposable development/demo database.
 */
+:On Error exit
 :setvar DbName "BankManagement"
-:setvar ProjectRoot "C:\CHANGE_ME\bank-management-backend-v2"
 
 USE [$(DbName)];
 GO
 
-:r "$(ProjectRoot)\database\scripts\SampleData\SampleData_RealisticScenario_RESILIENT.sql"
+SET ANSI_NULLS ON;
+SET ANSI_PADDING ON;
+SET ANSI_WARNINGS ON;
+SET ARITHABORT ON;
+SET CONCAT_NULL_YIELDS_NULL ON;
+SET QUOTED_IDENTIFIER ON;
+SET NUMERIC_ROUNDABORT OFF;
+GO
+
+:r "database/scripts/SampleData/SampleData_RealisticScenario_RESILIENT.sql"
 
 PRINT 'Optional sample data script completed.';
 GO

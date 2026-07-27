@@ -1,0 +1,17 @@
+compose.yaml
+.env.docker.example
+Dockerfile
+.dockerignore
+docker/init-db.sh
+BankManagement_Frontend_Complete/BankManagement_Frontend_Complete/Dockerfile
+BankManagement_Frontend_Complete/BankManagement_Frontend_Complete/.dockerignore
+database/install/01_create_database_and_logins.sqlcmd
+database/install/02_install_bankmanagement_database.sqlcmd
+database/install/03_install_security_and_views.sqlcmd
+database/install/04_optional_sample_data.sqlcmd
+database/install/05_install_agent_jobs.sqlcmd
+database/scripts/00_MasterInstall_SQLCMD.sql
+database/security/00_Install_DatabaseSecurityAndViews_SQLCMD.sql
+database/scripts/TableCreation/TableCreation_FULL_FINAL_SAFE_REBUILD.sql
+DOCKER_WSL_FIXED_FILES_README.md
+FILE_MANIFEST.txt

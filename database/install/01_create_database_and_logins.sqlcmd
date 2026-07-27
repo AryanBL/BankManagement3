@@ -1,13 +1,18 @@
 /*
-  Run this in SSMS with SQLCMD Mode enabled.
-  Replace the passwords before running.
+  Cross-platform SQLCMD installer.
+
+  Required SQLCMD variables (pass with sqlcmd -v):
+    BankAppPassword
+    BankReportPassword
+    BankAuditorPassword
+    BankHighAdminReportPassword
+    BankMaintenancePassword
+
+  The project database name is intentionally fixed to BankManagement because
+  several application and maintenance scripts use that database name.
 */
+:On Error exit
 :setvar DbName "BankManagement"
-:setvar BankAppPassword "Replace_With_Strong_Password_1!"
-:setvar BankReportPassword "Replace_With_Strong_Password_2!"
-:setvar BankAuditorPassword "Replace_With_Strong_Password_3!"
-:setvar BankHighAdminReportPassword "Replace_With_Strong_Password_4!"
-:setvar BankMaintenancePassword "Replace_With_Strong_Password_5!"
 
 USE [master];
 GO

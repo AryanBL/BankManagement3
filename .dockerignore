@@ -1,0 +1,25 @@
+node_modules
+npm-debug.log*
+.env
+.env.*
+!.env.example
+!.env.docker.example
+.git
+.gitignore
+.vscode
+.idea
+*.zip
+*.tar
+*.gz
+
+# The backend image only needs package manifests and src/.
+BankManagement_Frontend_Complete
+database
+docker
+docs
+BankManagement_Technical_Report_Source_and_PDF
+BankManagement_SampleData_Postman_Tests
+BankManagement_Postman_API_Testing_Guide.html
+BankManagement_Demo_UserCredentials.html
+README*.md
+WSL_DOCKER_RUN.md
